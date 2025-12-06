@@ -33,19 +33,17 @@ function SaveManager.new()
     return self
 end
 
--- Set custom folder name
 function SaveManager:SetFolder(folderName)
-    if not folderName or type(folderName) ~= "string" or folderName == "" then
+    if type(folderName) ~= "string" or folderName == "" then
         return self
     end
-    
+
     self.Folder = folderName
-    
-    -- Rebuild folder tree if already initialized
+
     if self.IsInitialized then
         self:BuildFolderTree()
     end
-    
+
     return self
 end
 
@@ -347,23 +345,3 @@ end
 -- Global instance
 local instance = SaveManager.new()
 getgenv().Lonely_SaveManager = instance
-
-function SaveManager:SetFolder(folderName)
-    if type(folderName) ~= "string" or folderName == "" then
-        return self
-    end
-
-    self.Folder = folderName
-    
-    if makefolder then
-        if not isfolder(folderName) then
-            makefolder(folderName)
-        end
-
-        if not isfolder(folderName .. "/settings") then
-            makefolder(folderName .. "/settings")
-        end
-    end
-
-    return self
-end
