@@ -1,356 +1,362 @@
-if getgenv().Lonely_SaveManager then
-    return getgenv().Lonely_SaveManager
-end
-
-local httpService = game:GetService("HttpService")
-local Players = game:GetService("Players")
-
 local SaveManager = {}
-SaveManager.__index = SaveManager
+local HttpService = game:GetService("HttpService")
 
-SaveManager.Folder = "LonelyHub"  -- Default value
-SaveManager.Options = {}
-SaveManager.AutoSaveEnabled = true
-SaveManager.AutoSaveInterval = 5
-SaveManager.GameName = ""
-SaveManager.Library = nil
-SaveManager.IsInitialized = false
-SaveManager.AutoSaveThread = nil
+-- Cấu hình
+local FolderName = "Lonely Hub"
+local CurrentFileName = "config"
+local AutoSaveEnabled = true
+local AutoSaveDelay = 0.5 -- Delay trước khi lưu (tránh spam)
 
--- Create new instance
-function SaveManager.new()
-    local self = setmetatable({}, SaveManager)
-    
-    self.Folder = "LonelyHub"  -- Default folder
-    self.Options = {}
-    self.AutoSaveEnabled = true
-    self.AutoSaveInterval = 5
-    self.GameName = ""
-    self.Library = nil
-    self.IsInitialized = false
-    self.AutoSaveThread = nil
-    
-    return self
+-- Tạo folder
+if not isfolder(FolderName) then
+    makefolder(FolderName)
 end
 
--- Set custom folder name
-function SaveManager:SetFolder(folderName)
-    if type(folderName) ~= "string" or folderName == "" then
-        return self
-    end
-
-    self.Folder = folderName
-
-    -- Rebuild folder tree if already initialized
-    if self.IsInitialized then
-        self:BuildFolderTree()
-    end
-
-    return self
+-- Khởi tạo Config
+if not getgenv().Config then
+    getgenv().Config = {}
 end
 
--- Initialize the SaveManager
-function SaveManager:Init()
-    if self.IsInitialized then return self end
-    
-    self:BuildFolderTree()
-    self.IsInitialized = true
-    
-    -- Bật auto-save ngay khi khởi động
-    self:StartAutoSave()
-    
-    -- Auto-load khi khởi động
-    self:AutoLoad()
-    
-    return self
+-- Biến tracking
+local SaveScheduled = false
+local OriginalCallbacks = {}
+local IsLoading = false
+
+-- =====================================================
+-- HELPER FUNCTIONS
+-- =====================================================
+
+local function GetFilePath(fileName)
+    return FolderName .. "/" .. (fileName or CurrentFileName) .. ".json"
 end
 
--- Setup Library reference
-function SaveManager:SetLibrary(library)
-    self.Library = library
-    return self
+local function ScheduleSave()
+    if not AutoSaveEnabled or IsLoading then return end
+    
+    if SaveScheduled then return end
+    SaveScheduled = true
+    
+    task.delay(AutoSaveDelay, function()
+        SaveScheduled = false
+        SaveManager:SaveConfig()
+    end)
 end
 
--- Set Game Name
-function SaveManager:SetGameName(name)
-    self.GameName = name
-    return self
-end
+-- =====================================================
+-- HOOK FUNCTIONS - TỰ ĐỘNG HOOK VÀO CONTROL
+-- =====================================================
 
--- Register an option
-function SaveManager:RegisterOption(id, optionData)
-    if not id or not optionData then return self end
+function SaveManager:HookToggle(toggleObject, name)
+    if not toggleObject or not toggleObject.SetStage then return end
     
-    self.Options[id] = optionData
-    return self
-end
-
--- Create necessary folders
-function SaveManager:BuildFolderTree()
-    if not makefolder then return end
+    -- Lưu callback gốc
+    local originalSetStage = toggleObject.SetStage
     
-    local paths = {
-        self.Folder,
-        self.Folder .. "/settings"
-    }
-    
-    for _, path in ipairs(paths) do
-        if not isfolder then break end
-        if not isfolder(path) then
-            makefolder(path)
-        end
-    end
-end
-
--- Get auto-save filename (theo player và game)
-function SaveManager:GetAutoSaveFileName()
-    local player = Players.LocalPlayer
-    local playerName = player and player.Name or "Player"
-    local gameName = self.GameName ~= "" and self.GameName or tostring(game.PlaceId)
-    
-    -- Safe filename
-    local safePlayerName = string.gsub(playerName, "[^%w_-]", "_")
-    local safeGameName = string.gsub(gameName, "[^%w_-]", "_")
-    
-    return safePlayerName .. "_" .. safeGameName
-end
-
--- Collect all current values (chỉ lấy giá trị của các phần tử)
-function SaveManager:GetCurrentValues()
-    local values = {}
-    
-    for id, option in pairs(self.Options) do
-        if option.GetValue then
-            values[id] = option.GetValue()
-        elseif option.Value ~= nil then
-            values[id] = option.Value
+    -- Override SetStage
+    toggleObject.SetStage = function(self, value)
+        originalSetStage(self, value)
+        
+        -- Chỉ lưu khi không đang load config
+        if not IsLoading then
+            getgenv().Config[name] = value
+            ScheduleSave()
         end
     end
     
-    return values
+    print("[SaveManager] Hooked Toggle: " .. name)
 end
 
--- Save current state
-function SaveManager:SaveCurrentState()
-    if not writefile then return false end
+function SaveManager:HookSlider(sliderObject, name)
+    if not sliderObject or not sliderObject.SetValue then return end
     
-    local fileName = self:GetAutoSaveFileName()
-    local filePath = self.Folder .. "/settings/" .. fileName .. ".json"
-    local values = self:GetCurrentValues()
+    local originalSetValue = sliderObject.SetValue
     
-    -- Chỉ lưu nếu có giá trị
-    if next(values) == nil then return false end
+    sliderObject.SetValue = function(self, value)
+        originalSetValue(self, value)
+        
+        if not IsLoading then
+            getgenv().Config[name] = value
+            ScheduleSave()
+        end
+    end
     
-    local success, jsonData = pcall(httpService.JSONEncode, httpService, values)
-    if not success then return false end
+    print("[SaveManager] Hooked Slider: " .. name)
+end
+
+function SaveManager:HookInput(inputObject, name)
+    if not inputObject or not inputObject.SetValue then return end
     
-    writefile(filePath, jsonData)
+    local originalSetValue = inputObject.SetValue
+    
+    inputObject.SetValue = function(self, value)
+        originalSetValue(self, value)
+        
+        if not IsLoading then
+            getgenv().Config[name] = value
+            ScheduleSave()
+        end
+    end
+    
+    print("[SaveManager] Hooked Input: " .. name)
+end
+
+function SaveManager:HookDropdown(dropdownObject, name)
+    if not dropdownObject then return end
+    
+    -- Dropdown có thể có rf (refresh function)
+    -- Ta hook vào callback thay vì SetValue
+    -- Do đó cần lưu trong callback của Dropdown
+    
+    print("[SaveManager] Hooked Dropdown: " .. name)
+end
+
+function SaveManager:HookKeybind(keybindObject, name)
+    if not keybindObject or not keybindObject.Set then return end
+    
+    local originalSet = keybindObject.Set
+    
+    keybindObject.Set = function(self, key)
+        originalSet(self, key)
+        
+        if not IsLoading then
+            getgenv().Config[name] = key
+            ScheduleSave()
+        end
+    end
+    
+    print("[SaveManager] Hooked Keybind: " .. name)
+end
+
+-- =====================================================
+-- AUTO HOOK TẤT CẢ CONTROL
+-- =====================================================
+
+function SaveManager:AutoHookAll()
+    if not getgenv().AllControls then
+        warn("[SaveManager] AllControls not found! Run this after creating UI")
+        return
+    end
+    
+    print("[SaveManager] Auto hooking all controls...")
+    
+    for _, control in pairs(getgenv().AllControls) do
+        local name = control.Name
+        
+        -- Xác định loại control và hook tương ứng
+        if control.SetStage then
+            -- Toggle
+            self:HookToggle(control, name)
+        elseif control.SetValue and control.GetValue then
+            -- Slider hoặc Input
+            self:HookSlider(control, name)
+        elseif control.Set and control.Get then
+            -- Keybind
+            self:HookKeybind(control, name)
+        elseif control.rf then
+            -- Dropdown
+            self:HookDropdown(control, name)
+        end
+    end
+    
+    print("[SaveManager] Auto hook complete!")
+end
+
+-- =====================================================
+-- SAVE/LOAD FUNCTIONS
+-- =====================================================
+
+function SaveManager:SaveConfig(fileName)
+    local filePath = GetFilePath(fileName)
+    local success, err = pcall(function()
+        local jsonString = HttpService:JSONEncode(getgenv().Config)
+        writefile(filePath, jsonString)
+    end)
+    
+    if success then
+        print("[SaveManager] ✓ Config saved: " .. filePath)
+    else
+        warn("[SaveManager] ✗ Error saving: " .. tostring(err))
+    end
+end
+
+function SaveManager:LoadConfig(fileName)
+    local filePath = GetFilePath(fileName)
+    
+    if not isfile(filePath) then
+        warn("[SaveManager] File not found: " .. filePath)
+        return false
+    end
+    
+    local success, result = pcall(function()
+        local data = readfile(filePath)
+        return HttpService:JSONDecode(data)
+    end)
+    
+    if success and type(result) == "table" then
+        getgenv().Config = result
+        print("[SaveManager] ✓ Config loaded: " .. filePath)
+        self:ApplyConfig()
+        return true
+    else
+        warn("[SaveManager] ✗ Error loading: " .. tostring(result))
+        return false
+    end
+end
+
+function SaveManager:ApplyConfig()
+    if not getgenv().AllControls then
+        warn("[SaveManager] AllControls not found!")
+        return
+    end
+    
+    -- Đặt cờ đang load để tránh auto save
+    IsLoading = true
+    
+    print("[SaveManager] Applying config...")
+    
+    for _, control in pairs(getgenv().AllControls) do
+        local name = control.Name
+        local value = getgenv().Config[name]
+        
+        if value ~= nil then
+            pcall(function()
+                if control.SetStage then
+                    -- Toggle
+                    control:SetStage(value)
+                elseif control.SetValue then
+                    -- Slider / Input
+                    control:SetValue(value)
+                elseif control.Set then
+                    -- Keybind
+                    control:Set(value)
+                end
+            end)
+        end
+    end
+    
+    -- Tắt cờ loading
+    task.delay(0.5, function()
+        IsLoading = false
+        print("[SaveManager] ✓ Config applied")
+    end)
+end
+
+-- =====================================================
+-- UTILITY FUNCTIONS
+-- =====================================================
+
+function SaveManager:SetAutoSave(enabled)
+    AutoSaveEnabled = enabled
+    print("[SaveManager] Auto save: " .. (enabled and "ON" or "OFF"))
+end
+
+function SaveManager:SetFileName(fileName)
+    if not fileName or fileName == "" then
+        warn("[SaveManager] Invalid file name!")
+        return false
+    end
+    
+    CurrentFileName = fileName
+    print("[SaveManager] ✓ File name set to: " .. CurrentFileName)
     return true
 end
 
--- Load saved state
-function SaveManager:LoadSavedState(jsonData)
-    local values = {}
+function SaveManager:GetFileName()
+    return CurrentFileName
+end
+
+function SaveManager:ListConfigs()
+    local configs = {}
     
-    -- Nếu có jsonData, load từ đó
-    if jsonData then
-        local success, data = pcall(httpService.JSONDecode, httpService, jsonData)
-        if success and type(data) == "table" then
-            values = data
-        else
-            return false, "Invalid JSON format"
+    if not isfolder(FolderName) then
+        return configs
+    end
+    
+    for _, file in ipairs(listfiles(FolderName)) do
+        if file:match("%.json$") then
+            local name = file:match("([^/\\]+)%.json$")
+            table.insert(configs, name)
         end
+    end
+    
+    return configs
+end
+
+function SaveManager:DeleteConfig(fileName)
+    local filePath = GetFilePath(fileName)
+    
+    if isfile(filePath) then
+        delfile(filePath)
+        print("[SaveManager] ✓ Config deleted: " .. fileName)
+        return true
     else
-        -- Load từ file auto-save
-        local fileName = self:GetAutoSaveFileName()
-        local filePath = self.Folder .. "/settings/" .. fileName .. ".json"
-        
-        if not isfile(filePath) then
-            return false, "No saved settings found"
-        end
-        
-        local content = readfile(filePath)
-        local success, data = pcall(httpService.JSONDecode, httpService, content)
-        if not success then
-            return false, "Failed to decode JSON"
-        end
-        
-        values = data
-    end
-    
-    -- Apply loaded values
-    local appliedCount = 0
-    for id, value in pairs(values) do
-        local option = self.Options[id]
-        if option and option.SetValue then
-            pcall(function()
-                option.SetValue(value)
-                appliedCount = appliedCount + 1
-            end)
-        elseif option and option.SetStage then
-            pcall(function()
-                option.SetStage(value)
-                appliedCount = appliedCount + 1
-            end)
-        end
-    end
-    
-    return true, string.format("Loaded %d settings", appliedCount)
-end
-
--- Start auto-save loop
-function SaveManager:StartAutoSave()
-    if self.AutoSaveThread then
-        self:StopAutoSave()
-    end
-    
-    self.AutoSaveEnabled = true
-    
-    self.AutoSaveThread = task.spawn(function()
-        while self.AutoSaveEnabled do
-            task.wait(self.AutoSaveInterval)
-            self:SaveCurrentState()
-        end
-    end)
-    
-    return self
-end
-
--- Stop auto-save
-function SaveManager:StopAutoSave()
-    self.AutoSaveEnabled = false
-    self.AutoSaveThread = nil
-    return self
-end
-
--- Auto-load on startup
-function SaveManager:AutoLoad()
-    local success, message = self:LoadSavedState()
-    return success, message
-end
-
--- Get current config as JSON string
-function SaveManager:GetConfigAsJSON()
-    local values = self:GetCurrentValues()
-    local success, jsonData = pcall(httpService.JSONEncode, httpService, values)
-    
-    if success then
-        return jsonData
-    else
-        return "{}"
+        warn("[SaveManager] File not found: " .. fileName)
+        return false
     end
 end
 
--- Copy current config to clipboard
-function SaveManager:CopyConfigToClipboard()
-    local jsonData = self:GetConfigAsJSON()
+function SaveManager:ResetConfig()
+    getgenv().Config = {}
+    self:SaveConfig()
+    self:ApplyConfig()
+    print("[SaveManager] ✓ Config reset")
+end
+
+function SaveManager:CopyConfigString()
+    local configStr = HttpService:JSONEncode(getgenv().Config)
     
     if setclipboard then
-        setclipboard(jsonData)
-        return true, "Config copied to clipboard"
+        setclipboard(configStr)
+        print("[SaveManager] ✓ Config copied to clipboard")
     else
-        return false, "Clipboard not available"
+        print("[SaveManager] Config string:")
+        print(configStr)
+    end
+    
+    return configStr
+end
+
+function SaveManager:ImportConfig(configString)
+    local success, result = pcall(function()
+        return HttpService:JSONDecode(configString)
+    end)
+    
+    if success and type(result) == "table" then
+        getgenv().Config = result
+        self:ApplyConfig()
+        self:SaveConfig()
+        print("[SaveManager] ✓ Config imported")
+        return true
+    else
+        warn("[SaveManager] ✗ Invalid config string")
+        return false
     end
 end
 
--- Validate JSON string
-function SaveManager:ValidateJSON(jsonString)
-    if not jsonString or jsonString:gsub("%s", "") == "" then
-        return false, "JSON is empty"
+function SaveManager:PrintConfig()
+    print("=== Current Config ===")
+    for k, v in pairs(getgenv().Config) do
+        print(string.format('  ["%s"] = %s', k, tostring(v)))
     end
-    
-    local success, data = pcall(httpService.JSONDecode, httpService, jsonString)
-    if not success then
-        return false, "Invalid JSON format"
-    end
-    
-    if type(data) ~= "table" then
-        return false, "JSON must be an object"
-    end
-    
-    return true, data
+    print("======================")
 end
 
--- Load config from JSON string
-function SaveManager:LoadConfigFromJSON(jsonString)
-    local valid, result = self:ValidateJSON(jsonString)
-    if not valid then
-        return false, result
+-- =====================================================
+-- INITIALIZATION
+-- =====================================================
+
+function SaveManager:Initialize()
+    print("[SaveManager] Initializing...")
+    
+    -- Auto hook tất cả control
+    self:AutoHookAll()
+    
+    -- Auto load config nếu có
+    if isfile(GetFilePath()) then
+        self:LoadConfig()
+    else
+        print("[SaveManager] No config found, using defaults")
     end
-    
-    return self:LoadSavedState(jsonString)
 end
 
--- Create simple GUI
-function SaveManager:CreateSimpleGUI(parentTab)
-    if not self.Library or not parentTab then return end
-    
-    local section = parentTab:AddLeftGroupbox("Save Manager")
-    
-    -- JSON TextBox
-    local jsonText = ""
-    section:AddLabel("Paste JSON config below:")
-    
-    local jsonInput = section:AddInput("SaveManager_JSON", {
-        Text = "JSON Config",
-        Placeholder = '{"Option1": true, "Option2": false, ...}',
-        Callback = function(value)
-            jsonText = value
-        end
-    })
-    
-    -- Buttons
-    section:AddButton({
-        Text = "Load Config",
-        Callback = function()
-            if jsonText == "" then
-                if self.Library.Notify then
-                    self.Library:Notify({
-                        Title = "Load Error",
-                        Desc = "Please paste JSON config",
-                        Duration = 3
-                    })
-                end
-                return
-            end
-            
-            local success, message = self:LoadConfigFromJSON(jsonText)
-            
-            if self.Library.Notify then
-                self.Library:Notify({
-                    Title = success and "Success" or "Error",
-                    Desc = message,
-                    Duration = success and 3 or 5
-                })
-            end
-        end
-    })
-    
-    section:AddButton({
-        Text = "Copy Config",
-        Callback = function()
-            local success, message = self:CopyConfigToClipboard()
-            
-            if self.Library.Notify then
-                self.Library:Notify({
-                    Title = success and "Success" or "Error",
-                    Desc = message,
-                    Duration = 3
-                })
-            end
-        end
-    })
-    
-    return section
-end
-
--- Get current folder path
-function SaveManager:GetCurrentFolder()
-    return self.Folder
-end
-
--- Global instance
-local instance = SaveManager.new()
-getgenv().Lonely_SaveManager = instance
-
-return instance
+return SaveManager
