@@ -3578,7 +3578,6 @@ Options={
 })
 end
 ag.Set=ag.SetSubTitle
-ag.AddMinimizeButton=ag.NewMinimizer
 
 R.Window=ag
 end local aa=function(
