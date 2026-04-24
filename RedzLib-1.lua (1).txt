@@ -3275,6 +3275,59 @@ end)
 return ax
 end
 
+function ag:AddMinimizeButton(av)
+    local btnConfig = {}
+    
+    if av.Button and type(av.Button) == "table" then
+        for k, v in pairs(av.Button) do
+            btnConfig[k] = v
+        end
+    else
+        for k, v in pairs(av) do
+            if k ~= "Corner" and k ~= "Stroke" then
+                btnConfig[k] = v
+            end
+        end
+    end
+    
+    local btn = E("ImageButton", ap, {
+        Size = UDim2.new(0, 18, 0, 18),
+        Position = UDim2.new(1, -55, 0.5, 0, 0),
+        AnchorPoint = Vector2.new(1, 0.5),
+        BackgroundTransparency = 1,
+        AutoButtonColor = false,
+        Image = btnConfig.Image or "",
+        ThemeTag = {
+            ImageColor3 = "Colors.Icons"
+        }
+    })
+    
+    if btnConfig.BackgroundTransparency then
+        btn.BackgroundTransparency = btnConfig.BackgroundTransparency
+        btn.ThemeTag = nil
+    end
+    
+    if btnConfig.BackgroundColor3 then
+        btn.BackgroundColor3 = btnConfig.BackgroundColor3
+        btn.BackgroundTransparency = 0
+        btn.ThemeTag = nil
+    end
+    
+    if av.Corner then
+        E("UICorner", btn, av.Corner)
+    end
+    
+    if av.Stroke then
+        E("UIStroke", btn, av.Stroke)
+    end
+    
+    u(btn.Activated, function()
+        ag:Minimize()
+    end)
+    
+    return btn
+end
+
 function ag:Dialog(av)
 if self.Minimized then
 while not self:MinimizeButton()do task.wait()end
