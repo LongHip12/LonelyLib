@@ -1,27 +1,4 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+-- Remaked from omg hub
 
 local a=cloneref or(function(...)return...end)
 
