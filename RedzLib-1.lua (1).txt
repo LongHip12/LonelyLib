@@ -3276,56 +3276,39 @@ return ax
 end
 
 function ag:AddMinimizeButton(av)
-    local btnConfig = {}
+    local btn = E("ImageButton", I, {
+        Size = UDim2.fromOffset(35, 35),
+        Position = UDim2.fromScale(0.15, 0.15),
+        BackgroundTransparency = 1,
+        BackgroundColor3 = Color3.fromRGB(30, 30, 30),
+        AutoButtonColor = false
+    })
+    
+    D.Draggable(btn, ad, 0.5)
+    
+    local Stroke, Corner
+    if av.Corner then
+        Corner = E("UICorner", btn, av.Corner)
+    end
+    if av.Stroke then
+        Stroke = E("UIStroke", btn, av.Stroke)
+    end
     
     if av.Button and type(av.Button) == "table" then
         for k, v in pairs(av.Button) do
-            btnConfig[k] = v
+            btn[k] = v
         end
-    else
-        for k, v in pairs(av) do
-            if k ~= "Corner" and k ~= "Stroke" then
-                btnConfig[k] = v
-            end
-        end
-    end
-    
-    local btn = E("ImageButton", ap, {
-        Size = UDim2.new(0, 18, 0, 18),
-        Position = UDim2.new(1, -55, 0.5, 0, 0),
-        AnchorPoint = Vector2.new(1, 0.5),
-        BackgroundTransparency = 1,
-        AutoButtonColor = false,
-        Image = btnConfig.Image or "",
-        ThemeTag = {
-            ImageColor3 = "Colors.Icons"
-        }
-    })
-    
-    if btnConfig.BackgroundTransparency then
-        btn.BackgroundTransparency = btnConfig.BackgroundTransparency
-        btn.ThemeTag = nil
-    end
-    
-    if btnConfig.BackgroundColor3 then
-        btn.BackgroundColor3 = btnConfig.BackgroundColor3
-        btn.BackgroundTransparency = 0
-        btn.ThemeTag = nil
-    end
-    
-    if av.Corner then
-        E("UICorner", btn, av.Corner)
-    end
-    
-    if av.Stroke then
-        E("UIStroke", btn, av.Stroke)
     end
     
     u(btn.Activated, function()
         ag:Minimize()
     end)
     
-    return btn
+    return {
+        Stroke = Stroke,
+        Corner = Corner,
+        Button = btn
+    }
 end
 
 function ag:Dialog(av)
