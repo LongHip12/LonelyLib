@@ -1651,6 +1651,18 @@ Font="Font.Bold"
 }
 })
 
+local aTab=self
+local aSectionMeta={}
+aSectionMeta.__index=function(t,k)
+local v=ai[k]
+if v then return v end
+local tabFn=ah[k]
+if type(tabFn)=="function"then
+return function(_,...)
+return tabFn(aTab,...)
+end
+end
+end
 return setmetatable({
 Title=av,
 
@@ -1660,7 +1672,7 @@ TITLE_LABEL=ay,
 
 Kind="Section",
 Parent=self
-},ai)
+},aSectionMeta)
 end
 
 function ah:AddToggle(av)
