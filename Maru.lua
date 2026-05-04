@@ -571,7 +571,7 @@ function Library:AddWindows(ConfigWindow)
         
         local Fe = {}
 
-        -- Helper: tạo section tại một container cụ thể
+        
         local function makeSection(Nigga, cf2)
             cf2 = cf2 or {}
             cf2.Name = cf2.Name
@@ -644,11 +644,11 @@ function Library:AddWindows(ConfigWindow)
             
             local Sec = {}
             
-            -- AddButton({Name/[1], Callback/[2]})
+            
             function Sec:AddButton(cffe)
                 cffe = cffe or {}
-                cffe.Name = cffe[1] or cffe.Name or "Button"
-                cffe.Callback = cffe[2] or cffe.Callback or function() end
+                cffe.Name = cffe.Name or cffe.Title or "Button"
+                cffe.Callback = cffe.Callback or function() end
 
                 local Button = Instance.new("Frame")
                 local UICorner_7 = Instance.new("UICorner")
@@ -701,12 +701,12 @@ function Library:AddWindows(ConfigWindow)
                 end)
             end
             
-            -- AddToggle({Name/[1], Default/[2], Callback/[3]})
+            
             function Sec:AddToggle(cffe)
                 cffe = cffe or {}
-                cffe.Name = cffe[1] or cffe.Name or "Toggle"
-                cffe.Default = cffe[2] or cffe.Default or false
-                cffe.Callback = cffe[3] or cffe.Callback or function() end
+                cffe.Name = cffe.Name or cffe.Title or "Toggle"
+                cffe.Default = cffe.Default or false
+                cffe.Callback = cffe.Callback or function() end
                 
                 local Toggle = Instance.new("Frame")
                 local UICorner_8 = Instance.new("UICorner")
@@ -826,13 +826,13 @@ function Library:AddWindows(ConfigWindow)
                 return ToggleFunc
             end
             
-            -- AddDropdown({Name/[1], Options/[2], Default/[3], Callback/[4]})
+            
             function Sec:AddDropdown(cffe)
                 cffe = cffe or {}
-                cffe.Name = cffe[1] or cffe.Name or "Dropdown"
-                cffe.Options = cffe[2] or cffe.Options or {}
-                cffe.Default = cffe[3] or cffe.Default or ""
-                cffe.Callback = cffe[4] or cffe.Callback or function() end
+                cffe.Name = cffe.Name or cffe.Title or "Dropdown"
+                cffe.Options = cffe.Options or {}
+                cffe.Default = cffe.Default or ""
+                cffe.Callback = cffe.Callback or function() end
 
                 local Dropdown = Instance.new("Frame")
                 local UICorner_14 = Instance.new("UICorner")
@@ -1041,14 +1041,14 @@ function Library:AddWindows(ConfigWindow)
                 return DropFunc
             end
             
-            -- AddSlider({Name/[1], Min/[2], Max/[3], Default/[4], Callback/[5]})
+            
             function Sec:AddSlider(cffe)
                 cffe = cffe or {}
-                cffe.Name = cffe[1] or cffe.Name or "Slider"
-                cffe.Min = cffe[2] or cffe.Min or 0
-                cffe.Max = cffe[3] or cffe.Max or 100
-                cffe.Default = cffe[4] or cffe.Default or 50
-                cffe.Callback = cffe[5] or cffe.Callback or function() end
+                cffe.Name = cffe.Name or cffe.Title or "Slider"
+                cffe.Min = cffe.Min or 0
+                cffe.Max = cffe.Max or 100
+                cffe.Default = cffe.Default or 50
+                cffe.Callback = cffe.Callback or function() end
 
                 local Slider = Instance.new("Frame")
                 local Title_7 = Instance.new("TextLabel")
@@ -1172,13 +1172,13 @@ function Library:AddWindows(ConfigWindow)
                 return Slider1
             end
             
-            -- AddLabel({Title/[1], Desc/[2]})
-            -- Nếu chỉ có Title: hiển thị 1 dòng label
-            -- Nếu có cả Title + Desc: hiển thị Title\nDesc (paragraph style như redz)
+            
+            
+            
             function Sec:AddLabel(cffe)
                 cffe = cffe or {}
-                local title = cffe[1] or cffe.Title or cffe.Name or "Label"
-                local desc = cffe[2] or cffe.Desc or cffe.Description
+                local title = cffe.Title or cffe.Name or "Label"
+                local desc = cffe.Desc or cffe.Description
 
                 local hasDesc = desc ~= nil and desc ~= ""
 
@@ -1234,8 +1234,8 @@ function Library:AddWindows(ConfigWindow)
 
                 function ParaFunc:Set(cfSet)
                     cfSet = cfSet or {}
-                    local newTitle = cfSet[1] or cfSet.Title or cfSet.Name
-                    local newDesc = cfSet[2] or cfSet.Desc or cfSet.Description
+                    local newTitle = cfSet.Title or cfSet.Name
+                    local newDesc = cfSet.Desc or cfSet.Description
 
                     if newTitle and newTitle ~= "" then
                         Title_8.Text = newTitle
@@ -1249,14 +1249,12 @@ function Library:AddWindows(ConfigWindow)
             end
 
             Sec.AddParagraph = Sec.AddLabel
-
-            -- AddInput({Name/[1], PlaceHolder/[2], Default/[3], Callback/[4]})
             function Sec:AddInput(cffe)
                 cffe = cffe or {}
-                cffe.Name = cffe[1] or cffe.Name or "Input"
-                cffe.PlaceHolderText = cffe[2] or cffe.PlaceHolderText or "Input Here"
-                cffe.Default = cffe[3] or cffe.Default or ""
-                cffe.Callback = cffe[4] or cffe.Callback or function() end
+                cffe.Name = cffe.Name or cffe.Title or "Input"
+                cffe.PlaceHolderText = cffe.PlaceHolderText or "Input Here"
+                cffe.Default = cffe.Default or ""
+                cffe.Callback = cffe.Callback or function() end
 
                 local Input = Instance.new("Frame")
                 local UICorner_24 = Instance.new("UICorner")
@@ -1329,86 +1327,34 @@ function Library:AddWindows(ConfigWindow)
                 end)
             end
             
-            -- AddDiscordInvite({Name/[1], Invite/[2]}) hoặc (Name, Invite)
-            -- Tạo button với tên = Name, click = setclipboard(Invite)
-            function Sec:AddDiscordInvite(cffe)
-                cffe = cffe or {}
-                local name = cffe[1] or cffe.Name or cffe.Title or "Discord"
-                local invite = cffe[2] or cffe.Invite or cffe.Link or ""
-
-                local Button = Instance.new("Frame")
-                local UICorner_di = Instance.new("UICorner")
-                local UIStroke_di = Instance.new("UIStroke")
-                local Title_di = Instance.new("TextLabel")
-                local Clicked_di = Instance.new("TextButton")
-
-                Button.Name = "DiscordInvite"
-                Button.Parent = Listed
-                Button.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-                Button.BorderColor3 = Color3.fromRGB(0, 0, 0)
-                Button.BorderSizePixel = 0
-                Button.Size = UDim2.new(1, 0, 0, 35)
-
-                UICorner_di.CornerRadius = UDim.new(0, 4)
-                UICorner_di.Parent = Button
-
-                UIStroke_di.Parent = Button
-                UIStroke_di.Color = Color3.fromRGB(255, 255, 255)
-                UIStroke_di.Transparency = 0.970
-
-                Title_di.Name = "Title"
-                Title_di.Parent = Button
-                Title_di.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                Title_di.BackgroundTransparency = 1.000
-                Title_di.BorderColor3 = Color3.fromRGB(0, 0, 0)
-                Title_di.BorderSizePixel = 0
-                Title_di.Size = UDim2.new(1, 0, 1, 0)
-                Title_di.Font = Enum.Font.ArialBold
-                Title_di.Text = name
-                Title_di.TextColor3 = Color3.fromRGB(144, 144, 144)
-                Title_di.TextSize = 13.000
-
-                Clicked_di.Name = "Clicked"
-                Clicked_di.Parent = Button
-                Clicked_di.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                Clicked_di.BackgroundTransparency = 1.000
-                Clicked_di.BorderColor3 = Color3.fromRGB(0, 0, 0)
-                Clicked_di.BorderSizePixel = 0
-                Clicked_di.Size = UDim2.new(1, 0, 1, 0)
-                Clicked_di.Font = Enum.Font.SourceSans
-                Clicked_di.Text = ""
-                Clicked_di.TextColor3 = Color3.fromRGB(0, 0, 0)
-                Clicked_di.TextSize = 14.000
-
-                local copied = false
-                Clicked_di.Activated:Connect(function()
-                    if copied then return end
-                    copied = true
-                    setclipboard(invite)
-                    local orig = Title_di.Text
-                    Button.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
-                    Title_di.Text = "Copied!"
-                    TweenService:Create(Button, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {BackgroundColor3 = Color3.fromRGB(35, 35, 35)}):Play()
-                    task.wait(2)
-                    Title_di.Text = orig
-                    copied = false
-                end)
+            
+            
+            function Sec:AddDiscordInvite(...)
+                local cfg = ...
+                if type(cfg) ~= "table" then cfg = {} end
+                local invite = cfg.Invite or cfg.Link or ""
+                return self:AddButton({
+                    cfg.Name or cfg.Title or "Discord",
+                    Callback = function()
+                        pcall(setclipboard, invite)
+                    end
+                })
             end
 
             return Sec
         end
 
-        -- AddLeftGroupbox({Name}) -> Sec (thêm vào cột trái)
+        
         function Fe:AddLeftGroupbox(cf)
             return makeSection(ChAsamiLeft, cf)
         end
 
-        -- AddRightGroupbox({Name}) -> Sec (thêm vào cột phải)
+        
         function Fe:AddRightGroupbox(cf)
             return makeSection(ChAsamiLeft_2, cf)
         end
 
-        -- AddSection giữ lại để backward-compat (default Left)
+        
         function Fe:AddSection(asamisepai, cf)
             cf = cf or {}
             if type(asamisepai) == "table" then

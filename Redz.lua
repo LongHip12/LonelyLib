@@ -1,28 +1,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 local a=cloneref or(function(...)return...end)
 
 local b=delfolder or deletefolder
@@ -402,7 +380,6 @@ end
 self.Position=self.Position:Lerp(V,Q)end local U=function()
 
 
-
 while I==self do
 if(tick()-R)>=1 then
 S()
@@ -633,7 +610,6 @@ Z=nil
 aa.Parent=nil end local at=function()
 
 
-
 if Z~=nil then
 Z:Close()
 end end
@@ -644,8 +620,8 @@ return ar.NewOption(self,au)
 end
 
 function ar:NewOption(au)
-local av=au[1]or au.Name or au.Title
-local aw=F(au[2]or au.Callback)
+local av=au.Name or au.Title
+local aw=F(au.Callback)
 
 table.insert(aw,at)
 
@@ -969,7 +945,7 @@ Image=am.Icon or""
 
 
 local as=string.sub(ar.Image,1,13)=="rbxassetid://"
-local at=ao.Title
+local at=ao.Title or ao.Name
 ar.Visible=as
 at.Size=UDim2.new(1,as and-25 or-15,1)
 at.Position=UDim2.fromOffset(as and 25 or 15)end
@@ -1099,7 +1075,7 @@ if type(ao)~="table"then
 error(`"Tab.Add{an}[Configs]". 'table' expected, got {typeof(ao)}`,2)
 end
 
-local ap=ao[1]or ao.Name or ao.Title
+local ap=ao.Name or ao.Title
 local aq=ao.Desc or ao.Description
 
 assert(type(ap)=="string",`"Tab.Add{an}.Title". 'string' expected, got {typeof(ap)}`)
@@ -1117,7 +1093,6 @@ error(`"Tab.Add{ao}.Flag". 'nil', or 'string' expected, got {typeof(ap)}`)
 end
 
 return ap end local ap=function()
-
 
 
 local ap=160
@@ -1264,7 +1239,6 @@ local aO=I.AbsoluteSize.Y/ad.Scale
 return math.min((aK*math.max(aN,0.5))+10,aL,aO/1.75)end local aO=function()
 
 
-
 local aO=as.AbsolutePosition
 local aP=as.AbsoluteSize
 
@@ -1314,12 +1288,10 @@ aW-as.Size.X.Offset-(aM*2)-(at.AbsoluteSize.X/aU)
 return Vector2.new(a7,a5),a6 end local aQ=function(...)
 
 
-
 local aQ,aR=aP(...)
 
 as.AnchorPoint=aR
 as.Position=UDim2.fromOffset(aQ.X,aQ.Y)end local aR=function()
-
 
 
 if not aD then return end
@@ -1330,7 +1302,6 @@ aw.Text=""
 aA:Play()
 aA.Completed:Wait()
 aw.Visible=false end local aS=function()
-
 
 
 if aD then return end
@@ -1370,7 +1341,6 @@ return true
 end end local aU=function()
 
 
-
 if aC then return end
 
 if aE then
@@ -1386,7 +1356,6 @@ ar.Parent=nil
 aC=false end local aV=function()
 
 
-
 if aw:IsFocused()then
 aJ=tick()
 return nil
@@ -1395,7 +1364,6 @@ end
 if(tick()-aJ)>=0.3 and not aO()then
 aU()
 end end local aW=function()
-
 
 
 for aW,aX in aB do
@@ -1549,7 +1517,6 @@ aQ(#a0)
 J(as,"Size",UDim2.fromOffset(ap,aN(#a0)),0.3):Play()end local a1=function()
 
 
-
 local a1=aw.Text
 local a2=string.sub(a1,1,1)
 local a3=M(a1)
@@ -1624,7 +1591,7 @@ end
 
 function ah:AddSection(av)
 if type(av)=="table"then
-av=av[1]or av.Name or av.Title or av.Section or ""
+av=av.Name or av.Title or av.Section or ""
 end
 assert(av==nil or type(av)=="string",`"Tab.AddSection[param 1]". 'string', or 'nil' expected, got {typeof(av)}`)
 av=av or""
@@ -1680,10 +1647,10 @@ ah.AddRightGroupbox=ah.AddSection
 
 function ah:AddToggle(av)
 local aw,ax=an("Toggle",av)
-local ay=ao("Toggle",av[4]or av.Flag)
+local ay=ao("Toggle",av.Flag)
 
-local az=av[2]or av.Default or false
-local aA=F(av[3]or av.Callback)
+local az=av.Default or false
+local aA=F(av.Callback)
 
 if type(az)~="boolean"then
 error(`"Tab.AddToggle.Default". 'boolean' expected, got {typeof(az)}`,2)
@@ -1743,7 +1710,6 @@ aL[aN]=aM[aN]
 end end local aN=function()
 
 
-
 for aN=#aL,1,-1 do
 local aO=aL[aN]
 if aO.PlaybackState==Enum.PlaybackState.Playing then
@@ -1797,7 +1763,7 @@ end
 
 function ah:AddButton(av)
 local aw,ax=an("Button",av)
-local ay=F(av[2]or av.Callback)
+local ay=F(av.Callback)
 local az=av.Debounce or av.Cooldown
 
 local aA=V[self]
@@ -1843,13 +1809,13 @@ end
 
 function ah:AddTextBox(av)
 local aw,ax=an("TextBox",av)
-local ay=ao("TextBox",av[4]or av.Flag)
+local ay=ao("TextBox",av.Flag)
 
-local az=av[2]or av.Default
-local aA=F((type(av[3])=="function" and av[3]) or av.Callback)
+local az=av.Default
+local aA=F(av.Callback)
 
-local aB=av[5]or av.Placeholder or av.PlaceholderText
-local aC=(type(av[3])=="boolean" and av[3]) or av.ClearOnFocus or av.ClearTextOnFocus
+local aB=av.Placeholder or av.PlaceholderText
+local aC=av.ClearOnFocus or av.ClearTextOnFocus
 
 if az~=nil and type(az)~="string"then
 error(`"Tab.AddTextBox.Default". 'string', or 'nil' expected, got {typeof(az)}`,2)
@@ -1957,13 +1923,13 @@ end
 
 function ah:AddSlider(av)
 local aw,ax=an("Slider",av)
-local ay=ao("Slider",av[7]or av.Flag)
+local ay=ao("Slider",av.Flag)
 
-local az=av[2]or av.Min
-local aA=av[3]or av.Max
-local aB=av[4]or av.Increment
-local aC=av[5]or av.Default
-local aD=F(av[6]or av.Callback)
+local az=av.Min
+local aA=av.Max
+local aB=av.Increment
+local aC=av.Default
+local aD=F(av.Callback)
 
 if aB~=nil and type(aB)~="number"then
 error(`"Tab.AddSlider.Increment". 'number', or 'nil' expected, got {typeof(aB)}`,2)
@@ -2154,11 +2120,11 @@ end
 
 function ah:AddDiscordInvite(av)
 local aw,ax=an("DiscordInvite",av)
-local ay=av[2]or av.Icon or av.Image or av.Logo
+local ay=av.Icon or av.Image or av.Logo
 local az=av.Banner or av.BannerColor
 local aA=av.Online or av.MembersOnline
 local aB=av.Members or av.TotalMembers
-local aC=av[3]or av.Invite or av.Link
+local aC=av.Invite or av.Link
 
 assert(type(aC)=="string",`"Tab.AddDiscordInvite.Invite". 'string' expected, got {typeof(aC)}`)
 
@@ -2441,8 +2407,8 @@ end
 
 function ah:AddParagraph(av,aw)
 if type(av)=="table"then
-aw=av[2]or av.Text or av.Desc or av.Description or aw
-av=av[1]or av.Title or av.Name or ""
+aw=av.Text or av.Desc or av.Description or aw
+av=av.Title or av.Name or ""
 end
 assert(type(av)=="string",`"Tab.AddParagraph[param 1]". 'string' expected, got {typeof(av)}`)
 
@@ -2469,11 +2435,11 @@ end
 
 function ah:AddDropdown(av)
 local aw,ax=an("Dropdown",av)
-local ay=ao("Dropdown",av[5]or av.Flag)
+local ay=ao("Dropdown",av.Flag)
 
-local az=av[2]or av.Options
-local aA=av[3]or av.Default
-local aB=F(av[4]or av.Callback)
+local az=av.Options
+local aA=av.Default
+local aB=F(av.Callback)
 local aC=av.MultiSelect
 
 if aA~=nil and type(aA)~="table"and type(aA)~="string"then
@@ -2567,9 +2533,7 @@ local aW=aU and"Icons.Dropdown.Close"or"Icons.Dropdown.Open"
 aT(aV,aW)end local aV=function()
 
 
-
 aU(false)end local aW=function()
-
 
 
 local aW={}
@@ -2590,7 +2554,6 @@ end
 aI.Text=#aY~=0 and aY or"..."end local aY=function()
 
 
-
 aN=false
 
 local aY=aC and aW()or aM and aM.Name
@@ -2600,7 +2563,6 @@ aX(aY)
 if ay~=nil then
 ae[ay]=aY
 end end local aZ=function()
-
 
 
 if not aN then
@@ -2686,7 +2648,6 @@ aM=a3
 end end local a4=function(...)
 
 
-
 local a4=a2(...)
 
 if a4 then
@@ -2694,7 +2655,6 @@ a3(a4)
 elseif aC and type(...)=="string"then
 aP[select(1,...)]=true
 end end local a5=function()
-
 
 
 if not aA then return end
@@ -2813,6 +2773,7 @@ end)
 
 return aL
 end
+
 
 function ah:Destroy()
 assert(type(self)=="table"and self.IS_A_TAB,`"Tab.Destroy". {tostring(self)} is not a tab`)
@@ -3017,7 +2978,6 @@ aL[aM]:Play()
 end end local aM=function()
 
 
-
 aL(aI)
 ay.Selected=true
 aK:changeRendering(true)
@@ -3025,7 +2985,6 @@ aK:update()
 aD.Parent=aB
 aD.Size=aG
 aF:Play()end local aN=function()
-
 
 
 aL(aJ)
@@ -3064,7 +3023,7 @@ local ay=av.Resizers
 local az=av.TopBar
 
 local aA=av.SubTitle
-local aB=av.Title
+local aB=av.Title or av.Name
 
 Y=av.Dropdowns
 ab=av.MainFrame

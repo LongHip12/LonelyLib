@@ -1,19 +1,5 @@
---[[
 
-███████╗██╗░░░░░██╗░░░██╗███████╗███╗░░██╗████████╗  ██████╗░██╗░░░░░██╗░░░██╗░██████╗
-██╔════╝██║░░░░░██║░░░██║██╔════╝████╗░██║╚══██╔══╝  ██╔══██╗██║░░░░░██║░░░██║██╔════╝
-█████╗░░██║░░░░░██║░░░██║█████╗░░██╔██╗██║░░░██║░░░  ██████╔╝██║░░░░░██║░░░██║╚█████╗░
-██╔══╝░░██║░░░░░██║░░░██║██╔══╝░░██║╚████║░░░██║░░░  ██╔═══╝░██║░░░░░██║░░░██║░╚═══██╗
-██║░░░░░███████╗╚██████╔╝███████╗██║░╚███║░░░██║░░░  ██║░░░░░███████╗╚██████╔╝██████╔╝
-╚═╝░░░░░╚══════╝░╚═════╝░╚══════╝╚═╝░░╚══╝░░░╚═╝░░░  ╚═╝░░░░░╚══════╝░╚═════╝░╚═════╝░
 
-Make By LongHip12
-By Lonely Hub Team
-Discord: https://dsc.gg/lonelyhub
-
-]]
-
--- removed settings :)
 
 local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
@@ -3010,7 +2996,6 @@ function Spring:step(state, dt)
 		local j = math.sin(f * c * dt)
 
 
-
 		local z
 		if c > EPS then
 			z = j / c
@@ -3018,7 +3003,6 @@ function Spring:step(state, dt)
 			local a = dt * f
 			z = a + ((a * a) * (c * c) * (c * c) / 20 - c * c) * (a * a * a) / 6
 		end
-
 
 
 		local y
@@ -3512,7 +3496,7 @@ function Library:SafeCallback(Function, ...)
 			Duration = 5,
 		})
 	end
-end--?
+end
 function Library:Round(Number, Factor)
 	if Factor == 0 then
 		return math.floor(Number)
@@ -3804,11 +3788,11 @@ function Acrylic.init()
 	local depthOfFieldDefaults = {}
 
 	function Acrylic.Enable()
-	-- 1
+	
 	end
 
 	function Acrylic.Disable()
-	-- 2
+	
 	end
 
 end
@@ -4346,148 +4330,18 @@ Components.Tab = (function()
 			return Section
 		end
 
-		function Tab:AddDiscordInvite(cfg)
-			local _name = (type(cfg)=="table" and (cfg.Name or cfg[1])) or "Discord"
-			local _desc = (type(cfg)=="table" and (cfg.Description or cfg[2])) or ""
-			local _logo = (type(cfg)=="table" and (cfg.Logo or cfg.Icon or cfg.Image)) or ""
-			local _banner = type(cfg)=="table" and cfg.Banner or nil
-			local _invite = (type(cfg)=="table" and (cfg.Invite or cfg.Link)) or ""
-			local _members = (type(cfg)=="table" and cfg.Members) or 0
-			local _online = (type(cfg)=="table" and cfg.Online) or 0
-			local _onlineLabel, _membersLabel
-
-			local _cardInner = New("Frame", {
-				Size = UDim2.new(0, 178, 1, -15),
-				Position = UDim2.new(0, 5, 1, 0),
-				AnchorPoint = Vector2.new(0, 1),
-				ClipsDescendants = true,
-				BackgroundColor3 = Color3.fromRGB(30, 31, 34),
-			}, {
-				New("UICorner", { CornerRadius = UDim.new(0, 9) }),
-				New("UIStroke", { ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Color = Color3.fromRGB(70, 70, 80), Thickness = 1 }),
+		function Tab:AddDiscordInvite(...)
+			local cfg = ...
+			if type(cfg) ~= "table" then cfg = {} end
+			local invite = cfg.Invite or cfg.Link or ""
+			return self:AddButton({
+				Title = cfg.Title or cfg.Name or "Discord",
+				Callback = function()
+					pcall(setclipboard, invite)
+				end
 			})
-
-			local _bannerFrame = New("Frame", {
-				Size = UDim2.fromScale(1, 0.28),
-				BackgroundColor3 = Color3.fromRGB(50, 60, 120),
-				Parent = _cardInner,
-			}, { New("UICorner", { CornerRadius = UDim.new(0, 9) }) })
-			if type(_banner) == "string" and #_banner > 0 then
-				New("ImageLabel", { Size = UDim2.fromScale(1,1), Image = _banner, BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Crop, Parent = _bannerFrame })
-			elseif typeof(_banner) == "Color3" then
-				_bannerFrame.BackgroundColor3 = _banner
-			end
-
-			New("ImageLabel", {
-				Size = UDim2.fromOffset(33, 33),
-				Position = UDim2.new(0, 10, 0.28, 0),
-				AnchorPoint = Vector2.new(0, 0.5),
-				Image = _logo,
-				BackgroundColor3 = Color3.fromRGB(40,40,40),
-				Parent = _cardInner,
-			}, { New("UICorner", { CornerRadius = UDim.new(0, 8) }) })
-
-			New("TextLabel", {
-				Size = UDim2.new(1, -10, 0, 10),
-				Position = UDim2.new(0, 10, 0.44, 0),
-				Text = _name,
-				FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold),
-				TextColor3 = Color3.fromRGB(220,220,220),
-				TextSize = 11,
-				TextXAlignment = Enum.TextXAlignment.Left,
-				BackgroundTransparency = 1,
-				Parent = _cardInner,
-			})
-
-			local _statRow = New("Frame", {
-				Size = UDim2.new(1, -10, 0, 9),
-				Position = UDim2.new(0, 0, 0.52, 0),
-				BackgroundTransparency = 1,
-				Parent = _cardInner,
-			}, {
-				New("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, Padding = UDim.new(0,4), VerticalAlignment = Enum.VerticalAlignment.Center }),
-				New("UIPadding", { PaddingLeft = UDim.new(0,7) }),
-			})
-			local function _makeStat(col, txt)
-				local _lbl
-				New("Frame", { Size = UDim2.fromScale(0,1), AutomaticSize = Enum.AutomaticSize.X, BackgroundTransparency = 1, Parent = _statRow }, {
-					New("Frame", { Size = UDim2.fromOffset(3,3), Position = UDim2.new(0,5,0.5,0), AnchorPoint = Vector2.new(0,0.5), BackgroundColor3 = col }, { New("UICorner", { CornerRadius = UDim.new(1,0) }) }),
-				})
-				_lbl = New("TextLabel", { Size = UDim2.new(0,0,1,0), Position = UDim2.new(0,12,0.5,0), AnchorPoint = Vector2.new(0,0.5), AutomaticSize = Enum.AutomaticSize.X, BackgroundTransparency = 1, TextSize = 7, Text = txt, TextColor3 = Color3.fromRGB(160,160,160), FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json"), Parent = _statRow })
-				return _lbl
-			end
-			_onlineLabel = _makeStat(Color3.fromRGB(67,181,129), tostring(_online).." Online")
-			_membersLabel = _makeStat(Color3.fromRGB(86,101,105), tostring(_members).." Members")
-
-			New("TextLabel", {
-				Size = UDim2.new(1, -50, 0, 8),
-				Position = UDim2.new(0, 10, 0.6, 0),
-				Text = _desc,
-				TextSize = 8,
-				TextColor3 = Color3.fromRGB(120,120,120),
-				FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json"),
-				TextWrapped = true,
-				TextXAlignment = Enum.TextXAlignment.Left,
-				AutomaticSize = Enum.AutomaticSize.Y,
-				BackgroundTransparency = 1,
-				Parent = _cardInner,
-			})
-
-			local _bottomBar = New("Frame", {
-				Size = UDim2.new(1, 0, 0.28, 0),
-				Position = UDim2.fromScale(0, 1),
-				AnchorPoint = Vector2.new(0, 1),
-				BackgroundColor3 = Color3.fromRGB(24, 25, 28),
-				BorderSizePixel = 0,
-				Parent = _cardInner,
-			})
-			local _joinBtn = New("TextButton", {
-				Position = UDim2.new(0.5, 0, 1, -9),
-				Size = UDim2.new(1, -18, 0, 18),
-				AnchorPoint = Vector2.new(0.5, 1),
-				Text = "Join Server",
-				BackgroundColor3 = Color3.fromRGB(88, 101, 242),
-				FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold),
-				TextColor3 = Color3.fromRGB(255,255,255),
-				TextSize = 11,
-				Parent = _bottomBar,
-			}, { New("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-
-			local _root = New("Frame", {
-				Size = UDim2.new(1, -10, 0, 148),
-				BackgroundTransparency = 1,
-				LayoutOrder = 7,
-				Parent = Tab.Container,
-			}, {
-				_cardInner,
-				New("TextLabel", {
-					Position = UDim2.fromOffset(5, 0),
-					Size = UDim2.new(1, 0, 0, 15),
-					Text = _invite,
-					TextColor3 = Color3.fromRGB(40, 150, 255),
-					TextSize = 9,
-					TextXAlignment = Enum.TextXAlignment.Left,
-					BackgroundTransparency = 1,
-					FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json"),
-				}),
-			})
-
-			local _lastClick = 0
-			Creator.AddSignal(_joinBtn.MouseButton1Click, function()
-				if (tick() - _lastClick) < 5 then return end
-				_lastClick = tick()
-				local _orig = _joinBtn.Text
-				_joinBtn.Text = "Copied!"
-				setclipboard(_invite)
-				task.wait(4)
-				_joinBtn.Text = _orig
-			end)
-
-			local _invObj = {}
-			function _invObj:SetOnline(n) if _onlineLabel then _onlineLabel.Text = tostring(n).." Online" end end
-			function _invObj:SetMembers(n) if _membersLabel then _membersLabel.Text = tostring(n).." Members" end end
-			return _invObj
 		end
+
 
 		function Tab:AddLeftGroupbox(name) return Tab:AddSection(name) end
 		function Tab:AddRightGroupbox(name) return Tab:AddSection(name) end
@@ -4793,7 +4647,7 @@ Components.Notification = (function()
 	end
 
 	function Notification:New(Config)
-		Config.Title = Config.Title or "Title"
+		Config.Title = Config.Title or Config.Name or "Title"
 		Config.Content = Config.Content or "Content"
 		Config.SubContent = Config.SubContent or ""
 		Config.Duration = Config.Duration or nil
@@ -5981,7 +5835,7 @@ ElementsTable.Button = (function()
 	Element.__type = "Button"
 
 	function Element:New(Config)
-		assert(Config.Title, "Button - Missing Title")
+		assert(Config.Title or Config.Name, "Button - Missing Title")
 		Config.Callback = Config.Callback or function() end
 
 		local ButtonFrame = Components.Element(Config.Title, Config.Description, self.Container, true, Config)
@@ -6013,7 +5867,7 @@ ElementsTable.Toggle = (function()
 	Element.__type = "Toggle"
 
 	function Element:New(Idx, Config)
-		assert(Config.Title, "Toggle - Missing Title")
+		assert(Config.Title or Config.Name, "Toggle - Missing Title")
 
 		local Toggle = {
 			Value = Config.Default or false,
@@ -6774,7 +6628,7 @@ ElementsTable.Slider = (function()
 	Element.__type = "Slider"
 
 	function Element:New(Idx, Config)
-		assert(Config.Title, "Slider - Missing Title.")
+		assert(Config.Title or Config.Name, "Slider - Missing Title.")
 		assert(Config.Default, "Slider - Missing default value.")
 		assert(Config.Min, "Slider - Missing minimum value.")
 		assert(Config.Max, "Slider - Missing maximum value.")
@@ -7105,7 +6959,7 @@ ElementsTable.Keybind = (function()
 	Element.__type = "Keybind"
 
 	function Element:New(Idx, Config)
-		assert(Config.Title, "KeyBind - Missing Title")
+		assert(Config.Title or Config.Name, "KeyBind - Missing Title")
 		assert(Config.Default, "KeyBind - Missing default value.")
 
 		local Keybind = {
@@ -7305,7 +7159,7 @@ ElementsTable.Colorpicker = (function()
 	Element.__type = "Colorpicker"
 
 	function Element:New(Idx, Config)
-		assert(Config.Title, "Colorpicker - Missing Title")
+		assert(Config.Title or Config.Name, "Colorpicker - Missing Title")
 		assert(Config.Default, "AddColorPicker: Missing default value.")
 
 		local Colorpicker = {
@@ -7810,7 +7664,7 @@ ElementsTable.Input = (function()
 	Element.__type = "Input"
 
 	function Element:New(Idx, Config)
-		assert(Config.Title, "Input - Missing Title")
+		assert(Config.Title or Config.Name, "Input - Missing Title")
 		Config.Callback = Config.Callback or function() end
 
 		local Input = {
@@ -8734,15 +8588,16 @@ Elements.__namecall = function(Table, Key, ...)
 end
 
 for _, ElementComponent in pairs(ElementsTable) do
-	Elements["Add" .. ElementComponent.__type] = function(self, Idx, Config)
+	Elements["Add" .. ElementComponent.__type] = function(self, Config)
 		ElementComponent.Container = self.Container
 		ElementComponent.Type = self.Type
 		ElementComponent.ScrollFrame = self.ScrollFrame
 		ElementComponent.Library = Library
 
-		return ElementComponent:New(Idx, Config)
+		return ElementComponent:New(Config.Flag or Config.Idx, Config)
 	end
 end
+
 
 Library.Elements = Elements
 
@@ -8967,8 +8822,8 @@ local SaveManager = {} do
 
 		local section = tab:AddSection("Configuration", "settings")
 
-		section:AddInput("SaveManager_ConfigName",    { Title = "Config name" })
-		section:AddDropdown("SaveManager_ConfigList", { Title = "Config list", Values = self:RefreshConfigList(), AllowNull = true })
+		section:AddInput({ Flag = "SaveManager_ConfigName", Title = "Config name" })
+		section:AddDropdown({ Flag = "SaveManager_ConfigList", Title = "Config list", Values = self:RefreshConfigList(), AllowNull = true })
 
 		section:AddButton({
 			Title = "Create config",
@@ -9145,7 +9000,8 @@ local InterfaceManager = {} do
 		InterfaceManager:LoadSettings()
 
 		local section = tab:AddSection("Interface", "monitor")
-		local InterfaceTheme = section:AddDropdown("InterfaceTheme", {
+		local InterfaceTheme = section:AddDropdown({
+				Flag = "InterfaceTheme",
 			Title = "Theme",
 			Description = "Changes the interface theme.",
 			Values = Library.Themes,
@@ -9160,7 +9016,7 @@ local InterfaceManager = {} do
 		InterfaceTheme:SetValue(Settings.Theme)
 
 		if Library.UseAcrylic and not Mobile then
-			section:AddToggle("AcrylicToggle", {
+			section:AddToggle({ Flag = "AcrylicToggle",
 				Title = "Acrylic",
 				Description = "The blurred background requires graphic quality 8+",
 				Default = Settings.Acrylic,
@@ -9174,7 +9030,7 @@ local InterfaceManager = {} do
 			Settings.Acrylic = false
 		end
 
-		section:AddSlider("WindowTransparency", {
+		section:AddSlider({ Flag = "WindowTransparency",
 			Title = "Window Transparency",
 			Description = "Adjusts the window transparency.",
 			Default = 1,
@@ -9187,7 +9043,7 @@ local InterfaceManager = {} do
 		})
 
 
-		local MenuKeybind = section:AddKeybind("MenuKeybind", { Title = "Minimize Bind", Default = Library.MinimizeKey.Name or Settings.MenuKeybind })
+		local MenuKeybind = section:AddKeybind({ Flag = "MenuKeybind", Title = "Minimize Bind", Default = Library.MinimizeKey.Name or Settings.MenuKeybind })
 		MenuKeybind:OnChanged(function()
 			Settings.MenuKeybind = MenuKeybind.Value
 			InterfaceManager:SaveSettings()
@@ -9197,7 +9053,7 @@ local InterfaceManager = {} do
 end
 
 function Library:CreateWindow(Config)
-	assert(Config.Title, "Window - Missing Title")
+	assert(Config.Title or Config.Name, "Window - Missing Title")
 
 	if Library.Window then
 		print("You cannot create more than one window.")
@@ -9410,7 +9266,6 @@ function Library:CreateMinimizer(Config)
 			end
 		end)
 	end
-
 
 
 	self.Minimizer = holder
