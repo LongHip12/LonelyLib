@@ -669,7 +669,7 @@ function Library:AddWindows(ConfigWindow)
             UIPadding_3.PaddingTop = UDim.new(0, 8)
             
             game:GetService("RunService").Stepped:Connect(function()
-                Section.Size = UDim2.new(1, 0, 0, UIListLayout_3.AbsoluteContentSize.Y + 14)
+                Section.Size = UDim2.new(1, 0, 0, UIListLayout_3.AbsoluteContentSize.Y + 49)
             end)
             
             local Sec = {}
@@ -1214,21 +1214,21 @@ function Library:AddWindows(ConfigWindow)
             function Sec:AddLabel(cffe)
                 cffe = cffe or {}
                 local title = cffe.Title or cffe.Name or "Label"
-                local desc = cffe.Desc or cffe.Description
-
-                local hasDesc = desc ~= nil and desc ~= ""
+                local desc = cffe.Desc or cffe.Description or ""
 
                 local Paragraph = Instance.new("Frame")
                 local Title_8 = Instance.new("TextLabel")
+                local Desc_8 = Instance.new("TextLabel")
+                local UIPadding_5 = Instance.new("UIPadding")
                 local ParaFunc = {}
-                
+
                 Paragraph.Name = "Label"
                 Paragraph.Parent = Listed
                 Paragraph.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 Paragraph.BackgroundTransparency = 1.000
                 Paragraph.BorderColor3 = Color3.fromRGB(0, 0, 0)
                 Paragraph.BorderSizePixel = 0
-                Paragraph.Size = UDim2.new(1, 0, 0, hasDesc and 55 or 30)
+                Paragraph.Size = UDim2.new(1, 0, 0, 55)
 
                 Title_8.Name = "Title"
                 Title_8.Parent = Paragraph
@@ -1244,41 +1244,39 @@ function Library:AddWindows(ConfigWindow)
                 Title_8.TextSize = 13.000
                 Title_8.TextXAlignment = Enum.TextXAlignment.Left
 
-                local Desc_8
-                if hasDesc then
-                    Desc_8 = Instance.new("TextLabel")
-                    Desc_8.Name = "Desc"
-                    Desc_8.Parent = Paragraph
-                    Desc_8.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-                    Desc_8.BackgroundTransparency = 1.000
-                    Desc_8.BorderColor3 = Color3.fromRGB(0, 0, 0)
-                    Desc_8.BorderSizePixel = 0
-                    Desc_8.Position = UDim2.new(0, 0, 0, 27)
-                    Desc_8.Size = UDim2.new(1, 0, 1, -27)
-                    Desc_8.Font = Enum.Font.ArialBold
-                    Desc_8.Text = desc
-                    Desc_8.TextColor3 = Color3.fromRGB(144, 144, 144)
-                    Desc_8.TextSize = 12.000
-                    Desc_8.TextWrapped = true
-                    Desc_8.TextXAlignment = Enum.TextXAlignment.Left
-                    Desc_8.TextYAlignment = Enum.TextYAlignment.Top
+                Desc_8.Name = "Desc"
+                Desc_8.Parent = Paragraph
+                Desc_8.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                Desc_8.BackgroundTransparency = 1.000
+                Desc_8.BorderColor3 = Color3.fromRGB(0, 0, 0)
+                Desc_8.BorderSizePixel = 0
+                Desc_8.Position = UDim2.new(0, 0, 0, 27)
+                Desc_8.Size = UDim2.new(1, 0, 1, -7)
+                Desc_8.Font = Enum.Font.ArialBold
+                Desc_8.Text = desc
+                Desc_8.TextColor3 = Color3.fromRGB(144, 144, 144)
+                Desc_8.TextSize = 12.000
+                Desc_8.TextWrapped = true
+                Desc_8.TextXAlignment = Enum.TextXAlignment.Left
+                Desc_8.TextYAlignment = Enum.TextYAlignment.Top
 
-                    local UIPadding_5 = Instance.new("UIPadding")
-                    UIPadding_5.Parent = Desc_8
-                    UIPadding_5.PaddingTop = UDim.new(0, 3)
-                end
+                UIPadding_5.Parent = Desc_8
+                UIPadding_5.PaddingTop = UDim.new(0, 3)
 
                 function ParaFunc:Set(cfSet)
                     cfSet = cfSet or {}
                     local newTitle = cfSet.Title or cfSet.Name
                     local newDesc = cfSet.Desc or cfSet.Description
-
                     if newTitle and newTitle ~= "" then
                         Title_8.Text = newTitle
                     end
-                    if Desc_8 and newDesc and newDesc ~= "" then
+                    if newDesc and newDesc ~= "" then
                         Desc_8.Text = newDesc
                     end
+                end
+
+                function ParaFunc:SetDesc(text)
+                    Desc_8.Text = tostring(text or "")
                 end
 
                 return ParaFunc
