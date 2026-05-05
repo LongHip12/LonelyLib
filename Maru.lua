@@ -5,6 +5,34 @@ local mouse = plr:GetMouse()
 local ParentGui = game.Players.LocalPlayer.PlayerGui
 local Library = {}
 
+_G.SaveData = _G.SaveData or {}
+local _LibSaveFolder = "LonelyHub"
+local _LibHttpService = game:GetService("HttpService")
+local function _LibGetSavePath()
+    local username = game.Players.LocalPlayer.Name
+    return _LibSaveFolder .. "/" .. username .. "-config.json"
+end
+function SaveSettings()
+    if not writefile then return false end
+    local path = _LibGetSavePath()
+    pcall(function()
+        if makefolder and (not isfolder or not isfolder(_LibSaveFolder)) then makefolder(_LibSaveFolder) end
+        writefile(path, _LibHttpService:JSONEncode(_G.SaveData))
+    end)
+end
+function LoadSettings()
+    local path = _LibGetSavePath()
+    if not (isfile and isfile(path)) then return false end
+    local ok, result = pcall(function() return _LibHttpService:JSONDecode(readfile(path)) end)
+    if ok and type(result) == "table" then _G.SaveData = result; return true end
+    return false
+end
+function GetSetting(name, default)
+    return _G.SaveData[name] ~= nil and _G.SaveData[name] or default
+end
+local function AutoSave() SaveSettings() end
+
+
 local Config = {
     UiStroke = Color3.fromRGB(242, 232, 33),
     LogoHub = "http://www.roblox.com/asset/?id=100959239555483"
@@ -250,6 +278,8 @@ end
 
 function Library:AddWindows(ConfigWindow)
     ConfigWindow = ConfigWindow or {}
+    if ConfigWindow.ScriptFolder then _LibSaveFolder = ConfigWindow.ScriptFolder end
+    LoadSettings()
     
     if ConfigWindow.IconLogo then
         Config.LogoHub = "http://www.roblox.com/asset/?id=" .. ConfigWindow.IconLogo
@@ -512,7 +542,7 @@ function Library:AddWindows(ConfigWindow)
         ChAsamiLeft.Size = UDim2.new(1, 0, 1, 0)
         ChAsamiLeft.ScrollBarThickness = 0
         game:GetService("RunService").Stepped:Connect(function()
-            ChAsamiLeft.CanvasSize = UDim2.new(0, 0, 0, UIListLayout_2.AbsoluteContentSize.Y + 20)
+            ChAsamiLeft.CanvasSize = UDim2.new(0, 0, 0, UIListLayout_2.AbsoluteContentSize.Y + 6)
         end)
         
         UIListLayout_2.Parent = ChAsamiLeft
@@ -544,7 +574,7 @@ function Library:AddWindows(ConfigWindow)
         ChAsamiLeft_2.Size = UDim2.new(1, 0, 1, 0)
         ChAsamiLeft_2.ScrollBarThickness = 0
         game:GetService("RunService").Stepped:Connect(function()
-            ChAsamiLeft_2.CanvasSize = UDim2.new(0, 0, 0, UIListLayout_5.AbsoluteContentSize.Y + 20)
+            ChAsamiLeft_2.CanvasSize = UDim2.new(0, 0, 0, UIListLayout_5.AbsoluteContentSize.Y + 6)
         end)
         
         UIListLayout_5.Parent = ChAsamiLeft_2
@@ -639,7 +669,7 @@ function Library:AddWindows(ConfigWindow)
             UIPadding_3.PaddingTop = UDim.new(0, 8)
             
             game:GetService("RunService").Stepped:Connect(function()
-                Section.Size = UDim2.new(1, 0, 0, UIListLayout_3.AbsoluteContentSize.Y + 100)
+                Section.Size = UDim2.new(1, 0, 0, UIListLayout_3.AbsoluteContentSize.Y + 14)
             end)
             
             local Sec = {}
@@ -707,6 +737,7 @@ function Library:AddWindows(ConfigWindow)
                 cffe.Name = cffe.Name or cffe.Title or "Toggle"
                 cffe.Default = cffe.Default or false
                 cffe.Callback = cffe.Callback or function() end
+                if cffe.Flag then cffe.Default = GetSetting(cffe.Flag, cffe.Default) end
                 
                 local Toggle = Instance.new("Frame")
                 local UICorner_8 = Instance.new("UICorner")
@@ -812,6 +843,7 @@ function Library:AddWindows(ConfigWindow)
                     end
                     Toggled = Value
                     cffe.Callback(Toggled)
+                    if cffe.Flag then _G.SaveData[cffe.Flag] = Toggled; AutoSave() end
                 end
     
                 if cffe.Default then
@@ -833,6 +865,7 @@ function Library:AddWindows(ConfigWindow)
                 cffe.Options = cffe.Options or {}
                 cffe.Default = cffe.Default or ""
                 cffe.Callback = cffe.Callback or function() end
+                if cffe.Flag then cffe.Default = GetSetting(cffe.Flag, cffe.Default) end
 
                 local Dropdown = Instance.new("Frame")
                 local UICorner_14 = Instance.new("UICorner")
@@ -1016,6 +1049,7 @@ function Library:AddWindows(ConfigWindow)
                             SelectText.Text = tostring(v)
                             DropList.Visible = false
                             cffe.Callback(tostring(v))
+                            if cffe.Flag then _G.SaveData[cffe.Flag] = tostring(v); AutoSave() end
                         end)
                     end
                 end
@@ -1049,6 +1083,7 @@ function Library:AddWindows(ConfigWindow)
                 cffe.Max = cffe.Max or 100
                 cffe.Default = cffe.Default or 50
                 cffe.Callback = cffe.Callback or function() end
+                if cffe.Flag then cffe.Default = GetSetting(cffe.Flag, cffe.Default) end
 
                 local Slider = Instance.new("Frame")
                 local Title_7 = Instance.new("TextLabel")
@@ -1142,6 +1177,7 @@ function Library:AddWindows(ConfigWindow)
                     Slider1.Value = Value
                     ValueSlider.Text = tostring(Value)
                     cffe.Callback(Slider1.Value)
+                    if cffe.Flag then _G.SaveData[cffe.Flag] = Slider1.Value; AutoSave() end
                     TweenService:Create(
                         SliderDraggable,
                         TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
@@ -1255,6 +1291,7 @@ function Library:AddWindows(ConfigWindow)
                 cffe.PlaceHolderText = cffe.PlaceHolderText or "Input Here"
                 cffe.Default = cffe.Default or ""
                 cffe.Callback = cffe.Callback or function() end
+                if cffe.Flag then cffe.Default = GetSetting(cffe.Flag, cffe.Default) end
 
                 local Input = Instance.new("Frame")
                 local UICorner_24 = Instance.new("UICorner")
@@ -1324,6 +1361,7 @@ function Library:AddWindows(ConfigWindow)
 
                 FreeFire.FocusLost:Connect(function()
                     cffe.Callback(FreeFire.Text)
+                    if cffe.Flag then _G.SaveData[cffe.Flag] = FreeFire.Text; AutoSave() end
                 end)
             end
             

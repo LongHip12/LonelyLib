@@ -25,6 +25,33 @@ local RenderStepped = RunService.RenderStepped
 
 local ProtectGui = protectgui or (syn and syn.protect_gui) or function() end
 
+_G.SaveData = _G.SaveData or {}
+local _LibSaveFolder = "LonelyHub"
+local _LibHttpService = game:GetService("HttpService")
+local function _LibGetSavePath()
+    local username = game.Players.LocalPlayer.Name
+    return _LibSaveFolder .. "/" .. username .. "-config.json"
+end
+function SaveSettings()
+    if not writefile then return false end
+    local path = _LibGetSavePath()
+    pcall(function()
+        if makefolder and (not isfolder or not isfolder(_LibSaveFolder)) then makefolder(_LibSaveFolder) end
+        writefile(path, _LibHttpService:JSONEncode(_G.SaveData))
+    end)
+end
+function LoadSettings()
+    local path = _LibGetSavePath()
+    if not (isfile and isfile(path)) then return false end
+    local ok, result = pcall(function() return _LibHttpService:JSONDecode(readfile(path)) end)
+    if ok and type(result) == "table" then _G.SaveData = result; return true end
+    return false
+end
+function GetSetting(name, default)
+    return _G.SaveData[name] ~= nil and _G.SaveData[name] or default
+end
+local function AutoSave() SaveSettings() end
+
 local Themes = {
     Names = {
         "Dark",
@@ -5870,7 +5897,7 @@ ElementsTable.Toggle = (function()
 		assert(Config.Title or Config.Name, "Toggle - Missing Title")
 
 		local Toggle = {
-			Value = Config.Default or false,
+			Value = GetSetting(Idx, Config.Default or false),
 			Callback = Config.Callback or function(Value) end,
 			Type = "Toggle",
 		}
@@ -5943,6 +5970,7 @@ ElementsTable.Toggle = (function()
 
 			Library:SafeCallback(Toggle.Callback, Toggle.Value)
 			Library:SafeCallback(Toggle.Changed, Toggle.Value)
+			if Idx then _G.SaveData[Idx] = Toggle.Value; AutoSave() end
 		end
 
 		function Toggle:Destroy()
@@ -6548,6 +6576,7 @@ ElementsTable.Dropdown = (function()
 
 			Library:SafeCallback(Dropdown.Callback, Dropdown.Value)
 			Library:SafeCallback(Dropdown.Changed, Dropdown.Value)
+			if Idx then _G.SaveData[Idx] = Dropdown.Value; AutoSave() end
 		end
 
 		function Dropdown:Destroy()
@@ -6558,6 +6587,8 @@ ElementsTable.Dropdown = (function()
 		Dropdown:BuildDropdownList()
 		Dropdown:Display()
 
+		local _ddSaved = GetSetting(Idx, nil)
+		if _ddSaved ~= nil then Config.Default = _ddSaved end
 		local Defaults = {}
 
 		if type(Config.Default) == "string" then
@@ -6938,6 +6969,7 @@ ElementsTable.Slider = (function()
 
 			Library:SafeCallback(Slider.Callback, self.Value)
 			Library:SafeCallback(Slider.Changed, self.Value)
+			if Idx then _G.SaveData[Idx] = self.Value; AutoSave() end
 		end
 
 		function Slider:Destroy()
@@ -6945,7 +6977,7 @@ ElementsTable.Slider = (function()
 			Library.Options[Idx] = nil
 		end
 
-		Slider:SetValue(Config.Default)
+		Slider:SetValue(GetSetting(Idx, Config.Default))
 
 		Library.Options[Idx] = Slider
 		return Slider
@@ -6963,7 +6995,7 @@ ElementsTable.Keybind = (function()
 		assert(Config.Default, "KeyBind - Missing default value.")
 
 		local Keybind = {
-			Value = Config.Default,
+			Value = GetSetting(Idx, Config.Default),
 			Toggled = false,
 			Mode = Config.Mode or "Toggle",
 			Type = "Keybind",
@@ -7112,6 +7144,7 @@ ElementsTable.Keybind = (function()
 
 							KeybindDisplayLabel.Text = Key
 							Keybind.Value = Key
+							if Idx then _G.SaveData[Idx] = Key; AutoSave() end
 
 							Library:SafeCallback(Keybind.ChangedCallback, Input.KeyCode or Input.UserInputType)
 							Library:SafeCallback(Keybind.Changed, Input.KeyCode or Input.UserInputType)
@@ -7163,7 +7196,7 @@ ElementsTable.Colorpicker = (function()
 		assert(Config.Default, "AddColorPicker: Missing default value.")
 
 		local Colorpicker = {
-			Value = Config.Default,
+			Value = (function() local s=GetSetting(Idx,nil); return type(s)=="table" and Color3.fromRGB(s[1],s[2],s[3]) or Config.Default end)(),
 			Transparency = Config.Transparency or 0,
 			Type = "Colorpicker",
 			Title = type(Config.Title) == "string" and Config.Title or "Colorpicker",
@@ -7614,6 +7647,7 @@ ElementsTable.Colorpicker = (function()
 
 			Element.Library:SafeCallback(Colorpicker.Callback, Colorpicker.Value)
 			Element.Library:SafeCallback(Colorpicker.Changed, Colorpicker.Value)
+			if Idx then _G.SaveData[Idx]={math.floor(Colorpicker.Value.R*255),math.floor(Colorpicker.Value.G*255),math.floor(Colorpicker.Value.B*255)}; AutoSave() end
 		end
 
 		function Colorpicker:SetValue(HSV, Transparency)
@@ -7668,7 +7702,7 @@ ElementsTable.Input = (function()
 		Config.Callback = Config.Callback or function() end
 
 		local Input = {
-			Value = Config.Default or "",
+			Value = GetSetting(Idx, Config.Default or ""),
 			Numeric = Config.Numeric or false,
 			Finished = Config.Finished or false,
 			Callback = Config.Callback or function(Value) end,
@@ -7707,6 +7741,7 @@ ElementsTable.Input = (function()
 
 			Library:SafeCallback(Input.Callback, Input.Value)
 			Library:SafeCallback(Input.Changed, Input.Value)
+			if Idx then _G.SaveData[Idx] = Input.Value; AutoSave() end
 		end
 
 		if Input.Finished then
@@ -9054,6 +9089,8 @@ end
 
 function Library:CreateWindow(Config)
 	assert(Config.Title or Config.Name, "Window - Missing Title")
+	if Config.ScriptFolder then _LibSaveFolder = Config.ScriptFolder end
+	LoadSettings()
 
 	if Library.Window then
 		print("You cannot create more than one window.")
