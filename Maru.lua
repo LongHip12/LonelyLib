@@ -943,7 +943,7 @@ function Library:AddWindows(ConfigWindow)
                 SelectText.Position = UDim2.new(0, 10, 0, 0)
                 SelectText.Size = UDim2.new(1, 0, 1, 0)
                 SelectText.FontFace = Font.new([[rbxasset://fonts/families/Arial.json]], Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-                SelectText.Text = cffe.Default
+                SelectText.Text = type(cffe.Default) == "table" and table.concat(cffe.Default, ", ") or tostring(cffe.Default)
                 SelectText.TextColor3 = Color3.fromRGB(188, 188, 188)
                 SelectText.TextSize = 14.000
                 SelectText.TextWrapped = true
