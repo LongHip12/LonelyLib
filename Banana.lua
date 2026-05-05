@@ -3849,6 +3849,179 @@ end
     
     return textbox_function
 end
+function sectionFunction:AddInput(idk, Setting)
+    local TitleText = tostring(Setting.Text or Setting.Title) or ""
+    local Placeholder = tostring(Setting.Placeholder) or ""
+    local Flag = Setting.Flag or TitleText
+    local Default = GetSetting(Flag, Setting.Default or "")
+    local Number_Only = Setting.Numeric or false
+    local Callback = Setting.Callback
+    -- Tạo UI
+    local BoxFrame = Instance.new("Frame")
+    local BoxCorner = Instance.new("UICorner")
+    local BoxBG = Instance.new("Frame")
+    local ButtonCorner = Instance.new("UICorner")
+    local Boxtitle = Instance.new("TextLabel")
+    local BoxCor = Instance.new("Frame")
+    local ButtonCorner_2 = Instance.new("UICorner")
+    local Boxxx = Instance.new("TextBox")
+    local Lineeeee = Instance.new("Frame")
+    local UICorner = Instance.new("UICorner")
+    
+    BoxFrame.Name = "BoxFrame"
+    BoxFrame.Parent = Section
+    BoxFrame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    BoxFrame.BackgroundTransparency = 1.000
+    BoxFrame.Position = UDim2.new(0, 0, 0.208333328, 0)
+    BoxFrame.Size = UDim2.new(1, 0, 0, 60)
+    
+    BoxCorner.CornerRadius = UDim.new(0, 4)
+    BoxCorner.Name = "BoxCorner"
+    BoxCorner.Parent = BoxFrame
+    
+    BoxBG.Name = "Background1"
+    BoxBG.Parent = BoxFrame
+    BoxBG.AnchorPoint = Vector2.new(0.5, 0.5)
+    BoxBG.Position = UDim2.new(0.5, 0, 0.5, 0)
+    BoxBG.Size = UDim2.new(1, -10, 1, 0)
+    BoxBG.BackgroundColor3 = getgenv().UIColor["Background 1 Color"]
+    BoxBG.BackgroundTransparency = getgenv().UIColor["Background 1 Transparency"]
+    
+    ButtonCorner.CornerRadius = UDim.new(0, 4)
+    ButtonCorner.Name = "ButtonCorner"
+    ButtonCorner.Parent = BoxBG
+    
+    Boxtitle.Name = "TextColor"
+    Boxtitle.Parent = BoxBG
+    Boxtitle.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
+    Boxtitle.BackgroundTransparency = 1.000
+    Boxtitle.Position = UDim2.new(0, 10, 0, 0)
+    Boxtitle.Size = UDim2.new(1, -10, 0.5, 0)
+    Boxtitle.Font = Enum.Font.GothamBlack
+    Boxtitle.Text = TitleText
+    Boxtitle.TextSize = 14.000
+    Boxtitle.TextXAlignment = Enum.TextXAlignment.Left
+    Boxtitle.TextColor3 = getgenv().UIColor["Text Color"]
+    
+    BoxCor.Name = "Background2"
+    BoxCor.Parent = BoxBG
+    BoxCor.AnchorPoint = Vector2.new(1, 0.5)
+    BoxCor.ClipsDescendants = true
+    BoxCor.Position = UDim2.new(1, -5, 0, 40)
+    BoxCor.Size = UDim2.new(1, -10, 0, 25)
+    BoxCor.BackgroundColor3 = getgenv().UIColor["Background 2 Color"]
+    
+    ButtonCorner_2.CornerRadius = UDim.new(0, 4)
+    ButtonCorner_2.Name = "ButtonCorner"
+    ButtonCorner_2.Parent = BoxCor
+    
+    Boxxx.Name = "TextColorPlaceholder"
+    Boxxx.Parent = BoxCor
+    Boxxx.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
+    Boxxx.BackgroundTransparency = 1.000
+    Boxxx.Position = UDim2.new(0, 5, 0, 0)
+    Boxxx.Size = UDim2.new(1, -5, 1, 0)
+    Boxxx.Font = Enum.Font.GothamBold
+    Boxxx.PlaceholderText = Placeholder
+    Boxxx.Text = ""
+    Boxxx.TextSize = 14.000
+    Boxxx.TextXAlignment = Enum.TextXAlignment.Left
+    Boxxx.PlaceholderColor3 = getgenv().UIColor["Placeholder Text Color"]
+    Boxxx.TextColor3 = getgenv().UIColor["Text Color"]
+    
+    Lineeeee.Name = "TextNSBoxLineeeee"
+    Lineeeee.Parent = BoxCor
+    Lineeeee.BackgroundTransparency = 1.000
+    Lineeeee.Position = UDim2.new(0, 0, 1, -2)
+    Lineeeee.Size = UDim2.new(1, 0, 0, 6)
+    Lineeeee.BackgroundColor3 = getgenv().UIColor["Box Highlight Color"]
+    
+    UICorner.CornerRadius = UDim.new(1, 0)
+    UICorner.Parent = Lineeeee
+    
+    -- Focus effect
+    Boxxx.Focused:Connect(function()
+        TweenService:Create(Lineeeee, TweenInfo.new(getgenv().UIColor["Tween Animation 2 Speed"]), {
+            BackgroundTransparency = 0
+        }):Play()
+    end)
+    
+    -- Number only handling
+    if Number_Only then
+        Boxxx:GetPropertyChangedSignal("Text"):Connect(function()
+            if Boxxx.Text ~= "" and not tonumber(Boxxx.Text) then
+                Boxxx.Text = ""
+            end
+        end)
+    end
+    
+    -- Function lấy value
+    local function GetInputValue()
+        return Boxxx.Text
+    end
+    
+    -- Focus lost callback
+    Boxxx.FocusLost:Connect(function()
+        TweenService:Create(Lineeeee, TweenInfo.new(getgenv().UIColor["Tween Animation 2 Speed"]), {
+            BackgroundTransparency = 1
+        }):Play()
+        
+        if Boxxx.Text ~= '' then
+            if Callback then
+                pcall(Callback, Boxxx.Text)
+            end
+            _G.SaveData[Flag] = Boxxx.Text
+            AutoSave()
+        end
+    end)
+    
+    -- Set default value
+    if Default and Default ~= "" then
+        Boxxx.Text = Default
+    end
+    
+    -- Textbox functions
+    local textbox_function = {}
+    
+    function textbox_function:SetTitle(newTitle)
+        Boxtitle.Text = tostring(newTitle)
+    end
+    function textbox_function.SetValue(Value)
+        Boxxx.Text = tostring(Value)
+        if Callback then
+            pcall(Callback, tostring(Value))
+        end
+        _G.SaveData[Flag] = tostring(Value)
+        AutoSave()
+    end
+    
+    function textbox_function.GetValue()
+        return Boxxx.Text
+    end
+    
+    function textbox_function.SetPlaceholder(text)
+        Boxxx.PlaceholderText = tostring(text)
+    end
+    
+    -- Lưu control data
+    local controlData = {
+        Name = TitleText,
+        Section = Section,
+        Element = BoxFrame,
+        SectionName = Section_Name,
+        TabName = Page_Name,
+        TabButton = PageName,
+        GetValue = GetInputValue,
+        SetValue = function(_, value) 
+            textbox_function.SetValue(value) 
+        end,
+        Type = "Input"
+    }
+    table.insert(getgenv().AllControls, controlData)
+    
+    return textbox_function
+end
+
         function sectionFunction:AddSlider(Setting)
             local TitleText = tostring(Setting.Text or Setting.Title or Setting.Name) or ""
             local Flag = Setting.Flag or TitleText
