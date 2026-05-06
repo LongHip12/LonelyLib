@@ -1920,6 +1920,7 @@ end)
 
 return aL
 end
+ah.AddInput = ah.AddTextBox
 
 function ah:AddSlider(av)
 local aw,ax=an("Slider",av)
