@@ -1977,478 +1977,6 @@ function Library:CreateWindow(Setting)
 					end
 				})
 			end
-                local Title = tostring(Setting.Text or Setting.Title or Setting.Name or "")
-                local Search = Setting.Search or false
-            
-                local DropdownFrame = Instance.new("Frame")
-                local Dropdownbg = Instance.new("Frame")
-                local Dropdowncorner = Instance.new("UICorner")
-                local Topdrop = Instance.new("Frame")
-                local UICorner = Instance.new("UICorner")
-                local ImgDrop = Instance.new("ImageLabel")
-                local DropdownButton = Instance.new("TextButton")
-                local Dropdownlisttt = Instance.new("Frame")
-                local DropdownScroll = Instance.new("ScrollingFrame")
-                local ScrollContainer = Instance.new("Frame")
-                local ScrollContainerList = Instance.new("UIListLayout")
-                
-                DropdownFrame.Name = Title .. "DropdownSectionFrame"
-                DropdownFrame.Parent = Section
-                DropdownFrame.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
-                DropdownFrame.BackgroundTransparency = 1.000
-                DropdownFrame.Position = UDim2.new(0, 0, 0.473684222, 0)
-                DropdownFrame.Size = UDim2.new(1, 0, 0, 25)
-                
-                Dropdownbg.Name = "Background1"
-                Dropdownbg.Parent = DropdownFrame
-                Dropdownbg.AnchorPoint = Vector2.new(0.5, 0.5)
-                Dropdownbg.Position = UDim2.new(0.5, 0, 0.5, 0)
-                Dropdownbg.Size = UDim2.new(1, -10, 1, 0)
-                Dropdownbg.ClipsDescendants = true
-                Dropdownbg.BackgroundColor3 = getgenv().UIColor["Background 1 Color"]
-                Dropdownbg.BackgroundTransparency = 0.25
-                
-                Dropdowncorner.CornerRadius = UDim.new(0, 4)
-                Dropdowncorner.Name = "Dropdowncorner"
-                Dropdowncorner.Parent = Dropdownbg
-                
-                Topdrop.Name = "Background2"
-                Topdrop.Parent = Dropdownbg
-                Topdrop.Size = UDim2.new(1, 0, 0, 25)
-                Topdrop.BackgroundColor3 = getgenv().UIColor["Background 2 Color"]
-                Topdrop.BackgroundTransparency = getgenv().UIColor["Background 1 Transparency"]
-                
-                UICorner.CornerRadius = UDim.new(0, 4)
-                UICorner.Parent = Topdrop
-                
-                local Dropdowntitle
-                if Search then
-                    Dropdowntitle = Instance.new("TextBox")
-                    Dropdowntitle.PlaceholderText = Title
-                    Dropdowntitle.PlaceholderColor3 = getgenv().UIColor["Placeholder Text Color"]
-                else
-                    Dropdowntitle = Instance.new("TextLabel")
-                    Dropdowntitle.Text = Title
-                end
-                
-                Dropdowntitle.Name = "TextColorPlaceholder"
-                Dropdowntitle.Parent = Topdrop
-                Dropdowntitle.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
-                Dropdowntitle.BackgroundTransparency = 1.000
-                Dropdowntitle.Position = UDim2.new(0, 10, 0, 0)
-                Dropdowntitle.Size = UDim2.new(1, -40, 1, 0)
-                Dropdowntitle.Font = Enum.Font.GothamBlack
-                Dropdowntitle.TextSize = 14.000
-                Dropdowntitle.TextXAlignment = Enum.TextXAlignment.Left
-                Dropdowntitle.ClipsDescendants = true
-                Dropdowntitle.TextColor3 = getgenv().UIColor["Text Color"]
-                
-                ImgDrop.Name = "ImgDrop"
-                ImgDrop.Parent = Topdrop
-                ImgDrop.AnchorPoint = Vector2.new(1, 0.5)
-                ImgDrop.BackgroundTransparency = 1.000
-                ImgDrop.BorderColor3 = Color3.fromRGB(27, 42, 53)
-                ImgDrop.Position = UDim2.new(1, -6, 0.5, 0)
-                ImgDrop.Size = UDim2.new(0, 15, 0, 15)
-                ImgDrop.Image = "rbxassetid://6954383209"
-                ImgDrop.ImageColor3 = getgenv().UIColor["Dropdown Icon Color"]
-                
-                DropdownButton.Name = "DropdownButton"
-                DropdownButton.Parent = Topdrop
-                DropdownButton.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
-                DropdownButton.BackgroundTransparency = 1.000
-                DropdownButton.Size = Search and UDim2.new(0, 30, 0, 30) or UDim2.new(1, 0, 1 , 0)
-                DropdownButton.Position = Search and UDim2.new(1, -35, 0, 0) or UDim2.new(0 , 0 , 0 , 0)
-                DropdownButton.Font = Enum.Font.GothamBold
-                DropdownButton.Text = ""
-                DropdownButton.TextColor3 = Color3.fromRGB(230, 230, 230)
-                DropdownButton.TextSize = 14.000
-                
-                Dropdownlisttt.Name = "Dropdownlisttt"
-                Dropdownlisttt.Parent = Dropdownbg
-                Dropdownlisttt.BackgroundTransparency = 1.000
-                Dropdownlisttt.BorderSizePixel = 0
-                Dropdownlisttt.Position = UDim2.new(0, 0, 0, 25)
-                Dropdownlisttt.Size = UDim2.new(1, 0, 0, 0)
-                Dropdownlisttt.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
-                
-                DropdownScroll.Name = "DropdownScroll"
-                DropdownScroll.Parent = Dropdownlisttt
-                DropdownScroll.Active = true
-                DropdownScroll.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
-                DropdownScroll.BackgroundTransparency = 1.000
-                DropdownScroll.BorderSizePixel = 0
-                DropdownScroll.Size = UDim2.new(1, 0, 1, 0)
-                DropdownScroll.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
-                DropdownScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
-                DropdownScroll.ScrollBarThickness = 5
-                DropdownScroll.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
-                DropdownScroll.ScrollingEnabled = true
-                DropdownScroll.VerticalScrollBarInset = Enum.ScrollBarInset.Always
-                
-                ScrollContainer.Name = "ScrollContainer"
-                ScrollContainer.Parent = DropdownScroll
-                ScrollContainer.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
-                ScrollContainer.BackgroundTransparency = 1.000
-                ScrollContainer.Position = UDim2.new(0, 5, 0, 5)
-                ScrollContainer.Size = UDim2.new(1, -15, 1, -5)
-                
-                ScrollContainerList.Name = "ScrollContainerList"
-                ScrollContainerList.Parent = ScrollContainer
-                ScrollContainerList.SortOrder = Enum.SortOrder.LayoutOrder
-                ScrollContainerList.Padding = UDim.new(0, 5)
-                
-                
-                local InternalSection = Instance.new("Frame")
-                InternalSection.Name = "InternalSection"
-                InternalSection.Parent = ScrollContainer
-                InternalSection.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
-                InternalSection.BackgroundTransparency = 1.000
-                InternalSection.Size = UDim2.new(1, 0, 0, 0)
-                InternalSection.AutomaticSize = Enum.AutomaticSize.Y
-                
-                local InternalList = Instance.new("UIListLayout")
-                InternalList.Name = "InternalList"
-                InternalList.Parent = InternalSection
-                InternalList.SortOrder = Enum.SortOrder.LayoutOrder
-                InternalList.Padding = UDim.new(0, 5)
-                
-                local isOpen = false
-                
-                DropdownButton.MouseButton1Click:Connect(function()
-                    isOpen = not isOpen
-                    
-                    local listsize = isOpen and UDim2.new(1, 0, 0, 200) or UDim2.new(1, 0, 0, 0)
-                    local mainsize = isOpen and UDim2.new(1, 0, 0, 230) or UDim2.new(1, 0, 0, 25)
-                    local DropCRotation = isOpen and 90 or 0
-                    
-                    TweenService:Create(Dropdownlisttt, TweenInfo.new(getgenv().UIColor["Tween Animation 2 Speed"]), {
-                        Size = listsize
-                    }):Play()
-                    TweenService:Create(DropdownFrame, TweenInfo.new(getgenv().UIColor["Tween Animation 2 Speed"]), {
-                        Size = mainsize
-                    }):Play()
-                    TweenService:Create(ImgDrop, TweenInfo.new(getgenv().UIColor["Tween Animation 2 Speed"]), {
-                        Rotation = DropCRotation
-                    }):Play()
-                end)
-                
-                ScrollContainerList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                    DropdownScroll.CanvasSize = UDim2.new(0, 0, 0, 10 + ScrollContainerList.AbsoluteContentSize.Y + 5)
-                end)
-                
-                InternalList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                    local contentHeight = math.min(InternalList.AbsoluteContentSize.Y + 10, 300)
-                    local listsize = isOpen and UDim2.new(1, 0, 0, contentHeight) or UDim2.new(1, 0, 0, 0)
-                    local mainsize = isOpen and UDim2.new(1, 0, 0, contentHeight + 25) or UDim2.new(1, 0, 0, 25)
-                    
-                    if isOpen then
-                        TweenService:Create(Dropdownlisttt, TweenInfo.new(getgenv().UIColor["Tween Animation 2 Speed"]), {
-                            Size = listsize
-                        }):Play()
-                        TweenService:Create(DropdownFrame, TweenInfo.new(getgenv().UIColor["Tween Animation 2 Speed"]), {
-                            Size = mainsize
-                        }):Play()
-                    end
-                end)
-                
-                
-                local dropdownSectionFunction = {}
-                
-                
-                function dropdownSectionFunction:AddSlider(Setting)
-                    local TitleText = tostring(Setting.Text or Setting.Title or Setting.Name) or ""
-                    local minValue = tonumber(Setting.Min) or 0
-                    local Flag = Setting.Flag or TitleText
-                    local maxValue = tonumber(Setting.Max) or 100
-                    local Precise = Setting.Precise or false
-                    local DefaultValue = GetSetting(Flag, tonumber(Setting.Default) or 0)
-                    local Callback = Setting.Callback
-                    local Rounding = Setting.Rouding or Setting.Rounding
-                    local SliderFrame = Instance.new("Frame")
-                    local SliderCorner = Instance.new("UICorner")
-                    local SliderBG = Instance.new("Frame")
-                    local SliderBGCorner = Instance.new("UICorner")
-                    local SliderTitle = Instance.new("TextLabel")
-                    local SliderBar = Instance.new("Frame")
-                    local SliderButton = Instance.new("TextButton")
-                    local SliderBarCorner = Instance.new("UICorner")
-                    local Bar = Instance.new("Frame")
-                    local BarCorner = Instance.new("UICorner")
-                    local Sliderboxframe = Instance.new("Frame")
-                    local Sliderbox = Instance.new("UICorner")
-                    local Sliderbox_2 = Instance.new("TextBox")
-                    
-                    SliderFrame.Name = TitleText
-                    SliderFrame.Parent = InternalSection
-                    SliderFrame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-                    SliderFrame.BackgroundTransparency = 1.000
-                    SliderFrame.Size = UDim2.new(1, 0, 0, 50)  
-                    
-                    SliderCorner.CornerRadius = UDim.new(0, 4)
-                    SliderCorner.Name = "SliderCorner"
-                    SliderCorner.Parent = SliderFrame
-                    
-                    SliderBG.Name = "Background1"
-                    SliderBG.Parent = SliderFrame
-                    SliderBG.AnchorPoint = Vector2.new(0.5, 0.5)
-                    SliderBG.Position = UDim2.new(0.5, 0, 0.5, 0)
-                    SliderBG.Size = UDim2.new(1, -5, 1, 0)  
-                    SliderBG.BackgroundColor3 = Color3.fromRGB(28, 28, 34)
-                    SliderBG.BackgroundTransparency = 0.25
-                    
-                    SliderBGCorner.CornerRadius = UDim.new(0, 4)
-                    SliderBGCorner.Name = "SliderBGCorner"
-                    SliderBGCorner.Parent = SliderBG
-                    
-                    SliderTitle.Name = "TextColor"
-                    SliderTitle.Parent = SliderBG
-                    SliderTitle.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
-                    SliderTitle.BackgroundTransparency = 1.000
-                    SliderTitle.Position = UDim2.new(0, 10, 0, 0)
-                    SliderTitle.Size = UDim2.new(0.65, -10, 0, 25)  
-                    SliderTitle.Font = Enum.Font.GothamBlack
-                    SliderTitle.Text = TitleText
-                    SliderTitle.TextSize = 14.000
-                    SliderTitle.RichText = true
-                    SliderTitle.TextXAlignment = Enum.TextXAlignment.Left
-                    SliderTitle.TextColor3 = getgenv().UIColor["Text Color"]
-                    
-                    SliderBar.Name = "SliderBar"
-                    SliderBar.Parent = SliderFrame
-                    SliderBar.AnchorPoint = Vector2.new(0.5, 0.5)
-                    SliderBar.Position = UDim2.new(0.5, 0, 0.5, 14)
-                    SliderBar.Size = UDim2.new(0.9, 0, 0, 6)  
-                    SliderBar.BackgroundColor3 = getgenv().UIColor["Background 2 Color"]
-                    
-                    SliderButton.Name = "SliderButton"
-                    SliderButton.Parent = SliderBar
-                    SliderButton.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
-                    SliderButton.BackgroundTransparency = 1.000
-                    SliderButton.Size = UDim2.new(1, 0, 1, 0)
-                    SliderButton.Font = Enum.Font.GothamBold
-                    SliderButton.Text = ""
-                    SliderButton.TextColor3 = Color3.fromRGB(230, 230, 230)
-                    SliderButton.TextSize = 14.000
-                    
-                    SliderBarCorner.CornerRadius = UDim.new(1, 0)
-                    SliderBarCorner.Name = "SliderBarCorner"
-                    SliderBarCorner.Parent = SliderBar
-                    
-                    Bar.Name = "Bar"
-                    Bar.BorderSizePixel = 0
-                    Bar.Parent = SliderBar
-                    Bar.Size = UDim2.new(0, 0, 1, 0)
-                    Bar.BackgroundColor3 = getgenv().UIColor["Slider Line Color"]
-                    
-                    BarCorner.CornerRadius = UDim.new(1, 0)
-                    BarCorner.Name = "BarCorner"
-                    BarCorner.Parent = Bar
-                    
-                    Sliderboxframe.Name = "Background2"
-                    Sliderboxframe.Parent = SliderFrame
-                    Sliderboxframe.AnchorPoint = Vector2.new(1, 0)
-                    Sliderboxframe.Position = UDim2.new(1, -10, 0, 5)
-                    Sliderboxframe.Size = UDim2.new(0.25, 0, 0, 25)  
-                    Sliderboxframe.BackgroundColor3 = getgenv().UIColor["Background 2 Color"]
-                    
-                    Sliderbox.CornerRadius = UDim.new(0, 4)
-                    Sliderbox.Name = "Sliderbox"
-                    Sliderbox.Parent = Sliderboxframe
-                    
-                    Sliderbox_2.Name = "TextColor"
-                    Sliderbox_2.Parent = Sliderboxframe
-                    Sliderbox_2.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
-                    Sliderbox_2.BackgroundTransparency = 1.000
-                    Sliderbox_2.Size = UDim2.new(1, 0, 1, 0)
-                    Sliderbox_2.Font = Enum.Font.GothamBold
-                    Sliderbox_2.Text = ""
-                    Sliderbox_2.TextSize = 14.000
-                    Sliderbox_2.TextColor3 = getgenv().UIColor["Text Color"]
-                    
-                    SliderButton.MouseEnter:Connect(function()
-                        TweenService:Create(Bar, TweenInfo.new(getgenv().UIColor["Tween Animation 2 Speed"]), {
-                            BackgroundColor3 = getgenv().UIColor["Slider Highlight Color"]
-                        }):Play()
-                    end)
-                    
-                    SliderButton.MouseLeave:Connect(function()
-                        TweenService:Create(Bar, TweenInfo.new(getgenv().UIColor["Tween Animation 2 Speed"]), {
-                            BackgroundColor3 = getgenv().UIColor["Slider Line Color"]
-                        }):Play()
-                    end)
-                    
-                    local callBackAndSetText = function(val)
-                        local roundedVal = val
-                        if Setting.Rouding then
-                            local mult = 10 ^ Setting.Rouding
-                            roundedVal = math.floor(val * mult + 0.5) / mult
-                        elseif not Precise then
-                            roundedVal = math.floor(val)
-                        end
-                        
-                        Sliderbox_2.Text = tostring(roundedVal)
-                        if Callback then
-                            pcall(Callback, roundedVal)
-                        end
-                        
-                        _G.SaveData[Flag] = roundedVal
-                        AutoSave()
-                    end
-                    
-                    if DefaultValue then
-                        if DefaultValue <= minValue then
-                            DefaultValue = minValue
-                        elseif DefaultValue >= maxValue then
-                            DefaultValue = maxValue
-                        end
-                        Bar.Size = UDim2.new(1 - ((maxValue - DefaultValue) / (maxValue - minValue)), 0, 0, 6)
-                        Sliderbox_2.Text = tostring(DefaultValue)
-                    end
-                    
-                    
-                    local dragging = false
-                    local dragInput
-                    local holdTime = 0
-                    local holdStarted = 0
-                    
-                    local function onInputBegan(input)
-                        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                            holdStarted = tick()
-                            
-                            input.Changed:Connect(function()
-                                if input.UserInputState == Enum.UserInputState.End then
-                                    dragging = false
-                                    holdStarted = 0
-                                end
-                            end)
-                        end
-                    end
-                    
-                    local function onInputEnded(input)
-                        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                            dragging = false
-                            holdStarted = 0
-                        end
-                    end
-                    
-                    local function onInputChanged(input)
-                        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-                            dragInput = input
-                        end
-                    end
-                    
-                    SliderButton.InputBegan:Connect(onInputBegan)
-                    SliderButton.InputEnded:Connect(onInputEnded)
-                    SliderButton.InputChanged:Connect(onInputChanged)
-                    
-                    RunService.RenderStepped:Connect(function()
-                        if holdStarted > 0 and (tick() - holdStarted >= holdTime) and not dragging then
-                            dragging = true
-                        end
-                        
-                        if dragging and dragInput then
-                            local barWidth = math.clamp(dragInput.Position.X - Bar.AbsolutePosition.X, 0, SliderBar.AbsoluteSize.X)
-                            local percentage = barWidth / SliderBar.AbsoluteSize.X
-                            local value = minValue + (maxValue - minValue) * percentage
-                            
-                            if Rounding then
-                                value = tonumber(string.format("%.".. Rounding .."f", value))
-                            elseif not Precise then
-                                value = math.floor(value)
-                            end
-                            
-                            value = math.clamp(value, minValue, maxValue)
-                            
-                            pcall(function()
-                                callBackAndSetText(value)
-                            end)
-                            Bar.Size = UDim2.new(percentage, 0, 1, 0)
-                        end
-                    end)
-                    local function GetSliderValue(Value)
-                        Value = tonumber(Value) or minValue
-                        Value = math.clamp(Value, minValue, maxValue)
-                        
-                        local roundedVal = Value
-                        if Setting.Rouding then
-                            local mult = 10 ^ Setting.Rouding
-                            roundedVal = math.floor(Value * mult + 0.5) / mult
-                        elseif not Precise then
-                            roundedVal = math.floor(Value)
-                        end
-                        
-                        local percentage = (roundedVal - minValue) / (maxValue - minValue)
-                        Bar.Size = UDim2.new(percentage, 0, 1, 0)
-                        callBackAndSetText(roundedVal)
-                    end
-
-                    
-                    Sliderbox_2.FocusLost:Connect(function()
-                        local val = tonumber(Sliderbox_2.Text) or minValue
-                        val = math.clamp(val, minValue, maxValue)
-                        
-                        local roundedVal = val
-                        if Setting.Rouding then
-                            local mult = 10 ^ Setting.Rouding
-                            roundedVal = math.floor(val * mult + 0.5) / mult
-                        elseif not Precise then
-                            roundedVal = math.floor(val)
-                        end
-                        
-                        local percentage = (roundedVal - minValue) / (maxValue - minValue)
-                        Bar.Size = UDim2.new(percentage, 0, 1, 0)
-                        callBackAndSetText(roundedVal)
-                        
-                        _G.SaveData[Flag] = roundedVal
-                        AutoSave()
-                    end)
-                    
-                    local slider_function = {}
-                    function slider_function:SetTitle(newTitle)
-                        SliderTitle.Text = tostring(newTitle)
-                    end
-                    function slider_function.SetValue(Value)
-                        GetSliderValue(Value)
-                    end
-                    
-                    function slider_function.GetValue()
-                        return tonumber(Sliderbox_2.Text) or minValue
-                    end
-                    
-                    return slider_function
-                end
-                
-                function dropdownSectionFunction:SetOpen(state)
-                    if state ~= isOpen then
-                        DropdownButton.MouseButton1Click:Fire()
-                    end
-                end
-                
-                function dropdownSectionFunction:GetOpen()
-                    return isOpen
-                end
-                
-                function dropdownSectionFunction:SetTitle(newTitle)
-                    if Search then
-                        Dropdowntitle.PlaceholderText = newTitle
-                    else
-                        Dropdowntitle.Text = newTitle
-                    end
-                end
-                
-                local controlData = {
-                    Name = Title,
-                    Section = Section,
-                    Element = DropdownFrame,
-                    SectionName = Section_Name,
-                    TabName = Page_Name,
-                    TabButton = PageName
-                }
-                table.insert(getgenv().AllControls, controlData)
-                
-                return dropdownSectionFunction
-            end
             
 function sectionFunction:AddDropdown(Setting)
     local Title = tostring(Setting.Text or Setting.Title or Setting.Name) or ""
@@ -3849,6 +3377,179 @@ end
     
     return textbox_function
 end
+function sectionFunction:AddInput(idk, Setting)
+    local TitleText = tostring(Setting.Text or Setting.Title) or ""
+    local Placeholder = tostring(Setting.Placeholder) or ""
+    local Flag = Setting.Flag or TitleText
+    local Default = GetSetting(Flag, Setting.Default or "")
+    local Number_Only = Setting.Numeric or false
+    local Callback = Setting.Callback
+    -- Tạo UI
+    local BoxFrame = Instance.new("Frame")
+    local BoxCorner = Instance.new("UICorner")
+    local BoxBG = Instance.new("Frame")
+    local ButtonCorner = Instance.new("UICorner")
+    local Boxtitle = Instance.new("TextLabel")
+    local BoxCor = Instance.new("Frame")
+    local ButtonCorner_2 = Instance.new("UICorner")
+    local Boxxx = Instance.new("TextBox")
+    local Lineeeee = Instance.new("Frame")
+    local UICorner = Instance.new("UICorner")
+    
+    BoxFrame.Name = "BoxFrame"
+    BoxFrame.Parent = Section
+    BoxFrame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    BoxFrame.BackgroundTransparency = 1.000
+    BoxFrame.Position = UDim2.new(0, 0, 0.208333328, 0)
+    BoxFrame.Size = UDim2.new(1, 0, 0, 60)
+    
+    BoxCorner.CornerRadius = UDim.new(0, 4)
+    BoxCorner.Name = "BoxCorner"
+    BoxCorner.Parent = BoxFrame
+    
+    BoxBG.Name = "Background1"
+    BoxBG.Parent = BoxFrame
+    BoxBG.AnchorPoint = Vector2.new(0.5, 0.5)
+    BoxBG.Position = UDim2.new(0.5, 0, 0.5, 0)
+    BoxBG.Size = UDim2.new(1, -10, 1, 0)
+    BoxBG.BackgroundColor3 = getgenv().UIColor["Background 1 Color"]
+    BoxBG.BackgroundTransparency = getgenv().UIColor["Background 1 Transparency"]
+    
+    ButtonCorner.CornerRadius = UDim.new(0, 4)
+    ButtonCorner.Name = "ButtonCorner"
+    ButtonCorner.Parent = BoxBG
+    
+    Boxtitle.Name = "TextColor"
+    Boxtitle.Parent = BoxBG
+    Boxtitle.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
+    Boxtitle.BackgroundTransparency = 1.000
+    Boxtitle.Position = UDim2.new(0, 10, 0, 0)
+    Boxtitle.Size = UDim2.new(1, -10, 0.5, 0)
+    Boxtitle.Font = Enum.Font.GothamBlack
+    Boxtitle.Text = TitleText
+    Boxtitle.TextSize = 14.000
+    Boxtitle.TextXAlignment = Enum.TextXAlignment.Left
+    Boxtitle.TextColor3 = getgenv().UIColor["Text Color"]
+    
+    BoxCor.Name = "Background2"
+    BoxCor.Parent = BoxBG
+    BoxCor.AnchorPoint = Vector2.new(1, 0.5)
+    BoxCor.ClipsDescendants = true
+    BoxCor.Position = UDim2.new(1, -5, 0, 40)
+    BoxCor.Size = UDim2.new(1, -10, 0, 25)
+    BoxCor.BackgroundColor3 = getgenv().UIColor["Background 2 Color"]
+    
+    ButtonCorner_2.CornerRadius = UDim.new(0, 4)
+    ButtonCorner_2.Name = "ButtonCorner"
+    ButtonCorner_2.Parent = BoxCor
+    
+    Boxxx.Name = "TextColorPlaceholder"
+    Boxxx.Parent = BoxCor
+    Boxxx.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
+    Boxxx.BackgroundTransparency = 1.000
+    Boxxx.Position = UDim2.new(0, 5, 0, 0)
+    Boxxx.Size = UDim2.new(1, -5, 1, 0)
+    Boxxx.Font = Enum.Font.GothamBold
+    Boxxx.PlaceholderText = Placeholder
+    Boxxx.Text = ""
+    Boxxx.TextSize = 14.000
+    Boxxx.TextXAlignment = Enum.TextXAlignment.Left
+    Boxxx.PlaceholderColor3 = getgenv().UIColor["Placeholder Text Color"]
+    Boxxx.TextColor3 = getgenv().UIColor["Text Color"]
+    
+    Lineeeee.Name = "TextNSBoxLineeeee"
+    Lineeeee.Parent = BoxCor
+    Lineeeee.BackgroundTransparency = 1.000
+    Lineeeee.Position = UDim2.new(0, 0, 1, -2)
+    Lineeeee.Size = UDim2.new(1, 0, 0, 6)
+    Lineeeee.BackgroundColor3 = getgenv().UIColor["Box Highlight Color"]
+    
+    UICorner.CornerRadius = UDim.new(1, 0)
+    UICorner.Parent = Lineeeee
+    
+    -- Focus effect
+    Boxxx.Focused:Connect(function()
+        TweenService:Create(Lineeeee, TweenInfo.new(getgenv().UIColor["Tween Animation 2 Speed"]), {
+            BackgroundTransparency = 0
+        }):Play()
+    end)
+    
+    -- Number only handling
+    if Number_Only then
+        Boxxx:GetPropertyChangedSignal("Text"):Connect(function()
+            if Boxxx.Text ~= "" and not tonumber(Boxxx.Text) then
+                Boxxx.Text = ""
+            end
+        end)
+    end
+    
+    -- Function lấy value
+    local function GetInputValue()
+        return Boxxx.Text
+    end
+    
+    -- Focus lost callback
+    Boxxx.FocusLost:Connect(function()
+        TweenService:Create(Lineeeee, TweenInfo.new(getgenv().UIColor["Tween Animation 2 Speed"]), {
+            BackgroundTransparency = 1
+        }):Play()
+        
+        if Boxxx.Text ~= '' then
+            if Callback then
+                pcall(Callback, Boxxx.Text)
+            end
+            _G.SaveData[Flag] = Boxxx.Text
+            AutoSave()
+        end
+    end)
+    
+    -- Set default value
+    if Default and Default ~= "" then
+        Boxxx.Text = Default
+    end
+    
+    -- Textbox functions
+    local textbox_function = {}
+    
+    function textbox_function:SetTitle(newTitle)
+        Boxtitle.Text = tostring(newTitle)
+    end
+    function textbox_function.SetValue(Value)
+        Boxxx.Text = tostring(Value)
+        if Callback then
+            pcall(Callback, tostring(Value))
+        end
+        _G.SaveData[Flag] = tostring(Value)
+        AutoSave()
+    end
+    
+    function textbox_function.GetValue()
+        return Boxxx.Text
+    end
+    
+    function textbox_function.SetPlaceholder(text)
+        Boxxx.PlaceholderText = tostring(text)
+    end
+    
+    -- Lưu control data
+    local controlData = {
+        Name = TitleText,
+        Section = Section,
+        Element = BoxFrame,
+        SectionName = Section_Name,
+        TabName = Page_Name,
+        TabButton = PageName,
+        GetValue = GetInputValue,
+        SetValue = function(_, value) 
+            textbox_function.SetValue(value) 
+        end,
+        Type = "Input"
+    }
+    table.insert(getgenv().AllControls, controlData)
+    
+    return textbox_function
+end
+
         function sectionFunction:AddSlider(Setting)
             local TitleText = tostring(Setting.Text or Setting.Title or Setting.Name) or ""
             local Flag = Setting.Flag or TitleText
