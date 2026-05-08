@@ -39,47 +39,47 @@ local Config = {
 }
 
 makedraggable = function(topbar, object)
-	local Dragging = false
-	local DragInput = nil
-	local DragStart = nil
-	local PositionStart = nil
+        local Dragging = false
+        local DragInput = nil
+        local DragStart = nil
+        local PositionStart = nil
 
-	local function Update(input)
-		local Delta = input.Position - DragStart
-		local newPos = UDim2.new(
-			PositionStart.X.Scale,
-			PositionStart.X.Offset + Delta.X,
-			PositionStart.Y.Scale,
-			PositionStart.Y.Offset + Delta.Y
-		)
-		object.Position = newPos
-	end
+        local function Update(input)
+                local Delta = input.Position - DragStart
+                local newPos = UDim2.new(
+                        PositionStart.X.Scale,
+                        PositionStart.X.Offset + Delta.X,
+                        PositionStart.Y.Scale,
+                        PositionStart.Y.Offset + Delta.Y
+                )
+                object.Position = newPos
+        end
 
-	topbar.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-			Dragging = true
-			DragStart = input.Position
-			PositionStart = object.Position
+        topbar.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                        Dragging = true
+                        DragStart = input.Position
+                        PositionStart = object.Position
 
-			input.Changed:Connect(function()
-				if input.UserInputState == Enum.UserInputState.End then
-					Dragging = false
-				end
-			end)
-		end
-	end)
+                        input.Changed:Connect(function()
+                                if input.UserInputState == Enum.UserInputState.End then
+                                        Dragging = false
+                                end
+                        end)
+                end
+        end)
 
-	topbar.InputChanged:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-			DragInput = input
-		end
-	end)
+        topbar.InputChanged:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+                        DragInput = input
+                end
+        end)
 
-	uis.InputChanged:Connect(function(input)
-		if input == DragInput and Dragging then
-			Update(input)
-		end
-	end)
+        uis.InputChanged:Connect(function(input)
+                if input == DragInput and Dragging then
+                        Update(input)
+                end
+        end)
 end
 
 function Library:AddNotify(ConfigNotify)
@@ -1411,4 +1411,5 @@ function Library:AddWindows(ConfigWindow)
     return TabFunc
 end
 
+if getgenv then getgenv().MaruLib = Library end
 return Library

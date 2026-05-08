@@ -4106,6 +4106,7 @@ Library:Notify({
     Desc = "The UI automatically hides once executed.\nPress the button at the bottom-left of the screen to show the GUI.",
     Duration = 5
 })
+if getgenv then getgenv().BananaLib = Library end
 return Library
 end
 end

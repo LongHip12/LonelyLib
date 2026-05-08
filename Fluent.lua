@@ -5195,7 +5195,10 @@ Components.Window = (function()
                         CurrentPos = 0,
                         TabWidth = 0,
                         Position = UDim2.fromOffset(0, 0),
+                        _toggling = false,
                 }
+
+                local _logoHeight = (Config.Image and Config.Image ~= "") and 64 or 0
 
                 local Dragging, DragInput, MousePos, StartPos = false
                 local Resizing, ResizePos = false
@@ -5235,8 +5238,8 @@ Components.Window = (function()
                 })
 
                 Window.TabHolder = New("ScrollingFrame", {
-                        Size = UDim2.new(1, 0, 1, -45),
-                        Position = UDim2.new(0, 0, 0, 45),
+                        Size = UDim2.new(1, 0, 1, -(45 + _logoHeight)),
+                        Position = UDim2.new(0, 0, 0, 45 + _logoHeight),
                         BackgroundTransparency = 1,
                         ScrollBarImageTransparency = 1,
                         ScrollBarThickness = 0,
@@ -5359,16 +5362,38 @@ Components.Window = (function()
                 Window.RegisterElement = RegisterElement
                 Window.UpdateElementVisibility = UpdateElementVisibility
 
+                local _logoImage = nil
+                if Config.Image and Config.Image ~= "" then
+                        _logoImage = New("ImageLabel", {
+                                Name = "WindowLogo",
+                                Image = Config.Image,
+                                Size = UDim2.fromOffset(50, 50),
+                                Position = UDim2.new(0.5, 0, 0, 7),
+                                AnchorPoint = Vector2.new(0.5, 0),
+                                BackgroundTransparency = 1,
+                                ScaleType = Enum.ScaleType.Fit,
+                        }, {
+                                New("UICorner", {
+                                        CornerRadius = UDim.new(0, 6),
+                                }),
+                        })
+                end
+
+                local _tabFrameChildren = {
+                        Window.TabHolder,
+                        Selector,
+                        SearchFrame,
+                }
+                if _logoImage then
+                        table.insert(_tabFrameChildren, _logoImage)
+                end
+
                 local TabFrame = New("Frame", {
                         Size = UDim2.new(0, Window.TabWidth, 1, Window.ShowSearch and -66 or -31),
                         Position = UDim2.new(0, 12, 0, Window.ShowSearch and 54 or 19),
                         BackgroundTransparency = 1,
                         ClipsDescendants = true,
-                }, {
-                        Window.TabHolder,
-                        Selector,
-                        SearchFrame,
-                })
+                }, _tabFrameChildren)
 
                 Window.TabDisplay = New("TextLabel", {
                         RichText = true,
@@ -5519,11 +5544,11 @@ Components.Window = (function()
                                 TabFrame.Position = UDim2.new(0, 12, 0, 39)
                                 TabFrame.Size = UDim2.new(0, Window.TabWidth, 1, -31)
                                 SearchFrame.Position = UDim2.new(0, 0, 0, userInfoHeight + 6)
-                                Window.TabHolder.Position = UDim2.new(0, 0, 0, 45 + userInfoHeight + 6)
-                                Window.TabHolder.Size = UDim2.new(1, 0, 1, -(45 + userInfoHeight + 24))
+                                Window.TabHolder.Position = UDim2.new(0, 0, 0, 45 + userInfoHeight + 6 + _logoHeight)
+                                Window.TabHolder.Size = UDim2.new(1, 0, 1, -(45 + userInfoHeight + 24 + _logoHeight))
                                 Window.TabHolderTop = 45 + userInfoHeight + 6
                         else
-                                Window.TabHolder.Size = UDim2.new(1, 0, 1, -(45 + userInfoHeight + 24))
+                                Window.TabHolder.Size = UDim2.new(1, 0, 1, -(45 + userInfoHeight + 24 + _logoHeight))
                                 Window.TabHolderTop = 45
                         end
                 end
@@ -5712,9 +5737,15 @@ Components.Window = (function()
                         end
                 end)
 
+                local _windowScale = Instance.new("UIScale")
+                _windowScale.Scale = 1
+                _windowScale.Parent = Window.Root
+
                 function Window:Minimize()
+                        if Window._toggling then return end
+                        Window._toggling = true
+
                         Window.Minimized = not Window.Minimized
-                        Window.Root.Visible = not Window.Minimized
 
                         for _, Option in next, Library.Options do
                                 if Option and Option.Type == "Dropdown" and Option.Opened then
@@ -5723,51 +5754,69 @@ Components.Window = (function()
                                         end)
                                 end
                         end
+
                         if not MinimizeNotif then
                                 MinimizeNotif = true
                                 local Key = Library.MinimizeKeybind and Library.MinimizeKeybind.Value or Library.MinimizeKey.Name
-                                if not Mobile then Library:Notify({
-                                        Title = "Interface",
-                                        Content = "Press " .. Key .. " to toggle the interface.",
-                                        Duration = 6
-                                        })
-                                else 
+                                if not Mobile then
                                         Library:Notify({
                                                 Title = "Interface",
-                                                Content = "Tap to the button to toggle the interface.",
-                                                Duration = 6
+                                                Content = "Press " .. Key .. " to toggle the interface.",
+                                                Duration = 6,
+                                        })
+                                else
+                                        Library:Notify({
+                                                Title = "Interface",
+                                                Content = "Tap the button to toggle the interface.",
+                                                Duration = 6,
                                         })
                                 end
                         end
 
-                        function Window:ToggleSearch()
-                                Window.ShowSearch = not Window.ShowSearch
-                                SearchFrame.Visible = Window.ShowSearch
-                                TabFrame.Size = UDim2.new(0, Window.TabWidth, 1, Window.ShowSearch and -66 or -31)
-                                TabFrame.Position = UDim2.new(0, 12, 0, Window.ShowSearch and 54 or 19)
-                        end
-
                         if not RunService:IsStudio() and Library.Minimizer then
                                 pcall(function()
-                                        if Mobile then
-                                                local mobileButton = Library.Minimizer:FindFirstChild("TextButton")
-                                                if mobileButton then
-                                                        local imageLabel = mobileButton:FindFirstChild("ImageLabel")
-                                                        if imageLabel then
-                                                                imageLabel.Image = Window.Minimized and "rbxassetid://10734896384" or "rbxassetid://10734897102"
-                                                        end
-                                                end
-                                        else
-                                                local desktopButton = Library.Minimizer:FindFirstChild("TextButton")
-                                                if desktopButton then
-                                                        local imageLabel = desktopButton:FindFirstChild("ImageLabel")
-                                                        if imageLabel then
-                                                                imageLabel.Image = Window.Minimized and "rbxassetid://10734896384" or "rbxassetid://10734897102"
-                                                        end
+                                        local btn = Library.Minimizer:FindFirstChild("TextButton")
+                                        if btn then
+                                                local img = btn:FindFirstChild("ImageLabel")
+                                                if img then
+                                                        img.Image = Window.Minimized and "rbxassetid://10734896384" or "rbxassetid://10734897102"
                                                 end
                                         end
                                 end)
                         end
+
+                        local ANIM_TIME = 0.18
+
+                        if Window.Minimized then
+                                TweenService:Create(
+                                        _windowScale,
+                                        TweenInfo.new(ANIM_TIME, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+                                        { Scale = 0.85 }
+                                ):Play()
+                                task.delay(ANIM_TIME, function()
+                                        Window.Root.Visible = false
+                                        _windowScale.Scale = 1
+                                        Window._toggling = false
+                                end)
+                        else
+                                _windowScale.Scale = 0.85
+                                Window.Root.Visible = true
+                                TweenService:Create(
+                                        _windowScale,
+                                        TweenInfo.new(ANIM_TIME, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                                        { Scale = 1 }
+                                ):Play()
+                                task.delay(ANIM_TIME, function()
+                                        Window._toggling = false
+                                end)
+                        end
+                end
+
+                function Window:ToggleSearch()
+                        Window.ShowSearch = not Window.ShowSearch
+                        SearchFrame.Visible = Window.ShowSearch
+                        TabFrame.Size = UDim2.new(0, Window.TabWidth, 1, Window.ShowSearch and -66 or -31)
+                        TabFrame.Position = UDim2.new(0, 12, 0, Window.ShowSearch and 54 or 19)
                 end
 
                 function Window:Destroy()
@@ -5862,7 +5911,7 @@ ElementsTable.Button = (function()
         Element.__type = "Button"
 
         function Element:New(Idx, Config)
-			Config = Config or Idx
+                        Config = Config or Idx
                 assert(Config.Title or Config.Name, "Button - Missing Title")
                 Config.Callback = Config.Callback or function() end
 
@@ -9131,6 +9180,7 @@ function Library:CreateWindow(Config)
                 UserInfoTop = Config.UserInfoTop,
                 UserInfoSubtitle = Config.UserInfoSubtitle,
                 UserInfoSubtitleColor = Config.UserInfoSubtitleColor,
+                Image = Config.Image,
         })
 
         Library.Window = Window
@@ -9262,11 +9312,14 @@ _TextButton.Font = Enum.Font.SourceSans
 _TextButton.Text = ""
 _TextButton.TextColor3 = Color3.fromRGB(27, 42, 53)
 
-AddSignal(_TextButton.MouseButton1Down, function()
-        _ImageLabel.Size = UDim2.new(0, 32, 0, 32)
+AddSignal(_TextButton.MouseButton1Click, function()
         if Library.Window then
                 Library.Window:Minimize()
         end
+end)
+
+AddSignal(_TextButton.MouseButton1Down, function()
+        _ImageLabel.Size = UDim2.new(0, 32, 0, 32)
 end)
 
 AddSignal(_TextButton.MouseButton1Up, function()

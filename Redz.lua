@@ -4166,9 +4166,11 @@ u(ar.Activated,function()
 as:Dialog(aA)
 end)
 
+if getgenv then getgenv().RedzWindow = as end
 return as
 end
 
+if getgenv then getgenv().RedzLib = s end
 return s
 end
 end
