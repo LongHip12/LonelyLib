@@ -1,5 +1,8 @@
-
-
+--[[
+        Credit:
+        Original Fluent : https://github.com/dawid-scripts/Fluent
+        Themes : https://github.com/ActualMasterOogway/Fluent-Renewed/
+]]
 
 local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
@@ -10,2842 +13,736 @@ local TextService = game:GetService("TextService")
 local Camera = game:GetService("Workspace").CurrentCamera
 local Mouse = LocalPlayer:GetMouse()
 local httpService = game:GetService("HttpService")
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-
-local Mobile = not RunService:IsStudio() and table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform()) ~= nil
-
-local fischbypass
-
-if game.GameId == 5750914919 then
-        fischbypass = true
-end
 
 local RenderStepped = RunService.RenderStepped
 
 local ProtectGui = protectgui or (syn and syn.protect_gui) or function() end
 
-_G.SaveData = _G.SaveData or {}
-local _LibSaveFolder = "LonelyHub"
-local _LibHttpService = game:GetService("HttpService")
-local function _LibGetSavePath()
-    local username = game.Players.LocalPlayer.Name
-    return _LibSaveFolder .. "/" .. username .. "-config.json"
-end
-function SaveSettings()
-    if not writefile then return false end
-    local path = _LibGetSavePath()
-    pcall(function()
-        if makefolder and (not isfolder or not isfolder(_LibSaveFolder)) then makefolder(_LibSaveFolder) end
-        writefile(path, _LibHttpService:JSONEncode(_G.SaveData))
-    end)
-end
-function LoadSettings()
-    local path = _LibGetSavePath()
-    if not (isfile and isfile(path)) then return false end
-    local ok, result = pcall(function() return _LibHttpService:JSONDecode(readfile(path)) end)
-    if ok and type(result) == "table" then _G.SaveData = result; return true end
-    return false
-end
-function GetSetting(name, default)
-    return _G.SaveData[name] ~= nil and _G.SaveData[name] or default
-end
-local function AutoSave() SaveSettings() end
-
 local Themes = {
-    Names = {
-        "Dark",
-        "Darker",
-        "AMOLED",
-        "Lonely",
-        "Lonely Red",
-        "Light",
-        "Balloon",
-        "SoftCream",
-        "Aqua",
-        "Amethyst",
-        "Rose",
-        "Midnight",
-        "Forest",
-        "Sunset",
-        "Ocean",
-        "Emerald",
-        "Sapphire",
-        "Cloud",
-        "Grape",
-        "Bloody",
-        "Arctic",
-        "Abyss",
-        "Ambiance",
-        "Adapta Nokto",
-        "Amethyst Dark",
-        "Arc Dark",
-        "Dark Typewriter",
-        "DuoTone Dark Earth",
-        "DuoTone Dark Forest",
-        "DuoTone Dark Sea",
-        "DuoTone Dark Sky",
-        "DuoTone Dark Space",
-        "Elementary",
-        "GitHub Dark Colorblind",
-        "GitHub Dark Default",
-        "GitHub Dark Dimmed",
-        "GitHub Dark High Contrast",
-        "GitHub Dark",
-        "GitHub Light Colorblind",
-        "GitHub Light Default",
-        "GitHub Light",
-        "GitHub Light High Contrast",
-        "Kimbie Dark",
-        "Monokai Classic",
-        "Monokai Dimmed",
-        "Monokai Vibrant",
-        "Monokai",
-        "Quiet Light",
-        "Solarized Dark",
-        "Solarized Light",
-        "Tomorrow Night Blue",
-        "Typewriter",
-        "United GNOME",
-        "United Ubuntu",
-        "Viow Arabian",
-        "Viow Arabian Mix",
-        "Viow Darker",
-        "Viow Flat",
-        "Viow Light",
-        "Viow Mars",
-        "Viow Neon",
-        "VS Dark",
-        "VS Light",
-        "VSC Dark High Contrast",
-        "VSC Dark Modern",
-        "VSC Dark+",
-        "VSC Light High Contrast",
-        "VSC Light Modern",
-        "VSC Light+",
-        "VSC Red",
-        "Vynixu",
-        "Yaru",
-        "Yaru Dark"
-    },
-    Dark = {
-        Name = "Dark",
-        Accent = Color3.fromRGB(96, 205, 255),
-        AcrylicMain = Color3.fromRGB(60, 60, 60),
-        AcrylicBorder = Color3.fromRGB(90, 90, 90),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(40, 40, 40), Color3.fromRGB(40, 40, 40)),
-        AcrylicNoise = 0.9,
-        TitleBarLine = Color3.fromRGB(75, 75, 75),
-        Tab = Color3.fromRGB(120, 120, 120),
-        Element = Color3.fromRGB(120, 120, 120),
-        ElementBorder = Color3.fromRGB(35, 35, 35),
-        InElementBorder = Color3.fromRGB(90, 90, 90),
-        ElementTransparency = 0.87,
-        ToggleSlider = Color3.fromRGB(120, 120, 120),
-        ToggleToggled = Color3.fromRGB(42, 42, 42),
-        SliderRail = Color3.fromRGB(120, 120, 120),
-        DropdownFrame = Color3.fromRGB(160, 160, 160),
-        DropdownHolder = Color3.fromRGB(45, 45, 45),
-        DropdownBorder = Color3.fromRGB(35, 35, 35),
-        DropdownOption = Color3.fromRGB(120, 120, 120),
-        Keybind = Color3.fromRGB(120, 120, 120),
-        Input = Color3.fromRGB(160, 160, 160),
-        InputFocused = Color3.fromRGB(10, 10, 10),
-        InputIndicator = Color3.fromRGB(150, 150, 150),
-        Dialog = Color3.fromRGB(45, 45, 45),
-        DialogHolder = Color3.fromRGB(35, 35, 35),
-        DialogHolderLine = Color3.fromRGB(30, 30, 30),
-        DialogButton = Color3.fromRGB(45, 45, 45),
-        DialogButtonBorder = Color3.fromRGB(80, 80, 80),
-        DialogBorder = Color3.fromRGB(70, 70, 70),
-        DialogInput = Color3.fromRGB(55, 55, 55),
-        DialogInputLine = Color3.fromRGB(160, 160, 160),
-        Text = Color3.fromRGB(240, 240, 240),
-        SubText = Color3.fromRGB(170, 170, 170),
-        Hover = Color3.fromRGB(120, 120, 120),
-        HoverChange = 0.07
-    },
-    Darker = {
-        Name = "Darker",
-        Accent = Color3.fromRGB(56, 109, 223),
-        AcrylicMain = Color3.fromRGB(30, 30, 30),
-        AcrylicBorder = Color3.fromRGB(60, 60, 60),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(17, 17, 17), Color3.fromRGB(18, 18, 18)),
-        AcrylicNoise = 0.94,
-        TitleBarLine = Color3.fromRGB(65, 65, 65),
-        Tab = Color3.fromRGB(100, 100, 100),
-        Element = Color3.fromRGB(70, 70, 70),
-        ElementBorder = Color3.fromRGB(25, 25, 25),
-        InElementBorder = Color3.fromRGB(55, 55, 55),
-        ElementTransparency = 0.82,
-        DropdownFrame = Color3.fromRGB(120, 120, 120),
-        DropdownHolder = Color3.fromRGB(35, 35, 35),
-        DropdownBorder = Color3.fromRGB(25, 25, 25),
-        Dialog = Color3.fromRGB(35, 35, 35),
-        DialogHolder = Color3.fromRGB(25, 25, 25),
-        DialogHolderLine = Color3.fromRGB(20, 20, 20),
-        DialogButton = Color3.fromRGB(35, 35, 35),
-        DialogButtonBorder = Color3.fromRGB(55, 55, 55),
-        DialogBorder = Color3.fromRGB(50, 50, 50),
-        DialogInput = Color3.fromRGB(45, 45, 45),
-        DialogInputLine = Color3.fromRGB(120, 120, 120)
-    },
-    AMOLED = {
-        Name = "AMOLED",
-        Accent = Color3.fromRGB(255, 255, 255),
-        AcrylicMain = Color3.fromRGB(0, 0, 0),
-        AcrylicBorder = Color3.fromRGB(20, 20, 20),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(0, 0, 0), Color3.fromRGB(0, 0, 0)),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromRGB(25, 25, 25),
-        Tab = Color3.fromRGB(40, 40, 40),
-        Element = Color3.fromRGB(15, 15, 15),
-        ElementBorder = Color3.fromRGB(0, 0, 0),
-        InElementBorder = Color3.fromRGB(40, 40, 40),
-        ElementTransparency = 0.95,
-        ToggleSlider = Color3.fromRGB(40, 40, 40),
-        ToggleToggled = Color3.fromRGB(255, 255, 255),
-        SliderRail = Color3.fromRGB(40, 40, 40),
-        DropdownFrame = Color3.fromRGB(20, 20, 20),
-        DropdownHolder = Color3.fromRGB(0, 0, 0),
-        DropdownBorder = Color3.fromRGB(0, 0, 0),
-        DropdownOption = Color3.fromRGB(40, 40, 40),
-        Keybind = Color3.fromRGB(40, 40, 40),
-        Input = Color3.fromRGB(40, 40, 40),
-        InputFocused = Color3.fromRGB(0, 0, 0),
-        InputIndicator = Color3.fromRGB(60, 60, 60),
-        InputIndicatorFocus = Color3.fromRGB(255, 255, 255),
-        Dialog = Color3.fromRGB(0, 0, 0),
-        DialogHolder = Color3.fromRGB(0, 0, 0),
-        DialogHolderLine = Color3.fromRGB(20, 20, 20),
-        DialogButton = Color3.fromRGB(15, 15, 15),
-        DialogButtonBorder = Color3.fromRGB(30, 30, 30),
-        DialogBorder = Color3.fromRGB(27, 27, 27),
-        DialogInput = Color3.fromRGB(15, 15, 15),
-        DialogInputLine = Color3.fromRGB(60, 60, 60),
-        Text = Color3.fromRGB(255, 255, 255),
-        SubText = Color3.fromRGB(170, 170, 170),
-        Hover = Color3.fromRGB(40, 40, 40),
-        HoverChange = 0.04
-    },
-    Lonely = {
-        Name = "Lonely",
-        Accent = Color3.fromRGB(255, 255, 255),
-        AcrylicMain = Color3.fromRGB(0, 0, 0),
-        AcrylicBorder = Color3.fromRGB(20, 20, 20),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(0, 0, 0), Color3.fromRGB(0, 0, 0)),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromRGB(25, 25, 25),
-        Tab = Color3.fromRGB(40, 40, 40),
-        Element = Color3.fromRGB(15, 15, 15),
-        ElementBorder = Color3.fromRGB(255, 255, 255),
-        InElementBorder = Color3.fromRGB(40, 40, 40),
-        ElementTransparency = 0.95,
-        ToggleSlider = Color3.fromRGB(40, 40, 40),
-        ToggleToggled = Color3.fromRGB(255, 255, 255),
-        SliderRail = Color3.fromRGB(40, 40, 40),
-        DropdownFrame = Color3.fromRGB(20, 20, 20),
-        DropdownHolder = Color3.fromRGB(0, 0, 0),
-        DropdownBorder = Color3.fromRGB(255, 255, 255),
-        DropdownOption = Color3.fromRGB(40, 40, 40),
-        Keybind = Color3.fromRGB(40, 40, 40),
-        Input = Color3.fromRGB(40, 40, 40),
-        InputFocused = Color3.fromRGB(0, 0, 0),
-        InputIndicator = Color3.fromRGB(255, 255, 255),
-        InputIndicatorFocus = Color3.fromRGB(255, 255, 255),
-        Dialog = Color3.fromRGB(0, 0, 0),
-        DialogHolder = Color3.fromRGB(0, 0, 0),
-        DialogHolderLine = Color3.fromRGB(20, 20, 20),
-        DialogButton = Color3.fromRGB(15, 15, 15),
-        DialogButtonBorder = Color3.fromRGB(30, 30, 30),
-        DialogBorder = Color3.fromRGB(255, 255, 255),
-        DialogInput = Color3.fromRGB(15, 15, 15),
-        DialogInputLine = Color3.fromRGB(60, 60, 60),
-        Text = Color3.fromRGB(255, 255, 255),
-        SubText = Color3.fromRGB(170, 170, 170),
-        Hover = Color3.fromRGB(40, 40, 40),
-        HoverChange = 0.04
-    },
-    LonelyRed = {
-        Name = "Lonely Red",
-        Accent = Color3.fromRGB(255, 80, 80),
-        AcrylicMain = Color3.fromRGB(50, 35, 35),
-        AcrylicBorder = Color3.fromRGB(90, 60, 60),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(40, 25, 25), Color3.fromRGB(40, 25, 25)),
-        AcrylicNoise = 0.9,
-        TitleBarLine = Color3.fromRGB(100, 60, 60),
-        Tab = Color3.fromRGB(150, 90, 90),
-        Element = Color3.fromRGB(140, 80, 80),
-        ElementBorder = Color3.fromRGB(45, 25, 25),
-        InElementBorder = Color3.fromRGB(100, 60, 60),
-        ElementTransparency = 0.87,
-        ToggleSlider = Color3.fromRGB(140, 80, 80),
-        ToggleToggled = Color3.fromRGB(60, 30, 30),
-        SliderRail = Color3.fromRGB(140, 80, 80),
-        DropdownFrame = Color3.fromRGB(180, 100, 100),
-        DropdownHolder = Color3.fromRGB(55, 35, 35),
-        DropdownBorder = Color3.fromRGB(45, 25, 25),
-        DropdownOption = Color3.fromRGB(140, 80, 80),
-        Keybind = Color3.fromRGB(140, 80, 80),
-        Input = Color3.fromRGB(180, 100, 100),
-        InputFocused = Color3.fromRGB(20, 10, 10),
-        InputIndicator = Color3.fromRGB(160, 90, 90),
-        Dialog = Color3.fromRGB(55, 35, 35),
-        DialogHolder = Color3.fromRGB(45, 25, 25),
-        DialogHolderLine = Color3.fromRGB(40, 20, 20),
-        DialogButton = Color3.fromRGB(55, 35, 35),
-        DialogButtonBorder = Color3.fromRGB(100, 60, 60),
-        DialogBorder = Color3.fromRGB(90, 50, 50),
-        DialogInput = Color3.fromRGB(65, 45, 45),
-        DialogInputLine = Color3.fromRGB(180, 100, 100),
-        Text = Color3.fromRGB(240, 240, 240),
-        SubText = Color3.fromRGB(200, 170, 170),
-        Hover = Color3.fromRGB(160, 100, 100),
-        HoverChange = 0.07
-    },
-    Light = {
-        Name = "Light",
-        Accent = Color3.fromRGB(0, 103, 192),
-        AcrylicMain = Color3.fromRGB(200, 200, 200),
-        AcrylicBorder = Color3.fromRGB(120, 120, 120),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(255, 255, 255)),
-        AcrylicNoise = 0.96,
-        TitleBarLine = Color3.fromRGB(160, 160, 160),
-        Tab = Color3.fromRGB(90, 90, 90),
-        Element = Color3.fromRGB(255, 255, 255),
-        ElementBorder = Color3.fromRGB(180, 180, 180),
-        InElementBorder = Color3.fromRGB(150, 150, 150),
-        ElementTransparency = 0.65,
-        ToggleSlider = Color3.fromRGB(40, 40, 40),
-        ToggleToggled = Color3.fromRGB(255, 255, 255),
-        SliderRail = Color3.fromRGB(40, 40, 40),
-        DropdownFrame = Color3.fromRGB(200, 200, 200),
-        DropdownHolder = Color3.fromRGB(240, 240, 240),
-        DropdownBorder = Color3.fromRGB(200, 200, 200),
-        DropdownOption = Color3.fromRGB(150, 150, 150),
-        Keybind = Color3.fromRGB(120, 120, 120),
-        Input = Color3.fromRGB(200, 200, 200),
-        InputFocused = Color3.fromRGB(100, 100, 100),
-        InputIndicator = Color3.fromRGB(80, 80, 80),
-        InputIndicatorFocus = Color3.fromRGB(0, 103, 192),
-        Dialog = Color3.fromRGB(255, 255, 255),
-        DialogHolder = Color3.fromRGB(240, 240, 240),
-        DialogHolderLine = Color3.fromRGB(228, 228, 228),
-        DialogButton = Color3.fromRGB(255, 255, 255),
-        DialogButtonBorder = Color3.fromRGB(190, 190, 190),
-        DialogBorder = Color3.fromRGB(140, 140, 140),
-        DialogInput = Color3.fromRGB(250, 250, 250),
-        DialogInputLine = Color3.fromRGB(160, 160, 160),
-        Text = Color3.fromRGB(0, 0, 0),
-        SubText = Color3.fromRGB(40, 40, 40),
-        Hover = Color3.fromRGB(50, 50, 50),
-        HoverChange = 0.16
-    },
-    Balloon = {
-        Name = "Balloon",
-        Accent = Color3.fromRGB(100, 170, 255),
-        AcrylicMain = Color3.fromRGB(189, 224, 255),
-        AcrylicBorder = Color3.fromRGB(160, 227, 255),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(240, 250, 255), Color3.fromRGB(210, 235, 250)),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromRGB(150, 200, 255),
-        Tab = Color3.fromRGB(153, 185, 255),
-        Element = Color3.fromRGB(160, 200, 255),
-        ElementBorder = Color3.fromRGB(130, 170, 230),
-        InElementBorder = Color3.fromRGB(120, 174, 240),
-        ElementTransparency = 0.80,
-        ToggleSlider = Color3.fromRGB(93, 163, 255),
-        ToggleToggled = Color3.fromRGB(60, 112, 180),
-        SliderRail = Color3.fromRGB(170, 220, 255),
-        DropdownFrame = Color3.fromRGB(175, 235, 255),
-        DropdownHolder = Color3.fromRGB(200, 220, 240),
-        DropdownBorder = Color3.fromRGB(130, 170, 230),
-        DropdownOption = Color3.fromRGB(146, 202, 255),
-        Keybind = Color3.fromRGB(170, 220, 255),
-        Input = Color3.fromRGB(170, 220, 255),
-        InputFocused = Color3.fromRGB(75, 95, 140),
-        InputIndicator = Color3.fromRGB(190, 250, 255),
-        InputIndicatorFocus = Color3.fromRGB(100, 170, 255),
-        Dialog = Color3.fromRGB(189, 230, 255),
-        DialogHolder = Color3.fromRGB(201, 239, 255),
-        DialogHolderLine = Color3.fromRGB(197, 236, 250),
-        DialogButton = Color3.fromRGB(219, 252, 255),
-        DialogButtonBorder = Color3.fromRGB(160, 200, 255),
-        DialogBorder = Color3.fromRGB(175, 220, 255),
-        DialogInput = Color3.fromRGB(160, 200, 255),
-        DialogInputLine = Color3.fromRGB(185, 230, 255),
-        Text = Color3.fromRGB(30, 30, 30),
-        SubText = Color3.fromRGB(90, 90, 90),
-        Hover = Color3.fromRGB(170, 220, 255),
-        HoverChange = 0.03
-    },
-    SoftCream = {
-        Name = "SoftCream",
-        Accent = Color3.fromRGB(206, 163, 90),
-        AcrylicMain = Color3.fromRGB(255, 245, 220),
-        AcrylicBorder = Color3.fromRGB(255, 230, 200),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(255, 245, 220), Color3.fromRGB(255, 235, 210)),
-        AcrylicNoise = 0.93,
-        TitleBarLine = Color3.fromRGB(255, 220, 190),
-        Tab = Color3.fromRGB(199, 165, 112),
-        Element = Color3.fromRGB(255, 216, 161),
-        ElementBorder = Color3.fromRGB(234, 193, 111),
-        InElementBorder = Color3.fromRGB(255, 212, 143),
-        ElementTransparency = 0.80,
-        ToggleSlider = Color3.fromRGB(214, 175, 97),
-        ToggleToggled = Color3.fromRGB(200, 160, 100),
-        SliderRail = Color3.fromRGB(255, 220, 190),
-        DropdownFrame = Color3.fromRGB(255, 228, 164),
-        DropdownHolder = Color3.fromRGB(250, 240, 225),
-        DropdownBorder = Color3.fromRGB(255, 210, 180),
-        DropdownOption = Color3.fromRGB(255, 190, 115),
-        Keybind = Color3.fromRGB(255, 220, 190),
-        Input = Color3.fromRGB(255, 220, 190),
-        InputFocused = Color3.fromRGB(180, 140, 80),
-        InputIndicator = Color3.fromRGB(255, 250, 205),
-        InputIndicatorFocus = Color3.fromRGB(255, 236, 158),
-        Dialog = Color3.fromRGB(255, 255, 240),
-        DialogHolder = Color3.fromRGB(255, 245, 220),
-        DialogHolderLine = Color3.fromRGB(255, 240, 210),
-        DialogButton = Color3.fromRGB(255, 255, 240),
-        DialogButtonBorder = Color3.fromRGB(255, 210, 180),
-        DialogBorder = Color3.fromRGB(255, 220, 190),
-        DialogInput = Color3.fromRGB(255, 210, 180),
-        DialogInputLine = Color3.fromRGB(255, 225, 205),
-        Text = Color3.fromRGB(30, 30, 30),
-        SubText = Color3.fromRGB(90, 90, 90),
-        Hover = Color3.fromRGB(255, 220, 190),
-        HoverChange = 0.03
-    },
-    Aqua = {
-        Name = "Aqua",
-        Accent = Color3.fromRGB(38, 166, 178),
-        AcrylicMain = Color3.fromRGB(18, 54, 61),
-        AcrylicBorder = Color3.fromRGB(80, 118, 130),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(41, 101, 139), Color3.fromRGB(11, 132, 128)),
-        AcrylicNoise = 0.92,
-        TitleBarLine = Color3.fromRGB(68, 135, 136),
-        Tab = Color3.fromRGB(126, 175, 180),
-        Element = Color3.fromRGB(66, 130, 160),
-        ElementBorder = Color3.fromRGB(40, 100, 122),
-        InElementBorder = Color3.fromRGB(75, 109, 110),
-        ElementTransparency = 0.87,
-        ToggleSlider = Color3.fromRGB(100, 152, 160),
-        ToggleToggled = Color3.fromRGB(25, 70, 95),
-        SliderRail = Color3.fromRGB(115, 150, 160),
-        DropdownFrame = Color3.fromRGB(158, 194, 200),
-        DropdownHolder = Color3.fromRGB(39, 99, 116),
-        DropdownBorder = Color3.fromRGB(33, 119, 120),
-        DropdownOption = Color3.fromRGB(121, 152, 160),
-        Keybind = Color3.fromRGB(108, 153, 160),
-        Input = Color3.fromRGB(112, 156, 160),
-        InputFocused = Color3.fromRGB(14, 35, 40),
-        InputIndicator = Color3.fromRGB(137, 181, 190),
-        Dialog = Color3.fromRGB(27, 113, 130),
-        DialogHolder = Color3.fromRGB(33, 99, 109),
-        DialogHolderLine = Color3.fromRGB(34, 81, 86),
-        DialogButton = Color3.fromRGB(27, 128, 130),
-        DialogButtonBorder = Color3.fromRGB(62, 100, 110),
-        DialogBorder = Color3.fromRGB(26, 86, 100),
-        DialogInput = Color3.fromRGB(36, 107, 105),
-        DialogInputLine = Color3.fromRGB(70, 120, 130),
-        Text = Color3.fromRGB(240, 240, 240),
-        SubText = Color3.fromRGB(170, 170, 170),
-        Hover = Color3.fromRGB(112, 155, 160),
-        HoverChange = 0.04
-    },
-    Amethyst = {
-        Name = "Amethyst",
-        Accent = Color3.fromRGB(126, 44, 182),
-        AcrylicMain = Color3.fromRGB(40, 12, 71),
-        AcrylicBorder = Color3.fromRGB(85, 45, 120),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(34, 19, 49), Color3.fromRGB(41, 24, 57)),
-        AcrylicNoise = 0.92,
-        TitleBarLine = Color3.fromRGB(95, 55, 130),
-        Tab = Color3.fromRGB(135, 75, 170),
-        Element = Color3.fromRGB(115, 55, 150),
-        ElementBorder = Color3.fromRGB(60, 35, 85),
-        InElementBorder = Color3.fromRGB(85, 45, 110),
-        ElementTransparency = 0.87,
-        ToggleSlider = Color3.fromRGB(135, 65, 160),
-        ToggleToggled = Color3.fromRGB(59, 30, 79),
-        SliderRail = Color3.fromRGB(135, 65, 160),
-        DropdownFrame = Color3.fromRGB(145, 85, 170),
-        DropdownHolder = Color3.fromRGB(50, 30, 70),
-        DropdownBorder = Color3.fromRGB(60, 35, 85),
-        DropdownOption = Color3.fromRGB(135, 65, 160),
-        Keybind = Color3.fromRGB(135, 65, 160),
-        Input = Color3.fromRGB(135, 65, 160),
-        InputFocused = Color3.fromRGB(25, 15, 35),
-        InputIndicator = Color3.fromRGB(155, 85, 180),
-        InputIndicatorFocus = Color3.fromRGB(126, 44, 182),
-        Dialog = Color3.fromRGB(50, 30, 70),
-        DialogHolder = Color3.fromRGB(40, 25, 60),
-        DialogHolderLine = Color3.fromRGB(35, 20, 55),
-        DialogButton = Color3.fromRGB(50, 30, 70),
-        DialogButtonBorder = Color3.fromRGB(90, 50, 120),
-        DialogBorder = Color3.fromRGB(80, 45, 110),
-        DialogInput = Color3.fromRGB(60, 35, 80),
-        DialogInputLine = Color3.fromRGB(145, 75, 170),
-        Text = Color3.fromRGB(240, 240, 240),
-        SubText = Color3.fromRGB(170, 170, 170),
-        Hover = Color3.fromRGB(135, 65, 160),
-        HoverChange = 0.04
-    },
-    Rose = {
-        Name = "Rose",
-        Accent = Color3.fromRGB(219, 48, 123),
-        AcrylicMain = Color3.fromRGB(35, 25, 30),
-        AcrylicBorder = Color3.fromRGB(145, 35, 75),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(65, 25, 45), Color3.fromRGB(75, 30, 50)),
-        AcrylicNoise = 0.92,
-        TitleBarLine = Color3.fromRGB(150, 65, 95),
-        Tab = Color3.fromRGB(190, 85, 115),
-        Element = Color3.fromRGB(170, 60, 90),
-        ElementBorder = Color3.fromRGB(95, 35, 55),
-        InElementBorder = Color3.fromRGB(120, 50, 70),
-        ElementTransparency = 0.87,
-        ToggleSlider = Color3.fromRGB(190, 75, 105),
-        ToggleToggled = Color3.fromRGB(45, 15, 25),
-        SliderRail = Color3.fromRGB(190, 75, 105),
-        DropdownFrame = Color3.fromRGB(200, 95, 125),
-        DropdownHolder = Color3.fromRGB(75, 30, 45),
-        DropdownBorder = Color3.fromRGB(95, 35, 55),
-        DropdownOption = Color3.fromRGB(190, 75, 105),
-        Keybind = Color3.fromRGB(190, 75, 105),
-        Input = Color3.fromRGB(190, 75, 105),
-        InputFocused = Color3.fromRGB(35, 15, 20),
-        InputIndicator = Color3.fromRGB(210, 95, 125),
-        InputIndicatorFocus = Color3.fromRGB(219, 48, 123),
-        Dialog = Color3.fromRGB(75, 30, 45),
-        DialogHolder = Color3.fromRGB(65, 25, 40),
-        DialogHolderLine = Color3.fromRGB(60, 20, 35),
-        DialogButton = Color3.fromRGB(75, 30, 45),
-        DialogButtonBorder = Color3.fromRGB(115, 45, 65),
-        DialogBorder = Color3.fromRGB(105, 40, 60),
-        DialogInput = Color3.fromRGB(85, 35, 50),
-        DialogInputLine = Color3.fromRGB(200, 85, 115),
-        Text = Color3.fromRGB(240, 240, 240),
-        SubText = Color3.fromRGB(170, 170, 170),
-        Hover = Color3.fromRGB(190, 75, 105),
-        HoverChange = 0.04
-    },
-    Midnight = {
-        Name = "Midnight",
-        Accent = Color3.fromRGB(52, 50, 178),
-        AcrylicMain = Color3.fromRGB(20, 20, 20),
-        AcrylicBorder = Color3.fromRGB(83, 83, 130),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(1, 1, 39), Color3.fromRGB(6, 6, 54)),
-        AcrylicNoise = 0.96,
-        TitleBarLine = Color3.fromRGB(77, 75, 126),
-        Tab = Color3.fromRGB(126, 127, 180),
-        Element = Color3.fromRGB(111, 108, 160),
-        ElementBorder = Color3.fromRGB(32, 32, 59),
-        InElementBorder = Color3.fromRGB(85, 83, 110),
-        ElementTransparency = 0.87,
-        ToggleSlider = Color3.fromRGB(120, 117, 160),
-        ToggleToggled = Color3.fromRGB(30, 12, 68),
-        SliderRail = Color3.fromRGB(117, 117, 160),
-        DropdownFrame = Color3.fromRGB(161, 161, 200),
-        DropdownHolder = Color3.fromRGB(35, 36, 80),
-        DropdownBorder = Color3.fromRGB(32, 30, 65),
-        DropdownOption = Color3.fromRGB(116, 116, 160),
-        Keybind = Color3.fromRGB(110, 123, 160),
-        Input = Color3.fromRGB(116, 112, 160),
-        InputFocused = Color3.fromRGB(20, 10, 30),
-        InputIndicator = Color3.fromRGB(136, 140, 190),
-        Dialog = Color3.fromRGB(37, 37, 80),
-        DialogHolder = Color3.fromRGB(24, 24, 65),
-        DialogHolderLine = Color3.fromRGB(25, 26, 60),
-        DialogButton = Color3.fromRGB(46, 44, 80),
-        DialogButtonBorder = Color3.fromRGB(71, 72, 110),
-        DialogBorder = Color3.fromRGB(72, 70, 100),
-        DialogInput = Color3.fromRGB(55, 55, 85),
-        DialogInputLine = Color3.fromRGB(133, 131, 190),
-        Text = Color3.fromRGB(240, 240, 240),
-        SubText = Color3.fromRGB(170, 170, 170),
-        Hover = Color3.fromRGB(119, 121, 160),
-        HoverChange = 0.04
-    },
-    Forest = {
-        Name = "Forest",
-        Accent = Color3.fromRGB(46, 141, 70),
-        AcrylicMain = Color3.fromRGB(20, 35, 25),
-        AcrylicBorder = Color3.fromRGB(50, 90, 60),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(15, 35, 20), Color3.fromRGB(20, 40, 25)),
-        AcrylicNoise = 0.92,
-        TitleBarLine = Color3.fromRGB(60, 100, 70),
-        Tab = Color3.fromRGB(80, 140, 90),
-        Element = Color3.fromRGB(70, 120, 80),
-        ElementBorder = Color3.fromRGB(30, 50, 35),
-        InElementBorder = Color3.fromRGB(60, 90, 70),
-        ElementTransparency = 0.87,
-        ToggleSlider = Color3.fromRGB(90, 150, 100),
-        ToggleToggled = Color3.fromRGB(19, 57, 21),
-        SliderRail = Color3.fromRGB(90, 150, 100),
-        DropdownFrame = Color3.fromRGB(100, 160, 110),
-        DropdownHolder = Color3.fromRGB(35, 60, 40),
-        DropdownBorder = Color3.fromRGB(30, 50, 35),
-        DropdownOption = Color3.fromRGB(90, 150, 100),
-        Keybind = Color3.fromRGB(90, 150, 100),
-        Input = Color3.fromRGB(90, 150, 100),
-        InputFocused = Color3.fromRGB(15, 25, 18),
-        InputIndicator = Color3.fromRGB(110, 170, 120),
-        InputIndicatorFocus = Color3.fromRGB(46, 141, 70),
-        Dialog = Color3.fromRGB(35, 60, 40),
-        DialogHolder = Color3.fromRGB(30, 50, 35),
-        DialogHolderLine = Color3.fromRGB(25, 45, 30),
-        DialogButton = Color3.fromRGB(35, 60, 40),
-        DialogButtonBorder = Color3.fromRGB(70, 110, 80),
-        DialogBorder = Color3.fromRGB(60, 100, 70),
-        DialogInput = Color3.fromRGB(45, 70, 50),
-        DialogInputLine = Color3.fromRGB(100, 160, 110),
-        Text = Color3.fromRGB(240, 240, 240),
-        SubText = Color3.fromRGB(170, 170, 170),
-        Hover = Color3.fromRGB(90, 150, 100),
-        HoverChange = 0.04
-    },
-    Sunset = {
-        Name = "Sunset",
-        Accent = Color3.fromRGB(255, 128, 0),
-        AcrylicMain = Color3.fromRGB(40, 25, 25),
-        AcrylicBorder = Color3.fromRGB(130, 80, 60),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(70, 35, 20), Color3.fromRGB(60, 30, 20)),
-        AcrylicNoise = 0.92,
-        TitleBarLine = Color3.fromRGB(140, 90, 70),
-        Tab = Color3.fromRGB(180, 120, 90),
-        Element = Color3.fromRGB(160, 100, 70),
-        ElementBorder = Color3.fromRGB(70, 40, 30),
-        InElementBorder = Color3.fromRGB(110, 70, 50),
-        ElementTransparency = 0.87,
-        ToggleSlider = Color3.fromRGB(180, 110, 80),
-        ToggleToggled = Color3.fromRGB(62, 34, 21),
-        SliderRail = Color3.fromRGB(180, 110, 80),
-        DropdownFrame = Color3.fromRGB(190, 130, 100),
-        DropdownHolder = Color3.fromRGB(60, 35, 25),
-        DropdownBorder = Color3.fromRGB(70, 40, 30),
-        DropdownOption = Color3.fromRGB(180, 110, 80),
-        Keybind = Color3.fromRGB(180, 110, 80),
-        Input = Color3.fromRGB(180, 110, 80),
-        InputFocused = Color3.fromRGB(30, 20, 15),
-        InputIndicator = Color3.fromRGB(200, 130, 100),
-        InputIndicatorFocus = Color3.fromRGB(255, 128, 0),
-        Dialog = Color3.fromRGB(60, 35, 25),
-        DialogHolder = Color3.fromRGB(50, 30, 20),
-        DialogHolderLine = Color3.fromRGB(45, 25, 15),
-        DialogButton = Color3.fromRGB(60, 35, 25),
-        DialogButtonBorder = Color3.fromRGB(100, 65, 45),
-        DialogBorder = Color3.fromRGB(90, 55, 40),
-        DialogInput = Color3.fromRGB(70, 45, 35),
-        DialogInputLine = Color3.fromRGB(190, 120, 90),
-        Text = Color3.fromRGB(240, 240, 240),
-        SubText = Color3.fromRGB(170, 170, 170),
-        Hover = Color3.fromRGB(180, 110, 80),
-        HoverChange = 0.04
-    },
-    Ocean = {
-        Name = "Ocean",
-        Accent = Color3.fromRGB(0, 141, 255),
-        AcrylicMain = Color3.fromRGB(20, 25, 40),
-        AcrylicBorder = Color3.fromRGB(40, 60, 100),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(15, 25, 45), Color3.fromRGB(20, 30, 50)),
-        AcrylicNoise = 0.92,
-        TitleBarLine = Color3.fromRGB(50, 70, 120),
-        Tab = Color3.fromRGB(70, 90, 160),
-        Element = Color3.fromRGB(60, 80, 140),
-        ElementBorder = Color3.fromRGB(30, 40, 70),
-        InElementBorder = Color3.fromRGB(50, 60, 100),
-        ElementTransparency = 0.87,
-        ToggleSlider = Color3.fromRGB(80, 100, 170),
-        ToggleToggled = Color3.fromRGB(11, 35, 67),
-        SliderRail = Color3.fromRGB(80, 100, 170),
-        DropdownFrame = Color3.fromRGB(90, 110, 180),
-        DropdownHolder = Color3.fromRGB(25, 35, 60),
-        DropdownBorder = Color3.fromRGB(30, 40, 70),
-        DropdownOption = Color3.fromRGB(80, 100, 170),
-        Keybind = Color3.fromRGB(80, 100, 170),
-        Input = Color3.fromRGB(80, 100, 170),
-        InputFocused = Color3.fromRGB(15, 20, 35),
-        InputIndicator = Color3.fromRGB(100, 120, 190),
-        InputIndicatorFocus = Color3.fromRGB(0, 141, 255),
-        Dialog = Color3.fromRGB(25, 35, 60),
-        DialogHolder = Color3.fromRGB(20, 30, 55),
-        DialogHolderLine = Color3.fromRGB(15, 25, 50),
-        DialogButton = Color3.fromRGB(25, 35, 60),
-        DialogButtonBorder = Color3.fromRGB(45, 65, 110),
-        DialogBorder = Color3.fromRGB(40, 60, 100),
-        DialogInput = Color3.fromRGB(35, 45, 70),
-        DialogInputLine = Color3.fromRGB(90, 110, 180),
-        Text = Color3.fromRGB(240, 240, 240),
-        SubText = Color3.fromRGB(170, 170, 170),
-        Hover = Color3.fromRGB(80, 100, 170),
-        HoverChange = 0.04
-    },
-    Emerald = {
-        Name = "Emerald",
-        Accent = Color3.fromRGB(0, 168, 107),
-        AcrylicMain = Color3.fromRGB(20, 35, 30),
-        AcrylicBorder = Color3.fromRGB(30, 100, 80),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(20, 55, 45), Color3.fromRGB(25, 60, 50)),
-        AcrylicNoise = 0.92,
-        TitleBarLine = Color3.fromRGB(40, 110, 90),
-        Tab = Color3.fromRGB(50, 130, 100),
-        Element = Color3.fromRGB(40, 120, 95),
-        ElementBorder = Color3.fromRGB(25, 75, 60),
-        InElementBorder = Color3.fromRGB(35, 85, 70),
-        ElementTransparency = 0.87,
-        ToggleSlider = Color3.fromRGB(45, 130, 100),
-        ToggleToggled = Color3.fromRGB(15, 40, 30),
-        SliderRail = Color3.fromRGB(45, 130, 100),
-        DropdownFrame = Color3.fromRGB(55, 140, 110),
-        DropdownHolder = Color3.fromRGB(20, 70, 55),
-        DropdownBorder = Color3.fromRGB(25, 75, 60),
-        DropdownOption = Color3.fromRGB(45, 130, 100),
-        Keybind = Color3.fromRGB(45, 130, 100),
-        Input = Color3.fromRGB(45, 130, 100),
-        InputFocused = Color3.fromRGB(10, 35, 25),
-        InputIndicator = Color3.fromRGB(55, 150, 120),
-        InputIndicatorFocus = Color3.fromRGB(0, 168, 107),
-        Dialog = Color3.fromRGB(20, 70, 55),
-        DialogHolder = Color3.fromRGB(15, 65, 50),
-        DialogHolderLine = Color3.fromRGB(15, 60, 45),
-        DialogButton = Color3.fromRGB(20, 70, 55),
-        DialogButtonBorder = Color3.fromRGB(30, 90, 70),
-        DialogBorder = Color3.fromRGB(25, 85, 65),
-        DialogInput = Color3.fromRGB(25, 75, 60),
-        DialogInputLine = Color3.fromRGB(50, 140, 110),
-        Text = Color3.fromRGB(240, 240, 240),
-        SubText = Color3.fromRGB(170, 170, 170),
-        Hover = Color3.fromRGB(45, 130, 100),
-        HoverChange = 0.04
-    },
-    Sapphire = {
-        Name = "Sapphire",
-        Accent = Color3.fromRGB(0, 105, 255),
-        AcrylicMain = Color3.fromRGB(24, 30, 85),
-        AcrylicBorder = Color3.fromRGB(25, 80, 150),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(13, 33, 94), Color3.fromRGB(21, 44, 127)),
-        AcrylicNoise = 0.88,
-        TitleBarLine = Color3.fromRGB(50, 120, 200),
-        Tab = Color3.fromRGB(60, 140, 220),
-        Element = Color3.fromRGB(42, 98, 176),
-        ElementBorder = Color3.fromRGB(23, 66, 113),
-        InElementBorder = Color3.fromRGB(27, 65, 126),
-        ElementTransparency = 0.85,
-        ToggleSlider = Color3.fromRGB(50, 140, 210),
-        ToggleToggled = Color3.fromRGB(20, 50, 80),
-        SliderRail = Color3.fromRGB(50, 140, 210),
-        DropdownFrame = Color3.fromRGB(60, 150, 230),
-        DropdownHolder = Color3.fromRGB(15, 60, 100),
-        DropdownBorder = Color3.fromRGB(30, 90, 140),
-        DropdownOption = Color3.fromRGB(50, 140, 210),
-        Keybind = Color3.fromRGB(50, 140, 210),
-        Input = Color3.fromRGB(50, 140, 210),
-        InputFocused = Color3.fromRGB(15, 40, 60),
-        InputIndicator = Color3.fromRGB(60, 160, 240),
-        InputIndicatorFocus = Color3.fromRGB(0, 105, 255),
-        Dialog = Color3.fromRGB(10, 60, 100),
-        DialogHolder = Color3.fromRGB(15, 50, 90),
-        DialogHolderLine = Color3.fromRGB(15, 45, 80),
-        DialogButton = Color3.fromRGB(10, 60, 100),
-        DialogButtonBorder = Color3.fromRGB(30, 100, 160),
-        DialogBorder = Color3.fromRGB(20, 80, 130),
-        DialogInput = Color3.fromRGB(30, 90, 140),
-        DialogInputLine = Color3.fromRGB(55, 150, 230),
-        Text = Color3.fromRGB(240, 240, 240),
-        SubText = Color3.fromRGB(170, 170, 170),
-        Hover = Color3.fromRGB(50, 140, 210),
-        HoverChange = 0.05
-    },
-    Cloud = {
-        Name = "Cloud",
-        Accent = Color3.fromRGB(27, 114, 138),
-        AcrylicMain = Color3.fromRGB(13, 62, 77),
-        AcrylicBorder = Color3.fromRGB(80, 118, 130),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(51, 74, 83), Color3.fromRGB(4, 47, 66)),
-        AcrylicNoise = 0.94,
-        TitleBarLine = Color3.fromRGB(97, 97, 97),
-        Tab = Color3.fromRGB(126, 175, 180),
-        Element = Color3.fromRGB(66, 130, 160),
-        ElementBorder = Color3.fromRGB(40, 100, 122),
-        InElementBorder = Color3.fromRGB(75, 109, 110),
-        ElementTransparency = 0.87,
-        ToggleSlider = Color3.fromRGB(100, 152, 160),
-        ToggleToggled = Color3.fromRGB(26, 59, 80),
-        SliderRail = Color3.fromRGB(115, 150, 160),
-        DropdownFrame = Color3.fromRGB(158, 194, 200),
-        DropdownHolder = Color3.fromRGB(39, 99, 116),
-        DropdownBorder = Color3.fromRGB(33, 119, 120),
-        DropdownOption = Color3.fromRGB(121, 152, 160),
-        Keybind = Color3.fromRGB(108, 153, 160),
-        Input = Color3.fromRGB(112, 156, 160),
-        InputFocused = Color3.fromRGB(14, 35, 40),
-        InputIndicator = Color3.fromRGB(137, 181, 190),
-        Dialog = Color3.fromRGB(11, 75, 88),
-        DialogHolder = Color3.fromRGB(18, 77, 93),
-        DialogHolderLine = Color3.fromRGB(33, 76, 86),
-        DialogButton = Color3.fromRGB(43, 72, 80),
-        DialogButtonBorder = Color3.fromRGB(62, 100, 110),
-        DialogBorder = Color3.fromRGB(26, 86, 100),
-        DialogInput = Color3.fromRGB(4, 97, 107),
-        DialogInputLine = Color3.fromRGB(70, 120, 130),
-        Text = Color3.fromRGB(209, 240, 233),
-        SubText = Color3.fromRGB(170, 170, 170),
-        Hover = Color3.fromRGB(112, 155, 160),
-        HoverChange = 0.04
-    },
-    Grape = {
-        Name = "Grape",
-        Accent = Color3.fromRGB(183, 176, 223),
-        AcrylicMain = Color3.fromRGB(0, 0, 0),
-        AcrylicBorder = Color3.fromRGB(20, 20, 20),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(6, 0, 16), Color3.fromRGB(6, 0, 16)),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromRGB(25, 25, 25),
-        Tab = Color3.fromRGB(40, 40, 40),
-        Element = Color3.fromRGB(15, 15, 15),
-        ElementBorder = Color3.fromRGB(6, 0, 16),
-        InElementBorder = Color3.fromRGB(40, 40, 40),
-        ElementTransparency = 1,
-        ToggleSlider = Color3.fromRGB(255, 255, 255),
-        ToggleToggled = Color3.fromRGB(19, 16, 36),
-        SliderRail = Color3.fromRGB(40, 40, 40),
-        DropdownFrame = Color3.fromRGB(20, 20, 20),
-        DropdownHolder = Color3.fromRGB(12, 0, 34),
-        DropdownBorder = Color3.fromRGB(6, 0, 16),
-        DropdownOption = Color3.fromRGB(40, 40, 40),
-        Keybind = Color3.fromRGB(40, 40, 40),
-        Input = Color3.fromRGB(40, 40, 40),
-        InputFocused = Color3.fromRGB(6, 0, 16),
-        InputIndicator = Color3.fromRGB(60, 60, 60),
-        InputIndicatorFocus = Color3.fromRGB(255, 255, 255),
-        Dialog = Color3.fromRGB(7, 0, 18),
-        DialogHolder = Color3.fromRGB(7, 0, 18),
-        DialogHolderLine = Color3.fromRGB(7, 0, 18),
-        DialogButton = Color3.fromRGB(13, 0, 33),
-        DialogButtonBorder = Color3.fromRGB(30, 30, 30),
-        DialogBorder = Color3.fromRGB(27, 27, 27),
-        DialogInput = Color3.fromRGB(7, 0, 18),
-        DialogInputLine = Color3.fromRGB(60, 60, 60),
-        Text = Color3.fromRGB(255, 255, 255),
-        SubText = Color3.fromRGB(123, 144, 170),
-        Hover = Color3.fromRGB(40, 40, 40),
-        HoverChange = 0.04
-    },
-    Bloody = {
-        Name = "Bloody",
-        Accent = Color3.fromRGB(144, 0, 0),
-        AcrylicMain = Color3.fromRGB(61, 0, 0),
-        AcrylicBorder = Color3.fromRGB(86, 0, 0),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(90, 0, 0), Color3.fromRGB(100, 0, 0)),
-        AcrylicNoise = 0.92,
-        TitleBarLine = Color3.fromRGB(126, 0, 0),
-        Tab = Color3.fromRGB(134, 0, 0),
-        Element = Color3.fromRGB(156, 0, 0),
-        ElementBorder = Color3.fromRGB(91, 0, 0),
-        InElementBorder = Color3.fromRGB(106, 0, 0),
-        ElementTransparency = 0.86,
-        ToggleSlider = Color3.fromRGB(130, 5, 5),
-        ToggleToggled = Color3.fromRGB(66, 0, 0),
-        SliderRail = Color3.fromRGB(150, 30, 30),
-        DropdownFrame = Color3.fromRGB(150, 30, 30),
-        DropdownHolder = Color3.fromRGB(79, 0, 0),
-        DropdownBorder = Color3.fromRGB(116, 0, 0),
-        DropdownOption = Color3.fromRGB(150, 30, 30),
-        Keybind = Color3.fromRGB(150, 30, 30),
-        Input = Color3.fromRGB(150, 30, 30),
-        InputFocused = Color3.fromRGB(40, 10, 10),
-        InputIndicator = Color3.fromRGB(113, 1, 1),
-        Dialog = Color3.fromRGB(85, 0, 1),
-        DialogHolder = Color3.fromRGB(77, 0, 8),
-        DialogHolderLine = Color3.fromRGB(88, 4, 4),
-        DialogButton = Color3.fromRGB(115, 14, 21),
-        DialogButtonBorder = Color3.fromRGB(83, 0, 1),
-        DialogBorder = Color3.fromRGB(43, 4, 5),
-        DialogInput = Color3.fromRGB(108, 20, 21),
-        DialogInputLine = Color3.fromRGB(91, 1, 1),
-        Text = Color3.fromRGB(240, 240, 240),
-        SubText = Color3.fromRGB(131, 131, 131),
-        Hover = Color3.fromRGB(181, 0, 0),
-        HoverChange = 0.04
-    },
-    Arctic = {
-        Name = "Arctic",
-        Accent = Color3.fromRGB(64, 224, 255),
-        AcrylicMain = Color3.fromRGB(10, 18, 25),
-        AcrylicBorder = Color3.fromRGB(35, 55, 70),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(15, 25, 35), Color3.fromRGB(18, 30, 40)),
-        AcrylicNoise = 0.94,
-        TitleBarLine = Color3.fromRGB(45, 70, 90),
-        Tab = Color3.fromRGB(70, 110, 140),
-        Element = Color3.fromRGB(60, 95, 120),
-        ElementBorder = Color3.fromRGB(60, 95, 120),
-        InElementBorder = Color3.fromRGB(70, 110, 140),
-        ElementTransparency = 0.88,
-        ToggleSlider = Color3.fromRGB(90, 140, 180),
-        ToggleToggled = Color3.fromRGB(15, 25, 35),
-        SliderRail = Color3.fromRGB(90, 140, 180),
-        DropdownFrame = Color3.fromRGB(110, 170, 220),
-        DropdownHolder = Color3.fromRGB(30, 45, 60),
-        DropdownBorder = Color3.fromRGB(60, 95, 120),
-        DropdownOption = Color3.fromRGB(90, 140, 180),
-        Keybind = Color3.fromRGB(90, 140, 180),
-        Input = Color3.fromRGB(90, 140, 180),
-        InputFocused = Color3.fromRGB(10, 18, 25),
-        InputIndicator = Color3.fromRGB(130, 200, 255),
-        InputIndicatorFocus = Color3.fromRGB(64, 224, 255),
-        Dialog = Color3.fromRGB(30, 45, 60),
-        DialogHolder = Color3.fromRGB(18, 30, 40),
-        DialogHolderLine = Color3.fromRGB(15, 25, 35),
-        DialogButton = Color3.fromRGB(30, 45, 60),
-        DialogButtonBorder = Color3.fromRGB(45, 70, 90),
-        DialogBorder = Color3.fromRGB(40, 60, 80),
-        DialogInput = Color3.fromRGB(35, 55, 70),
-        DialogInputLine = Color3.fromRGB(110, 170, 220),
-        Text = Color3.fromRGB(240, 250, 255),
-        SubText = Color3.fromRGB(180, 200, 220),
-        Hover = Color3.fromRGB(90, 140, 180),
-        HoverChange = 0.04
-    },
-    Abyss = {
-        Name = "Abyss",
-        Accent = Color3.fromRGB(0, 180, 219),
-        AcrylicMain = Color3.fromRGB(10, 12, 18),
-        AcrylicBorder = Color3.fromRGB(22, 27, 34),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(10, 12, 18), Color3.fromRGB(15, 18, 26)),
-        AcrylicNoise = 0.95,
-        TitleBarLine = Color3.fromRGB(28, 33, 40),
-        Tab = Color3.fromRGB(45, 51, 60),
-        Element = Color3.fromRGB(35, 40, 48),
-        ElementBorder = Color3.fromRGB(20, 24, 30),
-        InElementBorder = Color3.fromRGB(40, 46, 54),
-        ElementTransparency = 0.90,
-        ToggleSlider = Color3.fromRGB(50, 57, 66),
-        ToggleToggled = Color3.fromRGB(0, 180, 219),
-        SliderRail = Color3.fromRGB(45, 51, 60),
-        DropdownFrame = Color3.fromRGB(40, 46, 54),
-        DropdownHolder = Color3.fromRGB(15, 18, 24),
-        DropdownBorder = Color3.fromRGB(25, 30, 36),
-        DropdownOption = Color3.fromRGB(50, 57, 66),
-        Keybind = Color3.fromRGB(45, 51, 60),
-        Input = Color3.fromRGB(40, 46, 54),
-        InputFocused = Color3.fromRGB(20, 24, 30),
-        InputIndicator = Color3.fromRGB(60, 68, 78),
-        InputIndicatorFocus = Color3.fromRGB(0, 180, 219),
-        Dialog = Color3.fromRGB(15, 18, 24),
-        DialogHolder = Color3.fromRGB(12, 14, 20),
-        DialogHolderLine = Color3.fromRGB(18, 22, 28),
-        DialogButton = Color3.fromRGB(25, 30, 36),
-        DialogButtonBorder = Color3.fromRGB(35, 40, 48),
-        DialogBorder = Color3.fromRGB(30, 36, 42),
-        DialogInput = Color3.fromRGB(20, 24, 30),
-        DialogInputLine = Color3.fromRGB(50, 57, 66),
-        Text = Color3.fromRGB(240, 240, 240),
-        SubText = Color3.fromRGB(160, 160, 160),
-        Hover = Color3.fromRGB(50, 57, 66),
-        HoverChange = 0.05
-    },
-    Ambiance = {
-        Name = "Ambiance",
-        Accent = Color3.fromRGB(255, 149, 92),
-        AcrylicMain = Color3.fromRGB(53, 59, 69),
-        AcrylicBorder = Color3.fromRGB(79, 86, 100),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(53, 59, 69), Color3.fromRGB(60, 66, 77)),
-        AcrylicNoise = 0.92,
-        TitleBarLine = Color3.fromRGB(70, 77, 89),
-        Tab = Color3.fromRGB(90, 98, 112),
-        Element = Color3.fromRGB(79, 86, 100),
-        ElementBorder = Color3.fromRGB(45, 50, 59),
-        InElementBorder = Color3.fromRGB(65, 72, 83),
-        ElementTransparency = 0.85,
-        ToggleSlider = Color3.fromRGB(100, 108, 122),
-        ToggleToggled = Color3.fromRGB(255, 149, 92),
-        SliderRail = Color3.fromRGB(90, 98, 112),
-        DropdownFrame = Color3.fromRGB(110, 118, 132),
-        DropdownHolder = Color3.fromRGB(45, 50, 59),
-        DropdownBorder = Color3.fromRGB(60, 66, 77),
-        DropdownOption = Color3.fromRGB(100, 108, 122),
-        Keybind = Color3.fromRGB(95, 103, 117),
-        Input = Color3.fromRGB(90, 98, 112),
-        InputFocused = Color3.fromRGB(35, 39, 47),
-        InputIndicator = Color3.fromRGB(120, 128, 142),
-        InputIndicatorFocus = Color3.fromRGB(255, 149, 92),
-        Dialog = Color3.fromRGB(45, 50, 59),
-        DialogHolder = Color3.fromRGB(40, 44, 52),
-        DialogHolderLine = Color3.fromRGB(50, 55, 64),
-        DialogButton = Color3.fromRGB(60, 66, 77),
-        DialogButtonBorder = Color3.fromRGB(70, 77, 89),
-        DialogBorder = Color3.fromRGB(65, 72, 83),
-        DialogInput = Color3.fromRGB(50, 55, 64),
-        DialogInputLine = Color3.fromRGB(100, 108, 122),
-        Text = Color3.fromRGB(240, 240, 240),
-        SubText = Color3.fromRGB(180, 180, 180),
-        Hover = Color3.fromRGB(100, 108, 122),
-        HoverChange = 0.06
-    },
-    ["Adapta Nokto"] = {
-        Name = "Adapta Nokto",
-        Accent = Color3.fromRGB(61, 189, 110),
-        AcrylicMain = Color3.fromRGB(46, 52, 64),
-        AcrylicBorder = Color3.fromRGB(67, 76, 94),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(46, 52, 64), Color3.fromRGB(52, 59, 72)),
-        AcrylicNoise = 0.93,
-        TitleBarLine = Color3.fromRGB(59, 66, 82),
-        Tab = Color3.fromRGB(76, 86, 106),
-        Element = Color3.fromRGB(67, 76, 94),
-        ElementBorder = Color3.fromRGB(40, 46, 56),
-        InElementBorder = Color3.fromRGB(59, 66, 82),
-        ElementTransparency = 0.87,
-        ToggleSlider = Color3.fromRGB(85, 95, 115),
-        ToggleToggled = Color3.fromRGB(61, 189, 110),
-        SliderRail = Color3.fromRGB(76, 86, 106),
-        DropdownFrame = Color3.fromRGB(94, 104, 124),
-        DropdownHolder = Color3.fromRGB(40, 46, 56),
-        DropdownBorder = Color3.fromRGB(52, 59, 72),
-        DropdownOption = Color3.fromRGB(85, 95, 115),
-        Keybind = Color3.fromRGB(80, 90, 110),
-        Input = Color3.fromRGB(76, 86, 106),
-        InputFocused = Color3.fromRGB(35, 40, 49),
-        InputIndicator = Color3.fromRGB(100, 110, 130),
-        InputIndicatorFocus = Color3.fromRGB(61, 189, 110),
-        Dialog = Color3.fromRGB(40, 46, 56),
-        DialogHolder = Color3.fromRGB(35, 40, 49),
-        DialogHolderLine = Color3.fromRGB(45, 51, 63),
-        DialogButton = Color3.fromRGB(52, 59, 72),
-        DialogButtonBorder = Color3.fromRGB(62, 70, 86),
-        DialogBorder = Color3.fromRGB(59, 66, 82),
-        DialogInput = Color3.fromRGB(46, 52, 64),
-        DialogInputLine = Color3.fromRGB(85, 95, 115),
-        Text = Color3.fromRGB(236, 239, 244),
-        SubText = Color3.fromRGB(175, 180, 190),
-        Hover = Color3.fromRGB(85, 95, 115),
-        HoverChange = 0.07
-    },
-    ["Amethyst Dark"] = {
-        Name = "Amethyst Dark",
-        Accent = Color3.fromRGB(157, 107, 219),
-        AcrylicMain = Color3.fromRGB(36, 28, 49),
-        AcrylicBorder = Color3.fromRGB(59, 47, 79),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(36, 28, 49), Color3.fromRGB(42, 33, 57)),
-        AcrylicNoise = 0.94,
-        TitleBarLine = Color3.fromRGB(50, 40, 67),
-        Tab = Color3.fromRGB(68, 54, 91),
-        Element = Color3.fromRGB(59, 47, 79),
-        ElementBorder = Color3.fromRGB(30, 24, 41),
-        InElementBorder = Color3.fromRGB(50, 40, 67),
-        ElementTransparency = 0.88,
-        ToggleSlider = Color3.fromRGB(77, 61, 103),
-        ToggleToggled = Color3.fromRGB(157, 107, 219),
-        SliderRail = Color3.fromRGB(68, 54, 91),
-        DropdownFrame = Color3.fromRGB(86, 68, 115),
-        DropdownHolder = Color3.fromRGB(30, 24, 41),
-        DropdownBorder = Color3.fromRGB(42, 33, 57),
-        DropdownOption = Color3.fromRGB(77, 61, 103),
-        Keybind = Color3.fromRGB(72, 58, 97),
-        Input = Color3.fromRGB(68, 54, 91),
-        InputFocused = Color3.fromRGB(25, 20, 34),
-        InputIndicator = Color3.fromRGB(95, 75, 127),
-        InputIndicatorFocus = Color3.fromRGB(157, 107, 219),
-        Dialog = Color3.fromRGB(30, 24, 41),
-        DialogHolder = Color3.fromRGB(26, 21, 36),
-        DialogHolderLine = Color3.fromRGB(35, 28, 48),
-        DialogButton = Color3.fromRGB(42, 33, 57),
-        DialogButtonBorder = Color3.fromRGB(52, 41, 70),
-        DialogBorder = Color3.fromRGB(50, 40, 67),
-        DialogInput = Color3.fromRGB(36, 28, 49),
-        DialogInputLine = Color3.fromRGB(77, 61, 103),
-        Text = Color3.fromRGB(240, 240, 240),
-        SubText = Color3.fromRGB(180, 180, 180),
-        Hover = Color3.fromRGB(77, 61, 103),
-        HoverChange = 0.06
-    },
-    ["Arc Dark"] = {
-        Name = "Arc Dark",
-        Accent = Color3.fromRGB(66, 142, 255),
-        AcrylicMain = Color3.fromRGB(47, 52, 63),
-        AcrylicBorder = Color3.fromRGB(65, 72, 86),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(47, 52, 63), Color3.fromRGB(53, 59, 71)),
-        AcrylicNoise = 0.92,
-        TitleBarLine = Color3.fromRGB(59, 65, 79),
-        Tab = Color3.fromRGB(74, 82, 98),
-        Element = Color3.fromRGB(65, 72, 86),
-        ElementBorder = Color3.fromRGB(41, 45, 55),
-        InElementBorder = Color3.fromRGB(59, 65, 79),
-        ElementTransparency = 0.86,
-        ToggleSlider = Color3.fromRGB(83, 91, 107),
-        ToggleToggled = Color3.fromRGB(66, 142, 255),
-        SliderRail = Color3.fromRGB(74, 82, 98),
-        DropdownFrame = Color3.fromRGB(92, 100, 116),
-        DropdownHolder = Color3.fromRGB(41, 45, 55),
-        DropdownBorder = Color3.fromRGB(53, 59, 71),
-        DropdownOption = Color3.fromRGB(83, 91, 107),
-        Keybind = Color3.fromRGB(78, 86, 102),
-        Input = Color3.fromRGB(74, 82, 98),
-        InputFocused = Color3.fromRGB(35, 39, 47),
-        InputIndicator = Color3.fromRGB(101, 109, 125),
-        InputIndicatorFocus = Color3.fromRGB(66, 142, 255),
-        Dialog = Color3.fromRGB(41, 45, 55),
-        DialogHolder = Color3.fromRGB(37, 41, 50),
-        DialogHolderLine = Color3.fromRGB(47, 52, 63),
-        DialogButton = Color3.fromRGB(53, 59, 71),
-        DialogButtonBorder = Color3.fromRGB(63, 69, 83),
-        DialogBorder = Color3.fromRGB(59, 65, 79),
-        DialogInput = Color3.fromRGB(47, 52, 63),
-        DialogInputLine = Color3.fromRGB(83, 91, 107),
-        Text = Color3.fromRGB(240, 240, 240),
-        SubText = Color3.fromRGB(170, 170, 170),
-        Hover = Color3.fromRGB(83, 91, 107),
-        HoverChange = 0.07
-    },
-    ["Dark Typewriter"] = {
-        Name = "Dark Typewriter",
-        Accent = Color3.fromRGB(255, 255, 255),
-        AcrylicMain = Color3.fromRGB(20, 20, 20),
-        AcrylicBorder = Color3.fromRGB(80, 80, 80),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(10, 10, 10), Color3.fromRGB(15, 15, 15)),
-        AcrylicNoise = 0.98,
-        TitleBarLine = Color3.fromRGB(60, 60, 60),
-        Tab = Color3.fromRGB(100, 100, 100),
-        Element = Color3.fromRGB(40, 40, 40),
-        ElementBorder = Color3.fromRGB(30, 30, 30),
-        InElementBorder = Color3.fromRGB(70, 70, 70),
-        ElementTransparency = 0.89,
-        ToggleSlider = Color3.fromRGB(120, 120, 120),
-        ToggleToggled = Color3.fromRGB(255, 255, 255),
-        SliderRail = Color3.fromRGB(100, 100, 100),
-        DropdownFrame = Color3.fromRGB(140, 140, 140),
-        DropdownHolder = Color3.fromRGB(25, 25, 25),
-        DropdownBorder = Color3.fromRGB(50, 50, 50),
-        DropdownOption = Color3.fromRGB(120, 120, 120),
-        Keybind = Color3.fromRGB(110, 110, 110),
-        Input = Color3.fromRGB(100, 100, 100),
-        InputFocused = Color3.fromRGB(15, 15, 15),
-        InputIndicator = Color3.fromRGB(150, 150, 150),
-        InputIndicatorFocus = Color3.fromRGB(255, 255, 255),
-        Dialog = Color3.fromRGB(25, 25, 25),
-        DialogHolder = Color3.fromRGB(20, 20, 20),
-        DialogHolderLine = Color3.fromRGB(35, 35, 35),
-        DialogButton = Color3.fromRGB(40, 40, 40),
-        DialogButtonBorder = Color3.fromRGB(60, 60, 60),
-        DialogBorder = Color3.fromRGB(55, 55, 55),
-        DialogInput = Color3.fromRGB(30, 30, 30),
-        DialogInputLine = Color3.fromRGB(120, 120, 120),
-        Text = Color3.fromRGB(255, 255, 255),
-        SubText = Color3.fromRGB(180, 180, 180),
-        Hover = Color3.fromRGB(120, 120, 120),
-        HoverChange = 0.08
-    },
-    ["DuoTone Dark Earth"] = {
-        Name = "DuoTone Dark Earth",
-        Accent = Color3.fromHex("#fecb52"),
-        AcrylicMain = Color3.fromHex("#2c2826"),
-        AcrylicBorder = Color3.fromHex("#48413d"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#2c2826"), Color3.fromHex("#2c2826")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#48413d"),
-        Tab = Color3.fromHex("#bd987f"),
-        Element = Color3.fromHex("#35302D"),
-        ElementBorder = Color3.fromHex("#48413d"),
-        InElementBorder = Color3.fromHex("#fecb52"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#fecb52"),
-        ToggleToggled = Color3.fromHex("#2c2826"),
-        SliderRail = Color3.fromHex("#fecb52"),
-        DropdownFrame = Color3.fromHex("#35302D"),
-        DropdownHolder = Color3.fromHex("#35302D"),
-        DropdownBorder = Color3.fromHex("#48413d"),
-        DropdownOption = Color3.fromHex("#bd987f"),
-        Keybind = Color3.fromHex("#35302D"),
-        Input = Color3.fromHex("#35302D"),
-        InputFocused = Color3.fromHex("#35302D"),
-        InputIndicator = Color3.fromHex("#564b43"),
-        Dialog = Color3.fromHex("#35302D"),
-        DialogHolder = Color3.fromHex("#2c2826"),
-        DialogHolderLine = Color3.fromHex("#48413d"),
-        DialogButton = Color3.fromHex("#35302D"),
-        DialogButtonBorder = Color3.fromHex("#48413d"),
-        DialogBorder = Color3.fromHex("#48413d"),
-        DialogInput = Color3.fromHex("#35302D"),
-        DialogInputLine = Color3.fromHex("#fecb52"),
-        Text = Color3.fromHex("#bd987f"),
-        SubText = Color3.fromHex("#564b43"),
-        Hover = Color3.fromHex("#4D4642"),
-        HoverChange = 0.1
-    },
-    ["DuoTone Dark Forest"] = {
-        Name = "DuoTone Dark Forest",
-        Accent = Color3.fromHex("#e7f98b"),
-        AcrylicMain = Color3.fromHex("#2a2d2a"),
-        AcrylicBorder = Color3.fromHex("#424842"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#2a2d2a"), Color3.fromHex("#2a2d2a")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#424842"),
-        Tab = Color3.fromHex("#a9bca9"),
-        Element = Color3.fromHex("#313531"),
-        ElementBorder = Color3.fromHex("#424842"),
-        InElementBorder = Color3.fromHex("#e7f98b"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#e7f98b"),
-        ToggleToggled = Color3.fromHex("#2a2d2a"),
-        SliderRail = Color3.fromHex("#e7f98b"),
-        DropdownFrame = Color3.fromHex("#313531"),
-        DropdownHolder = Color3.fromHex("#313531"),
-        DropdownBorder = Color3.fromHex("#424842"),
-        DropdownOption = Color3.fromHex("#a9bca9"),
-        Keybind = Color3.fromHex("#313531"),
-        Input = Color3.fromHex("#313531"),
-        InputFocused = Color3.fromHex("#313531"),
-        InputIndicator = Color3.fromHex("#585f58"),
-        Dialog = Color3.fromHex("#313531"),
-        DialogHolder = Color3.fromHex("#2a2d2a"),
-        DialogHolderLine = Color3.fromHex("#424842"),
-        DialogButton = Color3.fromHex("#313531"),
-        DialogButtonBorder = Color3.fromHex("#424842"),
-        DialogBorder = Color3.fromHex("#424842"),
-        DialogInput = Color3.fromHex("#313531"),
-        DialogInputLine = Color3.fromHex("#e7f98b"),
-        Text = Color3.fromHex("#a9bca9"),
-        SubText = Color3.fromHex("#585f58"),
-        Hover = Color3.fromHex("#474D47"),
-        HoverChange = 0.1
-    },
-    ["DuoTone Dark Sea"] = {
-        Name = "DuoTone Dark Sea",
-        Accent = Color3.fromHex("#34FEBB"),
-        AcrylicMain = Color3.fromHex("#1D262F"),
-        AcrylicBorder = Color3.fromHex("#303F4F"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#1D262F"), Color3.fromHex("#1D262F")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#303F4F"),
-        Tab = Color3.fromHex("#88b4e7"),
-        Element = Color3.fromHex("#232D38"),
-        ElementBorder = Color3.fromHex("#303F4F"),
-        InElementBorder = Color3.fromHex("#34FEBB"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#34FEBB"),
-        ToggleToggled = Color3.fromHex("#1D262F"),
-        SliderRail = Color3.fromHex("#34FEBB"),
-        DropdownFrame = Color3.fromHex("#232D38"),
-        DropdownHolder = Color3.fromHex("#232D38"),
-        DropdownBorder = Color3.fromHex("#303F4F"),
-        DropdownOption = Color3.fromHex("#88b4e7"),
-        Keybind = Color3.fromHex("#232D38"),
-        Input = Color3.fromHex("#232D38"),
-        InputFocused = Color3.fromHex("#232D38"),
-        InputIndicator = Color3.fromHex("#444c55"),
-        Dialog = Color3.fromHex("#232D38"),
-        DialogHolder = Color3.fromHex("#1D262F"),
-        DialogHolderLine = Color3.fromHex("#303F4F"),
-        DialogButton = Color3.fromHex("#232D38"),
-        DialogButtonBorder = Color3.fromHex("#303F4F"),
-        DialogBorder = Color3.fromHex("#303F4F"),
-        DialogInput = Color3.fromHex("#232D38"),
-        DialogInputLine = Color3.fromHex("#34FEBB"),
-        Text = Color3.fromHex("#88b4e7"),
-        SubText = Color3.fromHex("#444c55"),
-        Hover = Color3.fromHex("#354454"),
-        HoverChange = 0.1
-    },
-    ["DuoTone Dark Sky"] = {
-        Name = "DuoTone Dark Sky",
-        Accent = Color3.fromHex("#fec38f"),
-        AcrylicMain = Color3.fromHex("#2c2734"),
-        AcrylicBorder = Color3.fromHex("#443d51"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#2c2734"), Color3.fromHex("#2c2734")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#443d51"),
-        Tab = Color3.fromHex("#cab2fa"),
-        Element = Color3.fromHex("#342E3D"),
-        ElementBorder = Color3.fromHex("#443d51"),
-        InElementBorder = Color3.fromHex("#fec38f"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#fec38f"),
-        ToggleToggled = Color3.fromHex("#2c2734"),
-        SliderRail = Color3.fromHex("#fec38f"),
-        DropdownFrame = Color3.fromHex("#342E3D"),
-        DropdownHolder = Color3.fromHex("#342E3D"),
-        DropdownBorder = Color3.fromHex("#443d51"),
-        DropdownOption = Color3.fromHex("#cab2fa"),
-        Keybind = Color3.fromHex("#342E3D"),
-        Input = Color3.fromHex("#342E3D"),
-        InputFocused = Color3.fromHex("#342E3D"),
-        InputIndicator = Color3.fromHex("#544d60"),
-        Dialog = Color3.fromHex("#342E3D"),
-        DialogHolder = Color3.fromHex("#2c2734"),
-        DialogHolderLine = Color3.fromHex("#443d51"),
-        DialogButton = Color3.fromHex("#342E3D"),
-        DialogButtonBorder = Color3.fromHex("#443d51"),
-        DialogBorder = Color3.fromHex("#443d51"),
-        DialogInput = Color3.fromHex("#342E3D"),
-        DialogInputLine = Color3.fromHex("#fec38f"),
-        Text = Color3.fromHex("#cab2fa"),
-        SubText = Color3.fromHex("#544d60"),
-        Hover = Color3.fromHex("#494256"),
-        HoverChange = 0.1
-    },
-    ["DuoTone Dark Space"] = {
-        Name = "DuoTone Dark Space",
-        Accent = Color3.fromHex("#fe7734"),
-        AcrylicMain = Color3.fromHex("#24242e"),
-        AcrylicBorder = Color3.fromHex("#3a3a4a"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#24242e"), Color3.fromHex("#24242e")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#3a3a4a"),
-        Tab = Color3.fromHex("#8686cb"),
-        Element = Color3.fromHex("#2B2B36"),
-        ElementBorder = Color3.fromHex("#3a3a4a"),
-        InElementBorder = Color3.fromHex("#fe7734"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#fe7734"),
-        ToggleToggled = Color3.fromHex("#24242e"),
-        SliderRail = Color3.fromHex("#fe7734"),
-        DropdownFrame = Color3.fromHex("#2B2B36"),
-        DropdownHolder = Color3.fromHex("#2B2B36"),
-        DropdownBorder = Color3.fromHex("#3a3a4a"),
-        DropdownOption = Color3.fromHex("#8686cb"),
-        Keybind = Color3.fromHex("#2B2B36"),
-        Input = Color3.fromHex("#2B2B36"),
-        InputFocused = Color3.fromHex("#2B2B36"),
-        InputIndicator = Color3.fromHex("#49495a"),
-        Dialog = Color3.fromHex("#2B2B36"),
-        DialogHolder = Color3.fromHex("#24242e"),
-        DialogHolderLine = Color3.fromHex("#3a3a4a"),
-        DialogButton = Color3.fromHex("#2B2B36"),
-        DialogButtonBorder = Color3.fromHex("#3a3a4a"),
-        DialogBorder = Color3.fromHex("#3a3a4a"),
-        DialogInput = Color3.fromHex("#2B2B36"),
-        DialogInputLine = Color3.fromHex("#fe7734"),
-        Text = Color3.fromHex("#8686cb"),
-        SubText = Color3.fromHex("#49495a"),
-        Hover = Color3.fromHex("#3F3F4F"),
-        HoverChange = 0.1
-    },
-    Elementary = {
-        Name = "Elementary",
-        Accent = Color3.fromHex("#cb5226"),
-        AcrylicMain = Color3.fromHex("#eff0f1"),
-        AcrylicBorder = Color3.fromHex("#e9d18d"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#eff0f1"), Color3.fromHex("#eff0f1")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#e9d18d"),
-        Tab = Color3.fromHex("#5e5e5e"),
-        Element = Color3.fromHex("#fdf6e3"),
-        ElementBorder = Color3.fromHex("#e9d18d"),
-        InElementBorder = Color3.fromHex("#cb5226"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#cb5226"),
-        ToggleToggled = Color3.fromHex("#fdf6e3"),
-        SliderRail = Color3.fromHex("#cb5226"),
-        DropdownFrame = Color3.fromHex("#fbefce"),
-        DropdownHolder = Color3.fromHex("#fbefce"),
-        DropdownBorder = Color3.fromHex("#e9d18d"),
-        DropdownOption = Color3.fromHex("#5e5e5e"),
-        Keybind = Color3.fromHex("#fdf6e3"),
-        Input = Color3.fromHex("#fdf6e3"),
-        InputFocused = Color3.fromHex("#fdf6e3"),
-        InputIndicator = Color3.fromHex("#93a1a1"),
-        Dialog = Color3.fromHex("#fbefce"),
-        DialogHolder = Color3.fromHex("#fbefce"),
-        DialogHolderLine = Color3.fromHex("#e9d18d"),
-        DialogButton = Color3.fromHex("#fbefce"),
-        DialogButtonBorder = Color3.fromHex("#e9d18d"),
-        DialogBorder = Color3.fromHex("#e9d18d"),
-        DialogInput = Color3.fromHex("#fdf6e3"),
-        DialogInputLine = Color3.fromHex("#cb5226"),
-        Text = Color3.fromHex("#5e5e5e"),
-        SubText = Color3.fromHex("#93a1a1"),
-        Hover = Color3.fromHex("#d6d6d6"),
-        HoverChange = 0.1
-    },
-    ["GitHub Dark Colorblind"] = {
-        Name = "GitHub Dark Colorblind",
-        Accent = Color3.fromHex("#1f6feb"),
-        AcrylicMain = Color3.fromHex("#010409"),
-        AcrylicBorder = Color3.fromHex("#30363d"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#010409"), Color3.fromHex("#010409")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#30363d"),
-        Tab = Color3.fromHex("#c9d1d9"),
-        Element = Color3.fromHex("#161b22"),
-        ElementBorder = Color3.fromHex("#30363d"),
-        InElementBorder = Color3.fromHex("#1f6feb"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#1f6feb"),
-        ToggleToggled = Color3.fromHex("#0d1117"),
-        SliderRail = Color3.fromHex("#1f6feb"),
-        DropdownFrame = Color3.fromHex("#161b22"),
-        DropdownHolder = Color3.fromHex("#161b22"),
-        DropdownBorder = Color3.fromHex("#30363d"),
-        DropdownOption = Color3.fromHex("#c9d1d9"),
-        Keybind = Color3.fromHex("#0d1117"),
-        Input = Color3.fromHex("#0d1117"),
-        InputFocused = Color3.fromHex("#0d1117"),
-        InputIndicator = Color3.fromHex("#6e7681"),
-        Dialog = Color3.fromHex("#161b22"),
-        DialogHolder = Color3.fromHex("#161b22"),
-        DialogHolderLine = Color3.fromHex("#30363d"),
-        DialogButton = Color3.fromHex("#0d1117"),
-        DialogButtonBorder = Color3.fromHex("#30363d"),
-        DialogBorder = Color3.fromHex("#30363d"),
-        DialogInput = Color3.fromHex("#0d1117"),
-        DialogInputLine = Color3.fromHex("#1f6feb"),
-        Text = Color3.fromHex("#c9d1d9"),
-        SubText = Color3.fromHex("#8b949e"),
-        Hover = Color3.fromHex("#6e7681"),
-        HoverChange = 0.1
-    },
-    ["GitHub Dark Default"] = {
-        Name = "GitHub Dark Default",
-        Accent = Color3.fromHex("#1f6feb"),
-        AcrylicMain = Color3.fromHex("#010409"),
-        AcrylicBorder = Color3.fromHex("#30363d"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#010409"), Color3.fromHex("#010409")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#30363d"),
-        Tab = Color3.fromHex("#e6edf3"),
-        Element = Color3.fromHex("#161b22"),
-        ElementBorder = Color3.fromHex("#30363d"),
-        InElementBorder = Color3.fromHex("#1f6feb"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#1f6feb"),
-        ToggleToggled = Color3.fromHex("#0d1117"),
-        SliderRail = Color3.fromHex("#1f6feb"),
-        DropdownFrame = Color3.fromHex("#161b22"),
-        DropdownHolder = Color3.fromHex("#161b22"),
-        DropdownBorder = Color3.fromHex("#30363d"),
-        DropdownOption = Color3.fromHex("#e6edf3"),
-        Keybind = Color3.fromHex("#0d1117"),
-        Input = Color3.fromHex("#0d1117"),
-        InputFocused = Color3.fromHex("#0d1117"),
-        InputIndicator = Color3.fromHex("#6e7681"),
-        Dialog = Color3.fromHex("#161b22"),
-        DialogHolder = Color3.fromHex("#161b22"),
-        DialogHolderLine = Color3.fromHex("#30363d"),
-        DialogButton = Color3.fromHex("#0d1117"),
-        DialogButtonBorder = Color3.fromHex("#30363d"),
-        DialogBorder = Color3.fromHex("#30363d"),
-        DialogInput = Color3.fromHex("#0d1117"),
-        DialogInputLine = Color3.fromHex("#1f6feb"),
-        Text = Color3.fromHex("#e6edf3"),
-        SubText = Color3.fromHex("#7d8590"),
-        Hover = Color3.fromHex("#6e7681"),
-        HoverChange = 0.1
-    },
-    ["GitHub Dark Dimmed"] = {
-        Name = "GitHub Dark Dimmed",
-        Accent = Color3.fromHex("#316dca"),
-        AcrylicMain = Color3.fromHex("#1c2128"),
-        AcrylicBorder = Color3.fromHex("#444c56"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#1c2128"), Color3.fromHex("#1c2128")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#444c56"),
-        Tab = Color3.fromHex("#adbac7"),
-        Element = Color3.fromHex("#2d333b"),
-        ElementBorder = Color3.fromHex("#444c56"),
-        InElementBorder = Color3.fromHex("#316dca"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#316dca"),
-        ToggleToggled = Color3.fromHex("#22272e"),
-        SliderRail = Color3.fromHex("#316dca"),
-        DropdownFrame = Color3.fromHex("#2d333b"),
-        DropdownHolder = Color3.fromHex("#2d333b"),
-        DropdownBorder = Color3.fromHex("#444c56"),
-        DropdownOption = Color3.fromHex("#adbac7"),
-        Keybind = Color3.fromHex("#22272e"),
-        Input = Color3.fromHex("#22272e"),
-        InputFocused = Color3.fromHex("#22272e"),
-        InputIndicator = Color3.fromHex("#636e7b"),
-        Dialog = Color3.fromHex("#2d333b"),
-        DialogHolder = Color3.fromHex("#2d333b"),
-        DialogHolderLine = Color3.fromHex("#444c56"),
-        DialogButton = Color3.fromHex("#22272e"),
-        DialogButtonBorder = Color3.fromHex("#444c56"),
-        DialogBorder = Color3.fromHex("#444c56"),
-        DialogInput = Color3.fromHex("#22272e"),
-        DialogInputLine = Color3.fromHex("#316dca"),
-        Text = Color3.fromHex("#adbac7"),
-        SubText = Color3.fromHex("#768390"),
-        Hover = Color3.fromHex("#636e7b"),
-        HoverChange = 0.1
-    },
-    ["GitHub Dark High Contrast"] = {
-        Name = "GitHub Dark High Contrast",
-        Accent = Color3.fromHex("#409eff"),
-        AcrylicMain = Color3.fromHex("#010409"),
-        AcrylicBorder = Color3.fromHex("#7a828e"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#010409"), Color3.fromHex("#010409")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#7a828e"),
-        Tab = Color3.fromHex("#f0f3f6"),
-        Element = Color3.fromHex("#272b33"),
-        ElementBorder = Color3.fromHex("#7a828e"),
-        InElementBorder = Color3.fromHex("#409eff"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#409eff"),
-        ToggleToggled = Color3.fromHex("#0a0c10"),
-        SliderRail = Color3.fromHex("#409eff"),
-        DropdownFrame = Color3.fromHex("#272b33"),
-        DropdownHolder = Color3.fromHex("#272b33"),
-        DropdownBorder = Color3.fromHex("#7a828e"),
-        DropdownOption = Color3.fromHex("#f0f3f6"),
-        Keybind = Color3.fromHex("#0a0c10"),
-        Input = Color3.fromHex("#0a0c10"),
-        InputFocused = Color3.fromHex("#0a0c10"),
-        InputIndicator = Color3.fromHex("#9ea7b3"),
-        Dialog = Color3.fromHex("#272b33"),
-        DialogHolder = Color3.fromHex("#272b33"),
-        DialogHolderLine = Color3.fromHex("#7a828e"),
-        DialogButton = Color3.fromHex("#0a0c10"),
-        DialogButtonBorder = Color3.fromHex("#7a828e"),
-        DialogBorder = Color3.fromHex("#7a828e"),
-        DialogInput = Color3.fromHex("#0a0c10"),
-        DialogInputLine = Color3.fromHex("#409eff"),
-        Text = Color3.fromHex("#f0f3f6"),
-        SubText = Color3.fromHex("#f0f3f6"),
-        Hover = Color3.fromHex("#9ea7b3"),
-        HoverChange = 0.1
-    },
-    ["GitHub Dark"] = {
-        Name = "GitHub Dark",
-        Accent = Color3.fromHex("#005cc5"),
-        AcrylicMain = Color3.fromHex("#1f2428"),
-        AcrylicBorder = Color3.fromHex("#1b1f23"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#1f2428"), Color3.fromHex("#1f2428")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#1b1f23"),
-        Tab = Color3.fromHex("#e1e4e8"),
-        Element = Color3.fromHex("#2f363d"),
-        ElementBorder = Color3.fromHex("#1b1f23"),
-        InElementBorder = Color3.fromHex("#005cc5"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#005cc5"),
-        ToggleToggled = Color3.fromHex("#2f363d"),
-        SliderRail = Color3.fromHex("#005cc5"),
-        DropdownFrame = Color3.fromHex("#2f363d"),
-        DropdownHolder = Color3.fromHex("#2f363d"),
-        DropdownBorder = Color3.fromHex("#1b1f23"),
-        DropdownOption = Color3.fromHex("#e1e4e8"),
-        Keybind = Color3.fromHex("#2f363d"),
-        Input = Color3.fromHex("#2f363d"),
-        InputFocused = Color3.fromHex("#2f363d"),
-        InputIndicator = Color3.fromHex("#959da5"),
-        Dialog = Color3.fromHex("#2f363d"),
-        DialogHolder = Color3.fromHex("#2f363d"),
-        DialogHolderLine = Color3.fromHex("#444d56"),
-        DialogButton = Color3.fromHex("#2f363d"),
-        DialogButtonBorder = Color3.fromHex("#1b1f23"),
-        DialogBorder = Color3.fromHex("#1b1f23"),
-        DialogInput = Color3.fromHex("#2f363d"),
-        DialogInputLine = Color3.fromHex("#005cc5"),
-        Text = Color3.fromHex("#d1d5da"),
-        SubText = Color3.fromHex("#959da5"),
-        Hover = Color3.fromHex("#282e34"),
-        HoverChange = 0.1
-    },
-    ["GitHub Light Colorblind"] = {
-        Name = "GitHub Light Colorblind",
-        Accent = Color3.fromHex("#0969da"),
-        AcrylicMain = Color3.fromHex("#f6f8fa"),
-        AcrylicBorder = Color3.fromHex("#d0d7de"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#f6f8fa"), Color3.fromHex("#f6f8fa")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#d0d7de"),
-        Tab = Color3.fromHex("#24292f"),
-        Element = Color3.fromHex("#ffffff"),
-        ElementBorder = Color3.fromHex("#d0d7de"),
-        InElementBorder = Color3.fromHex("#0969da"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#0969da"),
-        ToggleToggled = Color3.fromHex("#ffffff"),
-        SliderRail = Color3.fromHex("#0969da"),
-        DropdownFrame = Color3.fromHex("#ffffff"),
-        DropdownHolder = Color3.fromHex("#ffffff"),
-        DropdownBorder = Color3.fromHex("#d0d7de"),
-        DropdownOption = Color3.fromHex("#24292f"),
-        Keybind = Color3.fromHex("#ffffff"),
-        Input = Color3.fromHex("#ffffff"),
-        InputFocused = Color3.fromHex("#ffffff"),
-        InputIndicator = Color3.fromHex("#6e7781"),
-        Dialog = Color3.fromHex("#ffffff"),
-        DialogHolder = Color3.fromHex("#ffffff"),
-        DialogHolderLine = Color3.fromHex("#d0d7de"),
-        DialogButton = Color3.fromHex("#ffffff"),
-        DialogButtonBorder = Color3.fromHex("#20252c"),
-        DialogBorder = Color3.fromHex("#d0d7de"),
-        DialogInput = Color3.fromHex("#ffffff"),
-        DialogInputLine = Color3.fromHex("#0969da"),
-        Text = Color3.fromHex("#24292f"),
-        SubText = Color3.fromHex("#57606a"),
-        Hover = Color3.fromHex("#eaeef2"),
-        HoverChange = 0.1
-    },
-    ["GitHub Light Default"] = {
-        Name = "GitHub Light Default",
-        Accent = Color3.fromHex("#0969da"),
-        AcrylicMain = Color3.fromHex("#f6f8fa"),
-        AcrylicBorder = Color3.fromHex("#d0d7de"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#f6f8fa"), Color3.fromHex("#f6f8fa")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#d0d7de"),
-        Tab = Color3.fromHex("#1f2328"),
-        Element = Color3.fromHex("#ffffff"),
-        ElementBorder = Color3.fromHex("#d0d7de"),
-        InElementBorder = Color3.fromHex("#0969da"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#0969da"),
-        ToggleToggled = Color3.fromHex("#ffffff"),
-        SliderRail = Color3.fromHex("#0969da"),
-        DropdownFrame = Color3.fromHex("#ffffff"),
-        DropdownHolder = Color3.fromHex("#ffffff"),
-        DropdownBorder = Color3.fromHex("#d0d7de"),
-        DropdownOption = Color3.fromHex("#1f2328"),
-        Keybind = Color3.fromHex("#ffffff"),
-        Input = Color3.fromHex("#ffffff"),
-        InputFocused = Color3.fromHex("#ffffff"),
-        InputIndicator = Color3.fromHex("#6e7781"),
-        Dialog = Color3.fromHex("#ffffff"),
-        DialogHolder = Color3.fromHex("#ffffff"),
-        DialogHolderLine = Color3.fromHex("#d0d7de"),
-        DialogButton = Color3.fromHex("#ffffff"),
-        DialogButtonBorder = Color3.fromHex("#20252c"),
-        DialogBorder = Color3.fromHex("#d0d7de"),
-        DialogInput = Color3.fromHex("#ffffff"),
-        DialogInputLine = Color3.fromHex("#0969da"),
-        Text = Color3.fromHex("#1f2328"),
-        SubText = Color3.fromHex("#656d76"),
-        Hover = Color3.fromHex("#eaeef2"),
-        HoverChange = 0.1
-    },
-    ["GitHub Light"] = {
-        Name = "GitHub Light",
-        Accent = Color3.fromHex("#2188ff"),
-        AcrylicMain = Color3.fromHex("#f6f8fa"),
-        AcrylicBorder = Color3.fromHex("#e1e4e8"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#f6f8fa"), Color3.fromHex("#f6f8fa")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#e1e4e8"),
-        Tab = Color3.fromHex("#2f363d"),
-        Element = Color3.fromHex("#fafbfc"),
-        ElementBorder = Color3.fromHex("#e1e4e8"),
-        InElementBorder = Color3.fromHex("#2188ff"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#2188ff"),
-        ToggleToggled = Color3.fromHex("#fafbfc"),
-        SliderRail = Color3.fromHex("#2188ff"),
-        DropdownFrame = Color3.fromHex("#fafbfc"),
-        DropdownHolder = Color3.fromHex("#fafbfc"),
-        DropdownBorder = Color3.fromHex("#e1e4e8"),
-        DropdownOption = Color3.fromHex("#2f363d"),
-        Keybind = Color3.fromHex("#fafbfc"),
-        Input = Color3.fromHex("#fafbfc"),
-        InputFocused = Color3.fromHex("#fafbfc"),
-        InputIndicator = Color3.fromHex("#959da5"),
-        Dialog = Color3.fromHex("#fafbfc"),
-        DialogHolder = Color3.fromHex("#fafbfc"),
-        DialogHolderLine = Color3.fromHex("#e1e4e8"),
-        DialogButton = Color3.fromHex("#fafbfc"),
-        DialogButtonBorder = Color3.fromHex("#20252c"),
-        DialogBorder = Color3.fromHex("#e1e4e8"),
-        DialogInput = Color3.fromHex("#fafbfc"),
-        DialogInputLine = Color3.fromHex("#2188ff"),
-        Text = Color3.fromHex("#24292e"),
-        SubText = Color3.fromHex("#6a737d"),
-        Hover = Color3.fromHex("#ebf0f4"),
-        HoverChange = 0.1
-    },
-    ["GitHub Light High Contrast"] = {
-        Name = "GitHub Light High Contrast",
-        Accent = Color3.fromHex("#0349b4"),
-        AcrylicMain = Color3.fromHex("#ffffff"),
-        AcrylicBorder = Color3.fromHex("#20252c"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#ffffff"), Color3.fromHex("#ffffff")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#20252c"),
-        Tab = Color3.fromHex("#0e1116"),
-        Element = Color3.fromHex("#ffffff"),
-        ElementBorder = Color3.fromHex("#20252c"),
-        InElementBorder = Color3.fromHex("#0349b4"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#0349b4"),
-        ToggleToggled = Color3.fromHex("#ffffff"),
-        SliderRail = Color3.fromHex("#0349b4"),
-        DropdownFrame = Color3.fromHex("#ffffff"),
-        DropdownHolder = Color3.fromHex("#ffffff"),
-        DropdownBorder = Color3.fromHex("#20252c"),
-        DropdownOption = Color3.fromHex("#0e1116"),
-        Keybind = Color3.fromHex("#ffffff"),
-        Input = Color3.fromHex("#ffffff"),
-        InputFocused = Color3.fromHex("#ffffff"),
-        InputIndicator = Color3.fromHex("#66707b"),
-        Dialog = Color3.fromHex("#ffffff"),
-        DialogHolder = Color3.fromHex("#ffffff"),
-        DialogHolderLine = Color3.fromHex("#20252c"),
-        DialogButton = Color3.fromHex("#ffffff"),
-        DialogButtonBorder = Color3.fromHex("#20252c"),
-        DialogBorder = Color3.fromHex("#20252c"),
-        DialogInput = Color3.fromHex("#ffffff"),
-        DialogInputLine = Color3.fromHex("#0349b4"),
-        Text = Color3.fromHex("#0e1116"),
-        SubText = Color3.fromHex("#66707b"),
-        Hover = Color3.fromHex("#e7ecf0"),
-        HoverChange = 0.1
-    },
-    ["Kimbie Dark"] = {
-        Name = "Kimbie Dark",
-        Accent = Color3.fromHex("#a57a4c"),
-        AcrylicMain = Color3.fromHex("#221a0f"),
-        AcrylicBorder = Color3.fromHex("#5e452b"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#221a0f"), Color3.fromHex("#221a0f")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#51412c"),
-        Tab = Color3.fromHex("#d3af86"),
-        Element = Color3.fromHex("#51412c"),
-        ElementBorder = Color3.fromHex("#5e452b"),
-        InElementBorder = Color3.fromHex("#a57a4c"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#a57a4c"),
-        ToggleToggled = Color3.fromHex("#51412c"),
-        SliderRail = Color3.fromHex("#a57a4c"),
-        DropdownFrame = Color3.fromHex("#51412c"),
-        DropdownHolder = Color3.fromHex("#51412c"),
-        DropdownBorder = Color3.fromHex("#5e452b"),
-        DropdownOption = Color3.fromHex("#d3af86"),
-        Keybind = Color3.fromHex("#51412c"),
-        Input = Color3.fromHex("#51412c"),
-        InputFocused = Color3.fromHex("#51412c"),
-        InputIndicator = Color3.fromHex("#a57a4c"),
-        Dialog = Color3.fromHex("#362712"),
-        DialogHolder = Color3.fromHex("#221a14"),
-        DialogHolderLine = Color3.fromHex("#5e452b"),
-        DialogButton = Color3.fromHex("#6e583b"),
-        DialogButtonBorder = Color3.fromHex("#5e452b"),
-        DialogBorder = Color3.fromHex("#5e452b"),
-        DialogInput = Color3.fromHex("#51412c"),
-        DialogInputLine = Color3.fromHex("#a57a4c"),
-        Text = Color3.fromHex("#d3af86"),
-        SubText = Color3.fromHex("#a57a4c"),
-        Hover = Color3.fromHex("#7c5021"),
-        HoverChange = 0.1
-    },
-    ["Monokai Classic"] = {
-        Name = "Monokai Classic",
-        Accent = Color3.fromHex("#75715E"),
-        AcrylicMain = Color3.fromHex("#272822"),
-        AcrylicBorder = Color3.fromHex("#1e1f1c"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#272822"), Color3.fromHex("#272822")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#1e1f1c"),
-        Tab = Color3.fromHex("#f8f8f2"),
-        Element = Color3.fromHex("#414339"),
-        ElementBorder = Color3.fromHex("#75715E"),
-        InElementBorder = Color3.fromHex("#75715E"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#75715E"),
-        ToggleToggled = Color3.fromHex("#272822"),
-        SliderRail = Color3.fromHex("#75715E"),
-        DropdownFrame = Color3.fromHex("#414339"),
-        DropdownHolder = Color3.fromHex("#1e1f1c"),
-        DropdownBorder = Color3.fromHex("#75715E"),
-        DropdownOption = Color3.fromHex("#f8f8f2"),
-        Keybind = Color3.fromHex("#414339"),
-        Input = Color3.fromHex("#414339"),
-        InputFocused = Color3.fromHex("#414339"),
-        InputIndicator = Color3.fromHex("#90908a"),
-        Dialog = Color3.fromHex("#1e1f1c"),
-        DialogHolder = Color3.fromHex("#1e1f1c"),
-        DialogHolderLine = Color3.fromHex("#414339"),
-        DialogButton = Color3.fromHex("#414339"),
-        DialogButtonBorder = Color3.fromHex("#75715E"),
-        DialogBorder = Color3.fromHex("#75715E"),
-        DialogInput = Color3.fromHex("#414339"),
-        DialogInputLine = Color3.fromHex("#75715E"),
-        Text = Color3.fromHex("#f8f8f2"),
-        SubText = Color3.fromHex("#88846f"),
-        Hover = Color3.fromHex("#3e3d32"),
-        HoverChange = 0.1
-    },
-    ["Monokai Dimmed"] = {
-        Name = "Monokai Dimmed",
-        Accent = Color3.fromHex("#3655b5"),
-        AcrylicMain = Color3.fromHex("#1e1e1e"),
-        AcrylicBorder = Color3.fromHex("#303030"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#1e1e1e"), Color3.fromHex("#1e1e1e")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#303030"),
-        Tab = Color3.fromHex("#d8d8d8"),
-        Element = Color3.fromHex("#525252"),
-        ElementBorder = Color3.fromHex("#505050"),
-        InElementBorder = Color3.fromHex("#3655b5"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#3655b5"),
-        ToggleToggled = Color3.fromHex("#525252"),
-        SliderRail = Color3.fromHex("#3655b5"),
-        DropdownFrame = Color3.fromHex("#525252"),
-        DropdownHolder = Color3.fromHex("#525252"),
-        DropdownBorder = Color3.fromHex("#505050"),
-        DropdownOption = Color3.fromHex("#c5c8c6"),
-        Keybind = Color3.fromHex("#525252"),
-        Input = Color3.fromHex("#525252"),
-        InputFocused = Color3.fromHex("#525252"),
-        InputIndicator = Color3.fromHex("#949494"),
-        Dialog = Color3.fromHex("#272727"),
-        DialogHolder = Color3.fromHex("#272727"),
-        DialogHolderLine = Color3.fromHex("#505050"),
-        DialogButton = Color3.fromHex("#565656"),
-        DialogButtonBorder = Color3.fromHex("#505050"),
-        DialogBorder = Color3.fromHex("#505050"),
-        DialogInput = Color3.fromHex("#525252"),
-        DialogInputLine = Color3.fromHex("#3655b5"),
-        Text = Color3.fromHex("#c5c8c6"),
-        SubText = Color3.fromHex("#9A9B99"),
-        Hover = Color3.fromHex("#444444"),
-        HoverChange = 0.1
-    },
-    ["Monokai Vibrant"] = {
-        Name = "Monokai Vibrant",
-        Accent = Color3.fromHex("#528bff"),
-        AcrylicMain = Color3.fromHex("#16171D"),
-        AcrylicBorder = Color3.fromHex("#181A1F"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#16171D"), Color3.fromHex("#16171D")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#181A1F"),
-        Tab = Color3.fromHex("#f8f8f0"),
-        Element = Color3.fromHex("#1d1f23"),
-        ElementBorder = Color3.fromHex("#181A11"),
-        InElementBorder = Color3.fromHex("#528bff"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#528bff"),
-        ToggleToggled = Color3.fromHex("#16171D"),
-        SliderRail = Color3.fromHex("#528bff"),
-        DropdownFrame = Color3.fromHex("#1d1f23"),
-        DropdownHolder = Color3.fromHex("#21252B"),
-        DropdownBorder = Color3.fromHex("#181A11"),
-        DropdownOption = Color3.fromHex("#d7dae0"),
-        Keybind = Color3.fromHex("#1d1f23"),
-        Input = Color3.fromHex("#1d1f23"),
-        InputFocused = Color3.fromHex("#1d1f23"),
-        InputIndicator = Color3.fromHex("#495162"),
-        Dialog = Color3.fromHex("#21252B"),
-        DialogHolder = Color3.fromHex("#21252B"),
-        DialogHolderLine = Color3.fromHex("#181A1F"),
-        DialogButton = Color3.fromHex("#1d1f23"),
-        DialogButtonBorder = Color3.fromHex("#181A11"),
-        DialogBorder = Color3.fromHex("#181A1F"),
-        DialogInput = Color3.fromHex("#1d1f23"),
-        DialogInputLine = Color3.fromHex("#528bff"),
-        Text = Color3.fromHex("#f8f8f0"),
-        SubText = Color3.fromHex("#5c6370"),
-        Hover = Color3.fromHex("#292d35"),
-        HoverChange = 0.1
-    },
-    ["Monokai"] = {
-        Name = "Monokai",
-        Accent = Color3.fromHex("#F92672"),
-        AcrylicMain = Color3.fromHex("#272822"),
-        AcrylicBorder = Color3.fromHex("#414339"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#272822"), Color3.fromHex("#1e1f1c")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#414339"),
-        Tab = Color3.fromHex("#f8f8f2"),
-        Element = Color3.fromHex("#414339"),
-        ElementBorder = Color3.fromHex("#75715E"),
-        InElementBorder = Color3.fromHex("#F92672"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#F92672"),
-        ToggleToggled = Color3.fromHex("#414339"),
-        SliderRail = Color3.fromHex("#75715E"),
-        DropdownFrame = Color3.fromHex("#414339"),
-        DropdownHolder = Color3.fromHex("#1e1f1c"),
-        DropdownBorder = Color3.fromHex("#75715E"),
-        DropdownOption = Color3.fromHex("#f8f8f2"),
-        Keybind = Color3.fromHex("#414339"),
-        Input = Color3.fromHex("#414339"),
-        InputFocused = Color3.fromHex("#414339"),
-        InputIndicator = Color3.fromHex("#90908a"),
-        Dialog = Color3.fromHex("#1e1f1c"),
-        DialogHolder = Color3.fromHex("#1e1f1c"),
-        DialogHolderLine = Color3.fromHex("#414339"),
-        DialogButton = Color3.fromHex("#414339"),
-        DialogButtonBorder = Color3.fromHex("#75715E"),
-        DialogBorder = Color3.fromHex("#75715E"),
-        DialogInput = Color3.fromHex("#414339"),
-        DialogInputLine = Color3.fromHex("#F92672"),
-        Text = Color3.fromHex("#f8f8f2"),
-        SubText = Color3.fromHex("#88846f"),
-        Hover = Color3.fromHex("#3e3d32"),
-        HoverChange = 0.1
-    },
-    ["Quiet Light"] = {
-        Name = "Quiet Light",
-        Accent = Color3.fromHex("#9769dc"),
-        AcrylicMain = Color3.fromHex("#F5F5F5"),
-        AcrylicBorder = Color3.fromHex("#c4b7d7"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#F5F5F5"), Color3.fromHex("#F5F5F5")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#c4b7d7"),
-        Tab = Color3.fromHex("#705697"),
-        Element = Color3.fromHex("#F2F2F2"),
-        ElementBorder = Color3.fromHex("#adafb7"),
-        InElementBorder = Color3.fromHex("#9769dc"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#705697"),
-        ToggleToggled = Color3.fromHex("#F5F5F5"),
-        SliderRail = Color3.fromHex("#705697"),
-        DropdownFrame = Color3.fromHex("#F5F5F5"),
-        DropdownHolder = Color3.fromHex("#F5F5F5"),
-        DropdownBorder = Color3.fromHex("#adafb7"),
-        DropdownOption = Color3.fromHex("#333333"),
-        Keybind = Color3.fromHex("#F5F5F5"),
-        Input = Color3.fromHex("#F5F5F5"),
-        InputFocused = Color3.fromHex("#F5F5F5"),
-        InputIndicator = Color3.fromHex("#AAAAAA"),
-        Dialog = Color3.fromHex("#F2F8FC"),
-        DialogHolder = Color3.fromHex("#F2F8FC"),
-        DialogHolderLine = Color3.fromHex("#705697"),
-        DialogButton = Color3.fromHex("#F5F5F5"),
-        DialogButtonBorder = Color3.fromHex("#adafb7"),
-        DialogBorder = Color3.fromHex("#705697"),
-        DialogInput = Color3.fromHex("#F5F5F5"),
-        DialogInputLine = Color3.fromHex("#9769dc"),
-        Text = Color3.fromHex("#333333"),
-        SubText = Color3.fromHex("#6D705B"),
-        Hover = Color3.fromHex("#e0e0e0"),
-        HoverChange = 0.1
-    },
-    ["Solarized Dark"] = {
-        Name = "Solarized Dark",
-        Accent = Color3.fromHex("#2AA198"),
-        AcrylicMain = Color3.fromHex("#002B36"),
-        AcrylicBorder = Color3.fromHex("#073642"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#002B36"), Color3.fromHex("#002B36")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#2AA198"),
-        Tab = Color3.fromHex("#839496"),
-        Element = Color3.fromHex("#003847"),
-        ElementBorder = Color3.fromHex("#2AA198"),
-        InElementBorder = Color3.fromHex("#2AA198"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#2AA198"),
-        ToggleToggled = Color3.fromHex("#002B36"),
-        SliderRail = Color3.fromHex("#2AA198"),
-        DropdownFrame = Color3.fromHex("#00212B"),
-        DropdownHolder = Color3.fromHex("#00212B"),
-        DropdownBorder = Color3.fromHex("#2AA198"),
-        DropdownOption = Color3.fromHex("#839496"),
-        Keybind = Color3.fromHex("#003847"),
-        Input = Color3.fromHex("#003847"),
-        InputFocused = Color3.fromHex("#003847"),
-        InputIndicator = Color3.fromHex("#93A1A1"),
-        Dialog = Color3.fromHex("#00212B"),
-        DialogHolder = Color3.fromHex("#002B36"),
-        DialogHolderLine = Color3.fromHex("#073642"),
-        DialogButton = Color3.fromHex("#003847"),
-        DialogButtonBorder = Color3.fromHex("#2AA198"),
-        DialogBorder = Color3.fromHex("#2AA198"),
-        DialogInput = Color3.fromHex("#003847"),
-        DialogInputLine = Color3.fromHex("#2AA198"),
-        Text = Color3.fromHex("#839496"),
-        SubText = Color3.fromHex("#586E75"),
-        Hover = Color3.fromHex("#004454"),
-        HoverChange = 0.1
-    },
-    ["Solarized Light"] = {
-        Name = "Solarized Light",
-        Accent = Color3.fromHex("#b58900"),
-        AcrylicMain = Color3.fromHex("#FDF6E3"),
-        AcrylicBorder = Color3.fromHex("#DDD6C1"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#FDF6E3"), Color3.fromHex("#FDF6E3")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#DDD6C1"),
-        Tab = Color3.fromHex("#657B83"),
-        Element = Color3.fromHex("#EEE8D5"),
-        ElementBorder = Color3.fromHex("#D3AF86"),
-        InElementBorder = Color3.fromHex("#b49471"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#b58900"),
-        ToggleToggled = Color3.fromHex("#FDF6E3"),
-        SliderRail = Color3.fromHex("#b58900"),
-        DropdownFrame = Color3.fromHex("#EEE8D5"),
-        DropdownHolder = Color3.fromHex("#EEE8D5"),
-        DropdownBorder = Color3.fromHex("#D3AF86"),
-        DropdownOption = Color3.fromHex("#657B83"),
-        Keybind = Color3.fromHex("#DDD6C1"),
-        Input = Color3.fromHex("#DDD6C1"),
-        InputFocused = Color3.fromHex("#DDD6C1"),
-        InputIndicator = Color3.fromHex("#586E75"),
-        Dialog = Color3.fromHex("#EEE8D5"),
-        DialogHolder = Color3.fromHex("#EEE8D5"),
-        DialogHolderLine = Color3.fromHex("#DDD6C1"),
-        DialogButton = Color3.fromHex("#AC9D57"),
-        DialogButtonBorder = Color3.fromHex("#D3AF86"),
-        DialogBorder = Color3.fromHex("#DDD6C1"),
-        DialogInput = Color3.fromHex("#DDD6C1"),
-        DialogInputLine = Color3.fromHex("#b58900"),
-        Text = Color3.fromHex("#657B83"),
-        SubText = Color3.fromHex("#93A1A1"),
-        Hover = Color3.fromHex("#DFCA88"),
-        HoverChange = 0.1
-    },
-    ["Tomorrow Night Blue"] = {
-        Name = "Tomorrow Night Blue",
-        Accent = Color3.fromHex("#bbdaff"),
-        AcrylicMain = Color3.fromHex("#002451"),
-        AcrylicBorder = Color3.fromHex("#404f7d"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#002451"), Color3.fromHex("#002451")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#404f7d"),
-        Tab = Color3.fromHex("#ffffff"),
-        Element = Color3.fromHex("#001733"),
-        ElementBorder = Color3.fromHex("#404f7d"),
-        InElementBorder = Color3.fromHex("#bbdaff"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#bbdaff"),
-        ToggleToggled = Color3.fromHex("#001733"),
-        SliderRail = Color3.fromHex("#bbdaff"),
-        DropdownFrame = Color3.fromHex("#001733"),
-        DropdownHolder = Color3.fromHex("#001733"),
-        DropdownBorder = Color3.fromHex("#404f7d"),
-        DropdownOption = Color3.fromHex("#ffffff"),
-        Keybind = Color3.fromHex("#001733"),
-        Input = Color3.fromHex("#001733"),
-        InputFocused = Color3.fromHex("#001733"),
-        InputIndicator = Color3.fromHex("#404f7d"),
-        Dialog = Color3.fromHex("#001c40"),
-        DialogHolder = Color3.fromHex("#001c40"),
-        DialogHolderLine = Color3.fromHex("#404f7d"),
-        DialogButton = Color3.fromHex("#001733"),
-        DialogButtonBorder = Color3.fromHex("#404f7d"),
-        DialogBorder = Color3.fromHex("#ffffff"),
-        DialogInput = Color3.fromHex("#001733"),
-        DialogInputLine = Color3.fromHex("#bbdaff"),
-        Text = Color3.fromHex("#ffffff"),
-        SubText = Color3.fromHex("#7285B7"),
-        Hover = Color3.fromHex("#ffffff"),
-        HoverChange = 0.1
-    },
-    ["Typewriter"] = {
-        Name = "Typewriter",
-        Accent = Color3.fromRGB(97, 161, 107),
-        AcrylicMain = Color3.fromRGB(252, 245, 228),
-        AcrylicBorder = Color3.fromRGB(189, 189, 189),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(252, 245, 228), Color3.fromRGB(228, 220, 200)),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromRGB(189, 189, 189),
-        Tab = Color3.fromRGB(109, 180, 120),
-        Element = Color3.fromRGB(255, 255, 255),
-        ElementBorder = Color3.fromRGB(200, 200, 200),
-        InElementBorder = Color3.fromRGB(191, 191, 193),
-        ElementTransparency = 1,
-        ToggleSlider = Color3.fromRGB(97, 161, 107),
-        ToggleToggled = Color3.fromRGB(255, 255, 255),
-        SliderRail = Color3.fromRGB(230, 230, 230),
-        DropdownFrame = Color3.fromRGB(217, 218, 220),
-        DropdownHolder = Color3.fromRGB(226, 220, 205),
-        DropdownBorder = Color3.fromRGB(185, 182, 172),
-        DropdownOption = Color3.fromRGB(27, 129, 229),
-        Keybind = Color3.fromRGB(233, 227, 211),
-        Input = Color3.fromRGB(255, 255, 255),
-        InputFocused = Color3.fromRGB(20, 10, 30),
-        InputIndicator = Color3.fromRGB(170, 150, 190),
-        Dialog = Color3.fromRGB(252, 245, 228),
-        DialogHolder = Color3.fromRGB(228, 220, 200),
-        DialogHolderLine = Color3.fromRGB(189, 189, 189),
-        DialogButton = Color3.fromRGB(242, 243, 245),
-        DialogButtonBorder = Color3.fromRGB(213, 213, 215),
-        DialogBorder = Color3.fromRGB(189, 189, 189),
-        DialogInput = Color3.fromRGB(252, 245, 228),
-        DialogInputLine = Color3.fromRGB(190, 160, 180),
-        Text = Color3.fromRGB(104, 104, 104),
-        SubText = Color3.fromRGB(170, 170, 170),
-        Hover = Color3.fromRGB(149, 149, 149),
-        HoverChange = 0.04
-    },
-    ["United GNOME"] = {
-        Name = "United GNOME",
-        Accent = Color3.fromHex("#48b258"),
-        AcrylicMain = Color3.fromHex("#1e1e1e"),
-        AcrylicBorder = Color3.fromHex("#444444"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#1e1e1e"), Color3.fromHex("#1e1e1e")),
-        AcrylicNoise = 0.92,
-        TitleBarLine = Color3.fromHex("#444444"),
-        Tab = Color3.fromHex("#dddddd"),
-        Element = Color3.fromHex("#242424"),
-        ElementBorder = Color3.fromHex("#404040"),
-        InElementBorder = Color3.fromHex("#48b258"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#48b258"),
-        ToggleToggled = Color3.fromHex("#1e1e1e"),
-        SliderRail = Color3.fromHex("#48b258"),
-        DropdownFrame = Color3.fromHex("#242424"),
-        DropdownHolder = Color3.fromHex("#242424"),
-        DropdownBorder = Color3.fromHex("#404040"),
-        DropdownOption = Color3.fromHex("#dddddd"),
-        Keybind = Color3.fromHex("#242424"),
-        Input = Color3.fromHex("#242424"),
-        InputFocused = Color3.fromHex("#242424"),
-        InputIndicator = Color3.fromHex("#808080"),
-        Dialog = Color3.fromHex("#242424"),
-        DialogHolder = Color3.fromHex("#1e1e1e"),
-        DialogHolderLine = Color3.fromHex("#404040"),
-        DialogButton = Color3.fromHex("#242424"),
-        DialogButtonBorder = Color3.fromHex("#404040"),
-        DialogBorder = Color3.fromHex("#444444"),
-        DialogInput = Color3.fromHex("#242424"),
-        DialogInputLine = Color3.fromHex("#48b258"),
-        Text = Color3.fromHex("#dddddd"),
-        SubText = Color3.fromHex("#808080"),
-        Hover = Color3.fromHex("#2A2D2E"),
-        HoverChange = 0.05
-    },
-    ["United Ubuntu"] = {
-        Name = "United Ubuntu",
-        Accent = Color3.fromHex("#48b258"),
-        AcrylicMain = Color3.fromHex("#1e1e1e"),
-        AcrylicBorder = Color3.fromHex("#444444"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#1e1e1e"), Color3.fromHex("#1e1e1e")),
-        AcrylicNoise = 0.92,
-        TitleBarLine = Color3.fromHex("#444444"),
-        Tab = Color3.fromHex("#dddddd"),
-        Element = Color3.fromHex("#242424"),
-        ElementBorder = Color3.fromHex("#404040"),
-        InElementBorder = Color3.fromHex("#48b258"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#48b258"),
-        ToggleToggled = Color3.fromHex("#1e1e1e"),
-        SliderRail = Color3.fromHex("#48b258"),
-        DropdownFrame = Color3.fromHex("#242424"),
-        DropdownHolder = Color3.fromHex("#242424"),
-        DropdownBorder = Color3.fromHex("#404040"),
-        DropdownOption = Color3.fromHex("#dddddd"),
-        Keybind = Color3.fromHex("#242424"),
-        Input = Color3.fromHex("#242424"),
-        InputFocused = Color3.fromHex("#242424"),
-        InputIndicator = Color3.fromHex("#808080"),
-        Dialog = Color3.fromHex("#242424"),
-        DialogHolder = Color3.fromHex("#1e1e1e"),
-        DialogHolderLine = Color3.fromHex("#404040"),
-        DialogButton = Color3.fromHex("#242424"),
-        DialogButtonBorder = Color3.fromHex("#404040"),
-        DialogBorder = Color3.fromHex("#444444"),
-        DialogInput = Color3.fromHex("#242424"),
-        DialogInputLine = Color3.fromHex("#48b258"),
-        Text = Color3.fromHex("#dddddd"),
-        SubText = Color3.fromHex("#808080"),
-        Hover = Color3.fromHex("#2A2D2E"),
-        HoverChange = 0.05
-    },
-    ["Viow Arabian"] = {
-        Name = "Viow Arabian",
-        Accent = Color3.fromHex("#7b36e2"),
-        AcrylicMain = Color3.fromHex("#110e1a"),
-        AcrylicBorder = Color3.fromHex("#444444"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#110e1a"), Color3.fromHex("#110e1a")),
-        AcrylicNoise = 0.92,
-        TitleBarLine = Color3.fromHex("#444444"),
-        Tab = Color3.fromHex("#CCCCCC"),
-        Element = Color3.fromHex("#2D2D2D"),
-        ElementBorder = Color3.fromHex("#404040"),
-        InElementBorder = Color3.fromHex("#7b36e2"),
-        ElementTransparency = 0.85,
-        ToggleSlider = Color3.fromHex("#7b36e2"),
-        ToggleToggled = Color3.fromHex("#110e1a"),
-        SliderRail = Color3.fromHex("#7b36e2"),
-        DropdownFrame = Color3.fromHex("#2D2D2D"),
-        DropdownHolder = Color3.fromHex("#252526"),
-        DropdownBorder = Color3.fromHex("#404040"),
-        DropdownOption = Color3.fromHex("#a497b5"),
-        Keybind = Color3.fromHex("#2D2D2D"),
-        Input = Color3.fromHex("#3C3C3C"),
-        InputFocused = Color3.fromHex("#3C3C3C"),
-        InputIndicator = Color3.fromHex("#808080"),
-        Dialog = Color3.fromHex("#2a1c3e"),
-        DialogHolder = Color3.fromHex("#110e1a"),
-        DialogHolderLine = Color3.fromHex("#100422"),
-        DialogButton = Color3.fromHex("#2D2D2D"),
-        DialogButtonBorder = Color3.fromHex("#404040"),
-        DialogBorder = Color3.fromHex("#444444"),
-        DialogInput = Color3.fromHex("#3C3C3C"),
-        DialogInputLine = Color3.fromHex("#7b36e2"),
-        Text = Color3.fromHex("#a497b5"),
-        SubText = Color3.fromHex("#60576f"),
-        Hover = Color3.fromHex("#2A2D2E"),
-        HoverChange = 0.05
-    },
-    ["Viow Arabian Mix"] = {
-        Name = "Viow Arabian Mix",
-        Accent = Color3.fromHex("#7b36e2"),
-        AcrylicMain = Color3.fromHex("#110e1a"),
-        AcrylicBorder = Color3.fromHex("#444444"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#110e1a"), Color3.fromHex("#110e1a")),
-        AcrylicNoise = 0.92,
-        TitleBarLine = Color3.fromHex("#444444"),
-        Tab = Color3.fromHex("#CCCCCC"),
-        Element = Color3.fromHex("#2D2D2D"),
-        ElementBorder = Color3.fromHex("#404040"),
-        InElementBorder = Color3.fromHex("#7b36e2"),
-        ElementTransparency = 0.85,
-        ToggleSlider = Color3.fromHex("#7b36e2"),
-        ToggleToggled = Color3.fromHex("#110e1a"),
-        SliderRail = Color3.fromHex("#7b36e2"),
-        DropdownFrame = Color3.fromHex("#2D2D2D"),
-        DropdownHolder = Color3.fromHex("#252526"),
-        DropdownBorder = Color3.fromHex("#404040"),
-        DropdownOption = Color3.fromHex("#a497b5"),
-        Keybind = Color3.fromHex("#2D2D2D"),
-        Input = Color3.fromHex("#3C3C3C"),
-        InputFocused = Color3.fromHex("#3C3C3C"),
-        InputIndicator = Color3.fromHex("#808080"),
-        Dialog = Color3.fromHex("#2a1c3e"),
-        DialogHolder = Color3.fromHex("#150E33"),
-        DialogHolderLine = Color3.fromHex("#100422"),
-        DialogButton = Color3.fromHex("#2D2D2D"),
-        DialogButtonBorder = Color3.fromHex("#404040"),
-        DialogBorder = Color3.fromHex("#444444"),
-        DialogInput = Color3.fromHex("#3C3C3C"),
-        DialogInputLine = Color3.fromHex("#7b36e2"),
-        Text = Color3.fromHex("#a497b5"),
-        SubText = Color3.fromHex("#60576f"),
-        Hover = Color3.fromHex("#2A2D2E"),
-        HoverChange = 0.05
-    },
-    ["Viow Darker"] = {
-        Name = "Viow Darker",
-        Accent = Color3.fromHex("#165fb3"),
-        AcrylicMain = Color3.fromHex("#21252b"),
-        AcrylicBorder = Color3.fromHex("#383838"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#21252b"), Color3.fromHex("#21252b")),
-        AcrylicNoise = 0.92,
-        TitleBarLine = Color3.fromHex("#383838"),
-        Tab = Color3.fromHex("#d3d0c8"),
-        Element = Color3.fromHex("#2d333c"),
-        ElementBorder = Color3.fromHex("#383838"),
-        InElementBorder = Color3.fromHex("#165fb3"),
-        ElementTransparency = 0.85,
-        ToggleSlider = Color3.fromHex("#165fb3"),
-        ToggleToggled = Color3.fromHex("#21252b"),
-        SliderRail = Color3.fromHex("#165fb3"),
-        DropdownFrame = Color3.fromHex("#2d333c"),
-        DropdownHolder = Color3.fromHex("#1e2228"),
-        DropdownBorder = Color3.fromHex("#383838"),
-        DropdownOption = Color3.fromHex("#d3d0c8"),
-        Keybind = Color3.fromHex("#2d333c"),
-        Input = Color3.fromHex("#2d333c"),
-        InputFocused = Color3.fromHex("#2d333c"),
-        InputIndicator = Color3.fromHex("#747369"),
-        Dialog = Color3.fromHex("#21252b"),
-        DialogHolder = Color3.fromHex("#1E2228"),
-        DialogHolderLine = Color3.fromHex("#383838"),
-        DialogButton = Color3.fromHex("#2d333c"),
-        DialogButtonBorder = Color3.fromHex("#383838"),
-        DialogBorder = Color3.fromHex("#383838"),
-        DialogInput = Color3.fromHex("#2d333c"),
-        DialogInputLine = Color3.fromHex("#165fb3"),
-        Text = Color3.fromHex("#d3d0c8"),
-        SubText = Color3.fromHex("#747369"),
-        Hover = Color3.fromHex("#383838"),
-        HoverChange = 0.05
-    },
-    ["Viow Flat"] = {
-        Name = "Viow Flat",
-        Accent = Color3.fromHex("#165fb3"),
-        AcrylicMain = Color3.fromHex("#191c28"),
-        AcrylicBorder = Color3.fromHex("#191c28"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#191c28"), Color3.fromHex("#191c28")),
-        AcrylicNoise = 0.92,
-        TitleBarLine = Color3.fromHex("#191c28"),
-        Tab = Color3.fromHex("#d3d0c8"),
-        Element = Color3.fromHex("#191c28"),
-        ElementBorder = Color3.fromHex("#191c28"),
-        InElementBorder = Color3.fromHex("#165fb3"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#165fb3"),
-        ToggleToggled = Color3.fromHex("#191c28"),
-        SliderRail = Color3.fromHex("#165fb3"),
-        DropdownFrame = Color3.fromHex("#191c28"),
-        DropdownHolder = Color3.fromHex("#191c28"),
-        DropdownBorder = Color3.fromHex("#191c28"),
-        DropdownOption = Color3.fromHex("#d3d0c8"),
-        Keybind = Color3.fromHex("#191c28"),
-        Input = Color3.fromHex("#191c28"),
-        InputFocused = Color3.fromHex("#191c28"),
-        InputIndicator = Color3.fromHex("#747369"),
-        Dialog = Color3.fromHex("#191c28"),
-        DialogHolder = Color3.fromHex("#191c28"),
-        DialogHolderLine = Color3.fromHex("#191c28"),
-        DialogButton = Color3.fromHex("#191c28"),
-        DialogButtonBorder = Color3.fromHex("#191c28"),
-        DialogBorder = Color3.fromHex("#191c28"),
-        DialogInput = Color3.fromHex("#191c28"),
-        DialogInputLine = Color3.fromHex("#165fb3"),
-        Text = Color3.fromHex("#d3d0c8"),
-        SubText = Color3.fromHex("#747369"),
-        Hover = Color3.fromHex("#464870"),
-        HoverChange = 0.05
-    },
-    ["Viow Light"] = {
-        Name = "Viow Light",
-        Accent = Color3.fromHex("#0f96ff"),
-        AcrylicMain = Color3.fromHex("#ffffff"),
-        AcrylicBorder = Color3.fromHex("#d4d4d4"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#ffffff"), Color3.fromHex("#ffffff")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#d4d4d4"),
-        Tab = Color3.fromHex("#8e8e8e"),
-        Element = Color3.fromHex("#f3f3f3"),
-        ElementBorder = Color3.fromHex("#cecece"),
-        InElementBorder = Color3.fromHex("#0f96ff"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#0f96ff"),
-        ToggleToggled = Color3.fromHex("#ffffff"),
-        SliderRail = Color3.fromHex("#0f96ff"),
-        DropdownFrame = Color3.fromHex("#ffffff"),
-        DropdownHolder = Color3.fromHex("#ffffff"),
-        DropdownBorder = Color3.fromHex("#cecece"),
-        DropdownOption = Color3.fromHex("#57606c"),
-        Keybind = Color3.fromHex("#ffffff"),
-        Input = Color3.fromHex("#ffffff"),
-        InputFocused = Color3.fromHex("#ffffff"),
-        InputIndicator = Color3.fromHex("#767676"),
-        Dialog = Color3.fromHex("#f3f3f3"),
-        DialogHolder = Color3.fromHex("#ffffff"),
-        DialogHolderLine = Color3.fromHex("#d4d4d4"),
-        DialogButton = Color3.fromHex("#f3f3f3"),
-        DialogButtonBorder = Color3.fromHex("#cecece"),
-        DialogBorder = Color3.fromHex("#d4d4d4"),
-        DialogInput = Color3.fromHex("#ffffff"),
-        DialogInputLine = Color3.fromHex("#0f96ff"),
-        Text = Color3.fromHex("#57606c"),
-        SubText = Color3.fromHex("#6f6f6f"),
-        Hover = Color3.fromHex("#e8e8e8"),
-        HoverChange = 0.1
-    },
-    ["Viow Mars"] = {
-        Name = "Viow Mars",
-        Accent = Color3.fromHex("#e32b00"),
-        AcrylicMain = Color3.fromHex("#130c0f"),
-        AcrylicBorder = Color3.fromHex("#28191d"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#130c0f"), Color3.fromHex("#130c0f")),
-        AcrylicNoise = 0.92,
-        TitleBarLine = Color3.fromHex("#28191d"),
-        Tab = Color3.fromHex("#d3d0c8"),
-        Element = Color3.fromHex("#321f27"),
-        ElementBorder = Color3.fromHex("#5a0d29"),
-        InElementBorder = Color3.fromHex("#e32b00"),
-        ElementTransparency = 0.85,
-        ToggleSlider = Color3.fromHex("#e32b00"),
-        ToggleToggled = Color3.fromHex("#130c0f"),
-        SliderRail = Color3.fromHex("#e32b00"),
-        DropdownFrame = Color3.fromHex("#321f27"),
-        DropdownHolder = Color3.fromHex("#271e22"),
-        DropdownBorder = Color3.fromHex("#5a0d29"),
-        DropdownOption = Color3.fromHex("#d3d0c8"),
-        Keybind = Color3.fromHex("#321f27"),
-        Input = Color3.fromHex("#321f27"),
-        InputFocused = Color3.fromHex("#321f27"),
-        InputIndicator = Color3.fromHex("#747369"),
-        Dialog = Color3.fromHex("#462531"),
-        DialogHolder = Color3.fromHex("#3a1223"),
-        DialogHolderLine = Color3.fromHex("#5c1b33"),
-        DialogButton = Color3.fromHex("#321f27"),
-        DialogButtonBorder = Color3.fromHex("#5a0d29"),
-        DialogBorder = Color3.fromHex("#ff4f15"),
-        DialogInput = Color3.fromHex("#321f27"),
-        DialogInputLine = Color3.fromHex("#e32b00"),
-        Text = Color3.fromHex("#d3d0c8"),
-        SubText = Color3.fromHex("#747369"),
-        Hover = Color3.fromHex("#5c1b33"),
-        HoverChange = 0.05
-    },
-    ["Viow Neon"] = {
-        Name = "Viow Neon",
-        Accent = Color3.fromHex("#1591ff"),
-        AcrylicMain = Color3.fromHex("#202432"),
-        AcrylicBorder = Color3.fromHex("#191c28"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#202432"), Color3.fromHex("#202432")),
-        AcrylicNoise = 0.92,
-        TitleBarLine = Color3.fromHex("#191c28"),
-        Tab = Color3.fromHex("#d3d0c8"),
-        Element = Color3.fromHex("#202432"),
-        ElementBorder = Color3.fromHex("#0d2c5a"),
-        InElementBorder = Color3.fromHex("#1591ff"),
-        ElementTransparency = 0.85,
-        ToggleSlider = Color3.fromHex("#1591ff"),
-        ToggleToggled = Color3.fromHex("#202432"),
-        SliderRail = Color3.fromHex("#1591ff"),
-        DropdownFrame = Color3.fromHex("#202432"),
-        DropdownHolder = Color3.fromHex("#1e2228"),
-        DropdownBorder = Color3.fromHex("#0d2c5a"),
-        DropdownOption = Color3.fromHex("#d3d0c8"),
-        Keybind = Color3.fromHex("#202432"),
-        Input = Color3.fromHex("#202432"),
-        InputFocused = Color3.fromHex("#202432"),
-        InputIndicator = Color3.fromHex("#747369"),
-        Dialog = Color3.fromHex("#252f46"),
-        DialogHolder = Color3.fromHex("#1c1f2b"),
-        DialogHolderLine = Color3.fromHex("#1b375c"),
-        DialogButton = Color3.fromHex("#202432"),
-        DialogButtonBorder = Color3.fromHex("#0d2c5a"),
-        DialogBorder = Color3.fromHex("#1591ff"),
-        DialogInput = Color3.fromHex("#202432"),
-        DialogInputLine = Color3.fromHex("#1591ff"),
-        Text = Color3.fromHex("#d3d0c8"),
-        SubText = Color3.fromHex("#747369"),
-        Hover = Color3.fromHex("#1b375c"),
-        HoverChange = 0.05
-    },
-    ["VS Dark"] = {
-        Name = "VS Dark",
-        Accent = Color3.fromHex("#007ACC"),
-        AcrylicMain = Color3.fromHex("#1E1E1E"),
-        AcrylicBorder = Color3.fromHex("#303031"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#1E1E1E"), Color3.fromHex("#1E1E1E")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#303031"),
-        Tab = Color3.fromHex("#ffffff"),
-        Element = Color3.fromHex("#222222"),
-        ElementBorder = Color3.fromHex("#6B6B6B"),
-        InElementBorder = Color3.fromHex("#007ACC"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#007ACC"),
-        ToggleToggled = Color3.fromHex("#222222"),
-        SliderRail = Color3.fromHex("#404040"),
-        DropdownFrame = Color3.fromHex("#252526"),
-        DropdownHolder = Color3.fromHex("#252526"),
-        DropdownBorder = Color3.fromHex("#454545"),
-        DropdownOption = Color3.fromHex("#CCCCCC"),
-        Keybind = Color3.fromHex("#222222"),
-        Input = Color3.fromHex("#222222"),
-        InputFocused = Color3.fromHex("#222222"),
-        InputIndicator = Color3.fromHex("#A6A6A6"),
-        Dialog = Color3.fromHex("#252526"),
-        DialogHolder = Color3.fromHex("#252526"),
-        DialogHolderLine = Color3.fromHex("#454545"),
-        DialogButton = Color3.fromHex("#222222"),
-        DialogButtonBorder = Color3.fromHex("#454545"),
-        DialogBorder = Color3.fromHex("#454545"),
-        DialogInput = Color3.fromHex("#222222"),
-        DialogInputLine = Color3.fromHex("#007ACC"),
-        Text = Color3.fromHex("#D4D4D4"),
-        SubText = Color3.fromHex("#BBBBBB"),
-        Hover = Color3.fromHex("#383B3D"),
-        HoverChange = 0.1
-    },
-    ["VS Light"] = {
-        Name = "VS Light",
-        Accent = Color3.fromHex("#007ACC"),
-        AcrylicMain = Color3.fromHex("#FFFFFF"),
-        AcrylicBorder = Color3.fromHex("#919191"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#FFFFFF"), Color3.fromHex("#FFFFFF")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#D4D4D4"),
-        Tab = Color3.fromHex("#333333"),
-        Element = Color3.fromHex("#F3F3F3"),
-        ElementBorder = Color3.fromHex("#CECECE"),
-        InElementBorder = Color3.fromHex("#007ACC"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#007ACC"),
-        ToggleToggled = Color3.fromHex("#FFFFFF"),
-        SliderRail = Color3.fromHex("#007ACC"),
-        DropdownFrame = Color3.fromHex("#FFFFFF"),
-        DropdownHolder = Color3.fromHex("#FFFFFF"),
-        DropdownBorder = Color3.fromHex("#CECECE"),
-        DropdownOption = Color3.fromHex("#000000"),
-        Keybind = Color3.fromHex("#FFFFFF"),
-        Input = Color3.fromHex("#FFFFFF"),
-        InputFocused = Color3.fromHex("#FFFFFF"),
-        InputIndicator = Color3.fromHex("#767676"),
-        Dialog = Color3.fromHex("#F3F3F3"),
-        DialogHolder = Color3.fromHex("#FFFFFF"),
-        DialogHolderLine = Color3.fromHex("#D4D4D4"),
-        DialogButton = Color3.fromHex("#F3F3F3"),
-        DialogButtonBorder = Color3.fromHex("#CECECE"),
-        DialogBorder = Color3.fromHex("#D4D4D4"),
-        DialogInput = Color3.fromHex("#FFFFFF"),
-        DialogInputLine = Color3.fromHex("#007ACC"),
-        Text = Color3.fromHex("#000000"),
-        SubText = Color3.fromHex("#6F6F6F"),
-        Hover = Color3.fromHex("#E8E8E8"),
-        HoverChange = 0.1
-    },
-    ["VSC Dark High Contrast"] = {
-        Name = "VSC Dark High Contrast",
-        Accent = Color3.fromHex("#569cd6"),
-        AcrylicMain = Color3.fromHex("#000000"),
-        AcrylicBorder = Color3.fromHex("#FFFFFF"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#000000"), Color3.fromHex("#000000")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#FFFFFF"),
-        Tab = Color3.fromHex("#FFFFFF"),
-        Element = Color3.fromHex("#000000"),
-        ElementBorder = Color3.fromHex("#FFFFFF"),
-        InElementBorder = Color3.fromHex("#569cd6"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#569cd6"),
-        ToggleToggled = Color3.fromHex("#000000"),
-        SliderRail = Color3.fromHex("#569cd6"),
-        DropdownFrame = Color3.fromHex("#000000"),
-        DropdownHolder = Color3.fromHex("#000000"),
-        DropdownBorder = Color3.fromHex("#FFFFFF"),
-        DropdownOption = Color3.fromHex("#FFFFFF"),
-        Keybind = Color3.fromHex("#000000"),
-        Input = Color3.fromHex("#000000"),
-        InputFocused = Color3.fromHex("#000000"),
-        InputIndicator = Color3.fromHex("#7c7c7c"),
-        Dialog = Color3.fromHex("#000000"),
-        DialogHolder = Color3.fromHex("#000000"),
-        DialogHolderLine = Color3.fromHex("#FFFFFF"),
-        DialogButton = Color3.fromHex("#000000"),
-        DialogButtonBorder = Color3.fromHex("#FFFFFF"),
-        DialogBorder = Color3.fromHex("#FFFFFF"),
-        DialogInput = Color3.fromHex("#000000"),
-        DialogInputLine = Color3.fromHex("#569cd6"),
-        Text = Color3.fromHex("#FFFFFF"),
-        SubText = Color3.fromHex("#9D9D9D"),
-        Hover = Color3.fromHex("#383a49"),
-        HoverChange = 0.1
-    },
-    ["VSC Dark Modern"] = {
-        Name = "VSC Dark Modern",
-        Accent = Color3.fromHex("#0078D4"),
-        AcrylicMain = Color3.fromHex("#181818"),
-        AcrylicBorder = Color3.fromHex("#2B2B2B"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#181818"), Color3.fromHex("#181818")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#2B2B2B"),
-        Tab = Color3.fromHex("#FFFFFF"),
-        Element = Color3.fromHex("#313131"),
-        ElementBorder = Color3.fromHex("#3C3C3C"),
-        InElementBorder = Color3.fromHex("#0078D4"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#0078D4"),
-        ToggleToggled = Color3.fromHex("#313131"),
-        SliderRail = Color3.fromHex("#0078D4"),
-        DropdownFrame = Color3.fromHex("#313131"),
-        DropdownHolder = Color3.fromHex("#313131"),
-        DropdownBorder = Color3.fromHex("#3C3C3C"),
-        DropdownOption = Color3.fromHex("#CCCCCC"),
-        Keybind = Color3.fromHex("#313131"),
-        Input = Color3.fromHex("#313131"),
-        InputFocused = Color3.fromHex("#313131"),
-        InputIndicator = Color3.fromHex("#989898"),
-        Dialog = Color3.fromHex("#202020"),
-        DialogHolder = Color3.fromHex("#1F1F1F"),
-        DialogHolderLine = Color3.fromHex("#2B2B2B"),
-        DialogButton = Color3.fromHex("#313131"),
-        DialogButtonBorder = Color3.fromHex("#3C3C3C"),
-        DialogBorder = Color3.fromHex("#2B2B2B"),
-        DialogInput = Color3.fromHex("#313131"),
-        DialogInputLine = Color3.fromHex("#0078D4"),
-        Text = Color3.fromHex("#CCCCCC"),
-        SubText = Color3.fromHex("#9D9D9D"),
-        Hover = Color3.fromHex("#3C3C3C"),
-        HoverChange = 0.1
-    },
-    ["VSC Dark+"] = {
-        Name = "VSC Dark+",
-        Accent = Color3.fromHex("#DCDCAA"),
-        AcrylicMain = Color3.fromHex("#1E1E1E"),
-        AcrylicBorder = Color3.fromHex("#444444"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#1E1E1E"), Color3.fromHex("#1E1E1E")),
-        AcrylicNoise = 0.92,
-        TitleBarLine = Color3.fromHex("#444444"),
-        Tab = Color3.fromHex("#CCCCCC"),
-        Element = Color3.fromHex("#2D2D2D"),
-        ElementBorder = Color3.fromHex("#404040"),
-        InElementBorder = Color3.fromHex("#DCDCAA"),
-        ElementTransparency = 0.85,
-        ToggleSlider = Color3.fromHex("#4EC9B0"),
-        ToggleToggled = Color3.fromHex("#1E1E1E"),
-        SliderRail = Color3.fromHex("#4EC9B0"),
-        DropdownFrame = Color3.fromHex("#2D2D2D"),
-        DropdownHolder = Color3.fromHex("#252526"),
-        DropdownBorder = Color3.fromHex("#404040"),
-        DropdownOption = Color3.fromHex("#9CDCFE"),
-        Keybind = Color3.fromHex("#2D2D2D"),
-        Input = Color3.fromHex("#3C3C3C"),
-        InputFocused = Color3.fromHex("#3C3C3C"),
-        InputIndicator = Color3.fromHex("#808080"),
-        Dialog = Color3.fromHex("#252526"),
-        DialogHolder = Color3.fromHex("#1E1E1E"),
-        DialogHolderLine = Color3.fromHex("#404040"),
-        DialogButton = Color3.fromHex("#2D2D2D"),
-        DialogButtonBorder = Color3.fromHex("#404040"),
-        DialogBorder = Color3.fromHex("#444444"),
-        DialogInput = Color3.fromHex("#3C3C3C"),
-        DialogInputLine = Color3.fromHex("#DCDCAA"),
-        Text = Color3.fromHex("#D4D4D4"),
-        SubText = Color3.fromHex("#808080"),
-        Hover = Color3.fromHex("#2A2D2E"),
-        HoverChange = 0.05
-    },
-    ["VSC Light High Contrast"] = {
-        Name = "VSC Light High Contrast",
-        Accent = Color3.fromHex("#5e2cbc"),
-        AcrylicMain = Color3.fromHex("#ffffff"),
-        AcrylicBorder = Color3.fromHex("#292929"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#ffffff"), Color3.fromHex("#ffffff")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#292929"),
-        Tab = Color3.fromHex("#000000"),
-        Element = Color3.fromHex("#ffffff"),
-        ElementBorder = Color3.fromHex("#515151"),
-        InElementBorder = Color3.fromHex("#5e2cbc"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#0F4A85"),
-        ToggleToggled = Color3.fromHex("#ffffff"),
-        SliderRail = Color3.fromHex("#0F4A85"),
-        DropdownFrame = Color3.fromHex("#ffffff"),
-        DropdownHolder = Color3.fromHex("#ffffff"),
-        DropdownBorder = Color3.fromHex("#515151"),
-        DropdownOption = Color3.fromHex("#001080"),
-        Keybind = Color3.fromHex("#ffffff"),
-        Input = Color3.fromHex("#ffffff"),
-        InputFocused = Color3.fromHex("#ffffff"),
-        InputIndicator = Color3.fromHex("#515151"),
-        Dialog = Color3.fromHex("#ffffff"),
-        DialogHolder = Color3.fromHex("#ffffff"),
-        DialogHolderLine = Color3.fromHex("#515151"),
-        DialogButton = Color3.fromHex("#ffffff"),
-        DialogButtonBorder = Color3.fromHex("#515151"),
-        DialogBorder = Color3.fromHex("#292929"),
-        DialogInput = Color3.fromHex("#ffffff"),
-        DialogInputLine = Color3.fromHex("#5e2cbc"),
-        Text = Color3.fromHex("#292929"),
-        SubText = Color3.fromHex("#515151"),
-        Hover = Color3.fromHex("#dddddd"),
-        HoverChange = 0.1
-    },
-    ["VSC Light Modern"] = {
-        Name = "VSC Light Modern",
-        Accent = Color3.fromHex("#005FB8"),
-        AcrylicMain = Color3.fromHex("#F8F8F8"),
-        AcrylicBorder = Color3.fromHex("#E5E5E5"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#F8F8F8"), Color3.fromHex("#F8F8F8")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#E5E5E5"),
-        Tab = Color3.fromHex("#1F1F1F"),
-        Element = Color3.fromHex("#E5E5E5"),
-        ElementBorder = Color3.fromHex("#CECECE"),
-        InElementBorder = Color3.fromHex("#005FB8"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#005FB8"),
-        ToggleToggled = Color3.fromHex("#FFFFFF"),
-        SliderRail = Color3.fromHex("#005FB8"),
-        DropdownFrame = Color3.fromHex("#FFFFFF"),
-        DropdownHolder = Color3.fromHex("#FFFFFF"),
-        DropdownBorder = Color3.fromHex("#CECECE"),
-        DropdownOption = Color3.fromHex("#3B3B3B"),
-        Keybind = Color3.fromHex("#FFFFFF"),
-        Input = Color3.fromHex("#FFFFFF"),
-        InputFocused = Color3.fromHex("#FFFFFF"),
-        InputIndicator = Color3.fromHex("#767676"),
-        Dialog = Color3.fromHex("#F8F8F8"),
-        DialogHolder = Color3.fromHex("#FFFFFF"),
-        DialogHolderLine = Color3.fromHex("#E5E5E5"),
-        DialogButton = Color3.fromHex("#E5E5E5"),
-        DialogButtonBorder = Color3.fromHex("#CECECE"),
-        DialogBorder = Color3.fromHex("#E5E5E5"),
-        DialogInput = Color3.fromHex("#FFFFFF"),
-        DialogInputLine = Color3.fromHex("#005FB8"),
-        Text = Color3.fromHex("#3B3B3B"),
-        SubText = Color3.fromHex("#616161"),
-        Hover = Color3.fromHex("#F2F2F2"),
-        HoverChange = 0.1
-    },
-    ["VSC Light+"] = {
-        Name = "VSC Light+",
-        Accent = Color3.fromHex("#795E26"),
-        AcrylicMain = Color3.fromHex("#FFFFFF"),
-        AcrylicBorder = Color3.fromHex("#D4D4D4"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#FFFFFF"), Color3.fromHex("#FFFFFF")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#D4D4D4"),
-        Tab = Color3.fromHex("#000000"),
-        Element = Color3.fromHex("#F3F3F3"),
-        ElementBorder = Color3.fromHex("#CECECE"),
-        InElementBorder = Color3.fromHex("#795E26"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#795E26"),
-        ToggleToggled = Color3.fromHex("#FFFFFF"),
-        SliderRail = Color3.fromHex("#795E26"),
-        DropdownFrame = Color3.fromHex("#FFFFFF"),
-        DropdownHolder = Color3.fromHex("#FFFFFF"),
-        DropdownBorder = Color3.fromHex("#CECECE"),
-        DropdownOption = Color3.fromHex("#001080"),
-        Keybind = Color3.fromHex("#FFFFFF"),
-        Input = Color3.fromHex("#FFFFFF"),
-        InputFocused = Color3.fromHex("#FFFFFF"),
-        InputIndicator = Color3.fromHex("#767676"),
-        Dialog = Color3.fromHex("#F3F3F3"),
-        DialogHolder = Color3.fromHex("#FFFFFF"),
-        DialogHolderLine = Color3.fromHex("#D4D4D4"),
-        DialogButton = Color3.fromHex("#F3F3F3"),
-        DialogButtonBorder = Color3.fromHex("#CECECE"),
-        DialogBorder = Color3.fromHex("#D4D4D4"),
-        DialogInput = Color3.fromHex("#FFFFFF"),
-        DialogInputLine = Color3.fromHex("#795E26"),
-        Text = Color3.fromHex("#000000"),
-        SubText = Color3.fromHex("#6F6F6F"),
-        Hover = Color3.fromHex("#E8E8E8"),
-        HoverChange = 0.1
-    },
-    ["VSC Red"] = {
-        Name = "VSC Red",
-        Accent = Color3.fromHex("#cc3333"),
-        AcrylicMain = Color3.fromHex("#580000"),
-        AcrylicBorder = Color3.fromHex("#ff6666"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#580000"), Color3.fromHex("#580000")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#772222"),
-        Tab = Color3.fromHex("#F8F8F8"),
-        Element = Color3.fromHex("#580000"),
-        ElementBorder = Color3.fromHex("#ff6666"),
-        InElementBorder = Color3.fromHex("#cc0000"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#cc3333"),
-        ToggleToggled = Color3.fromHex("#300000"),
-        SliderRail = Color3.fromHex("#cc3333"),
-        DropdownFrame = Color3.fromHex("#580000"),
-        DropdownHolder = Color3.fromHex("#580000"),
-        DropdownBorder = Color3.fromHex("#220000"),
-        DropdownOption = Color3.fromHex("#F8F8F8"),
-        Keybind = Color3.fromHex("#580000"),
-        Input = Color3.fromHex("#580000"),
-        InputFocused = Color3.fromHex("#580000"),
-        InputIndicator = Color3.fromHex("#c10000"),
-        Dialog = Color3.fromHex("#300000"),
-        DialogHolder = Color3.fromHex("#300000"),
-        DialogHolderLine = Color3.fromHex("#ff0000"),
-        DialogButton = Color3.fromHex("#833333"),
-        DialogButtonBorder = Color3.fromHex("#662222"),
-        DialogBorder = Color3.fromHex("#220000"),
-        DialogInput = Color3.fromHex("#580000"),
-        DialogInputLine = Color3.fromHex("#cc3333"),
-        Text = Color3.fromHex("#F8F8F8"),
-        SubText = Color3.fromHex("#e7c0c0"),
-        Hover = Color3.fromHex("#800000"),
-        HoverChange = 0.1
-    },
-    ["Vynixu"] = {
-        Name = "Vynixu",
-        Accent = Color3.fromRGB(90, 235, 45),
-        AcrylicMain = Color3.fromRGB(30, 30, 30),
-        AcrylicBorder = Color3.fromRGB(60, 60, 60),
-        AcrylicGradient = ColorSequence.new(Color3.fromRGB(25, 25, 25), Color3.fromRGB(15, 15, 15)),
-        AcrylicNoise = 0.94,
-        TitleBarLine = Color3.fromRGB(65, 65, 65),
-        Tab = Color3.fromRGB(100, 100, 100),
-        Element = Color3.fromRGB(70, 70, 70),
-        ElementBorder = Color3.fromRGB(25, 25, 25),
-        InElementBorder = Color3.fromRGB(55, 55, 55),
-        ElementTransparency = 0.82,
-        ToggleSlider = Color3.fromRGB(90, 235, 45),
-        ToggleToggled = Color3.fromRGB(30, 30, 30),
-        SliderRail = Color3.fromRGB(90, 235, 45),
-        DropdownFrame = Color3.fromRGB(120, 120, 120),
-        DropdownHolder = Color3.fromRGB(35, 35, 35),
-        DropdownBorder = Color3.fromRGB(25, 25, 25),
-        DropdownOption = Color3.fromRGB(200, 200, 200),
-        Keybind = Color3.fromRGB(70, 70, 70),
-        Input = Color3.fromRGB(70, 70, 70),
-        InputFocused = Color3.fromRGB(70, 70, 70),
-        InputIndicator = Color3.fromRGB(150, 150, 150),
-        Dialog = Color3.fromRGB(35, 35, 35),
-        DialogHolder = Color3.fromRGB(25, 25, 25),
-        DialogHolderLine = Color3.fromRGB(20, 20, 20),
-        DialogButton = Color3.fromRGB(35, 35, 35),
-        DialogButtonBorder = Color3.fromRGB(55, 55, 55),
-        DialogBorder = Color3.fromRGB(50, 50, 50),
-        DialogInput = Color3.fromRGB(45, 45, 45),
-        DialogInputLine = Color3.fromRGB(120, 120, 120),
-        Text = Color3.fromRGB(240, 240, 240),
-        SubText = Color3.fromRGB(170, 170, 170),
-        Hover = Color3.fromRGB(80, 80, 80),
-        HoverChange = 0.07
-    },
-    ["Yaru"] = {
-        Name = "Yaru",
-        Accent = Color3.fromHex("#e95420"),
-        AcrylicMain = Color3.fromHex("#edeef0"),
-        AcrylicBorder = Color3.fromHex("#D4D4D4"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#edeef0"), Color3.fromHex("#edeef0")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#D4D4D4"),
-        Tab = Color3.fromHex("#111111"),
-        Element = Color3.fromHex("#FFFFFF"),
-        ElementBorder = Color3.fromHex("#CECECE"),
-        InElementBorder = Color3.fromHex("#e95420"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#e95420"),
-        ToggleToggled = Color3.fromHex("#FFFFFF"),
-        SliderRail = Color3.fromHex("#e95420"),
-        DropdownFrame = Color3.fromHex("#FFFFFF"),
-        DropdownHolder = Color3.fromHex("#FFFFFF"),
-        DropdownBorder = Color3.fromHex("#CECECE"),
-        DropdownOption = Color3.fromHex("#111111"),
-        Keybind = Color3.fromHex("#FFFFFF"),
-        Input = Color3.fromHex("#FFFFFF"),
-        InputFocused = Color3.fromHex("#FFFFFF"),
-        InputIndicator = Color3.fromHex("#767676"),
-        Dialog = Color3.fromHex("#f6f6f6"),
-        DialogHolder = Color3.fromHex("#FFFFFF"),
-        DialogHolderLine = Color3.fromHex("#D4D4D4"),
-        DialogButton = Color3.fromHex("#f6f6f6"),
-        DialogButtonBorder = Color3.fromHex("#CECECE"),
-        DialogBorder = Color3.fromHex("#D4D4D4"),
-        DialogInput = Color3.fromHex("#FFFFFF"),
-        DialogInputLine = Color3.fromHex("#e95420"),
-        Text = Color3.fromHex("#111111"),
-        SubText = Color3.fromHex("#6F6F6F"),
-        Hover = Color3.fromHex("#E8E8E8"),
-        HoverChange = 0.1
-    },
-    ["Yaru Dark"] = {
-        Name = "Yaru Dark",
-        Accent = Color3.fromHex("#e95420"),
-        AcrylicMain = Color3.fromHex("#383838"),
-        AcrylicBorder = Color3.fromHex("#444444"),
-        AcrylicGradient = ColorSequence.new(Color3.fromHex("#383838"), Color3.fromHex("#383838")),
-        AcrylicNoise = 1,
-        TitleBarLine = Color3.fromHex("#444444"),
-        Tab = Color3.fromHex("#FFFFFF"),
-        Element = Color3.fromHex("#484848"),
-        ElementBorder = Color3.fromHex("#404040"),
-        InElementBorder = Color3.fromHex("#e95420"),
-        ElementTransparency = 0,
-        ToggleSlider = Color3.fromHex("#e95420"),
-        ToggleToggled = Color3.fromHex("#2f2f2f"),
-        SliderRail = Color3.fromHex("#e95420"),
-        DropdownFrame = Color3.fromHex("#484848"),
-        DropdownHolder = Color3.fromHex("#484848"),
-        DropdownBorder = Color3.fromHex("#404040"),
-        DropdownOption = Color3.fromHex("#FFFFFF"),
-        Keybind = Color3.fromHex("#484848"),
-        Input = Color3.fromHex("#484848"),
-        InputFocused = Color3.fromHex("#484848"),
-        InputIndicator = Color3.fromHex("#636e7b"),
-        Dialog = Color3.fromHex("#434343"),
-        DialogHolder = Color3.fromHex("#2f2f2f"),
-        DialogHolderLine = Color3.fromHex("#404040"),
-        DialogButton = Color3.fromHex("#484848"),
-        DialogButtonBorder = Color3.fromHex("#404040"),
-        DialogBorder = Color3.fromHex("#444444"),
-        DialogInput = Color3.fromHex("#484848"),
-        DialogInputLine = Color3.fromHex("#e95420"),
-        Text = Color3.fromHex("#FFFFFF"),
-        SubText = Color3.fromHex("#808080"),
-        Hover = Color3.fromHex("#575757"),
-        HoverChange = 0.1
-    }
+        Names = {
+                "Amethyst Maru",
+                "Crimson Dark",
+                "Ember",
+                "Neon Crimson",         
+                "Neon Orange",
+                "Dark Typewriter",
+                "VSC Dark High Contrast",
+                "Dark",
+                "Darker",
+                "Light",
+                "Aqua",
+                "Amethyst",
+                "Amethyst Dark",
+                "Rose",
+                "Sakura"
+        },
+        ["VSC Dark High Contrast"] = {
+                Accent = Color3.fromHex("#569cd6"), -- Based on keyword color
+
+                AcrylicMain = Color3.fromHex("#000000"), -- editor.background
+                AcrylicBorder = Color3.fromHex("#FFFFFF"), -- Based on editor.foreground
+                AcrylicGradient = ColorSequence.new(Color3.fromHex("#000000"), Color3.fromHex("#000000")),
+                AcrylicNoise = 1,
+
+                TitleBarLine = Color3.fromHex("#FFFFFF"),
+                Tab = Color3.fromHex("#FFFFFF"),
+
+                Element = Color3.fromHex("#000000"),
+                ElementBorder = Color3.fromHex("#FFFFFF"),
+                InElementBorder = Color3.fromHex("#569cd6"),
+                ElementTransparency = 0,
+
+                ToggleSlider = Color3.fromHex("#569cd6"),
+                ToggleToggled = Color3.fromHex("#000000"),
+
+                SliderRail = Color3.fromHex("#569cd6"),
+
+                DropdownFrame = Color3.fromHex("#000000"),
+                DropdownHolder = Color3.fromHex("#000000"),
+                DropdownBorder = Color3.fromHex("#FFFFFF"),
+                DropdownOption = Color3.fromHex("#FFFFFF"),
+
+                Keybind = Color3.fromHex("#000000"),
+
+                Input = Color3.fromHex("#000000"),
+                InputFocused = Color3.fromHex("#000000"),
+                InputIndicator = Color3.fromHex("#7c7c7c"), -- Based on editorWhitespace.foreground
+
+                Dialog = Color3.fromHex("#000000"),
+                DialogHolder = Color3.fromHex("#000000"),
+                DialogHolderLine = Color3.fromHex("#FFFFFF"),
+                DialogButton = Color3.fromHex("#000000"),
+                DialogButtonBorder = Color3.fromHex("#FFFFFF"),
+                DialogBorder = Color3.fromHex("#FFFFFF"),
+                DialogInput = Color3.fromHex("#000000"),
+                DialogInputLine = Color3.fromHex("#569cd6"),
+
+                Text = Color3.fromHex("#FFFFFF"), -- editor.foreground
+                SubText = Color3.fromHex("#9D9D9D"), -- descriptionForeground
+                Hover = Color3.fromHex("#383a49"), -- Based on actionBar.toggledBackground
+                HoverChange = 0.1
+        },
+        ["Dark Typewriter"] = {
+                Accent = Color3.fromRGB(109, 180, 120),
+
+                AcrylicMain = Color3.fromRGB(38, 38, 38),
+                AcrylicBorder = Color3.fromRGB(85, 85, 85),
+                AcrylicGradient = ColorSequence.new(Color3.fromRGB(38, 38, 38), Color3.fromRGB(38, 38, 38)),
+                AcrylicNoise = 1,
+
+                TitleBarLine = Color3.fromRGB(189, 189, 189),
+                Tab = Color3.fromRGB(109, 180, 120),
+
+                Element = Color3.fromRGB(42, 42, 42),
+                ElementBorder = Color3.fromRGB(51, 51, 51),
+                InElementBorder = Color3.fromRGB(51, 51, 51),
+                ElementTransparency = 0,
+
+                ToggleSlider = Color3.fromRGB(103, 169, 113),
+                ToggleToggled = Color3.fromRGB(255, 255, 255),
+
+                SliderRail = Color3.fromRGB(51, 51, 51),
+
+                DropdownFrame = Color3.fromRGB(68, 68, 68),
+                DropdownHolder = Color3.fromRGB(68, 68, 68),
+                DropdownBorder = Color3.fromRGB(38, 38, 38),
+                DropdownOption = Color3.fromRGB(153, 200, 255),
+
+                Keybind = Color3.fromRGB(54, 54, 54),
+
+                Input = Color3.fromRGB(27, 27, 27),
+                InputFocused = Color3.fromRGB(51, 51, 51),
+                InputIndicator = Color3.fromRGB(197, 184, 161),
+
+                Dialog = Color3.fromRGB(38, 38, 38),
+                DialogHolder = Color3.fromRGB(58, 52, 46),
+                DialogHolderLine = Color3.fromRGB(40, 40, 40),
+                DialogButton = Color3.fromRGB(42, 42, 42),
+                DialogButtonBorder = Color3.fromRGB(51, 51, 51),
+                DialogBorder = Color3.fromRGB(189, 189, 189),
+                DialogInput = Color3.fromRGB(27, 27, 27),
+                DialogInputLine = Color3.fromRGB(197, 184, 161),
+
+                Text = Color3.fromRGB(197, 184, 161),
+                SubText = Color3.fromRGB(158, 158, 158),
+                Hover = Color3.fromRGB(149, 149, 149),
+                HoverChange = 0.04
+        },
+        ["Amethyst Maru"] = {
+                Name = "Amethyst Maru",
+                Accent = Color3.fromHex("#1e6dbf"), -- Dark blue accent
+
+                AcrylicMain = Color3.fromHex("#001a33"), -- Dark blue background
+                AcrylicBorder = Color3.fromHex("#004080"), -- Slightly lighter border
+                AcrylicGradient = ColorSequence.new(Color3.fromHex("#001a33"), Color3.fromHex("#001a33")),
+                AcrylicNoise = 0.92,
+
+                TitleBarLine = Color3.fromHex("#004080"),
+                Tab = Color3.fromHex("#a1c4e6"), -- Light blue text
+
+                Element = Color3.fromHex("#00264d"),
+                ElementBorder = Color3.fromHex("#004080"),
+                InElementBorder = Color3.fromHex("#1e6dbf"),
+                ElementTransparency = 0.85,
+
+                ToggleSlider = Color3.fromHex("#0055a3"),
+                ToggleToggled = Color3.fromHex("#001a33"),
+
+                SliderRail = Color3.fromHex("#0055a3"),
+
+                DropdownFrame = Color3.fromHex("#00264d"),
+                DropdownHolder = Color3.fromHex("#00264d"),
+                DropdownBorder = Color3.fromHex("#004080"),
+                DropdownOption = Color3.fromHex("#a1c4e6"),
+
+                Keybind = Color3.fromHex("#00264d"),
+
+                Input = Color3.fromHex("#001933"),
+                InputFocused = Color3.fromHex("#001933"),
+                InputIndicator = Color3.fromHex("#7fa1bf"),
+
+                Dialog = Color3.fromHex("#00264d"),
+                DialogHolder = Color3.fromHex("#001a33"),
+                DialogHolderLine = Color3.fromHex("#004080"),
+                DialogButton = Color3.fromHex("#00264d"),
+                DialogButtonBorder = Color3.fromHex("#004080"),
+                DialogBorder = Color3.fromHex("#004080"),
+                DialogInput = Color3.fromHex("#001933"),
+                DialogInputLine = Color3.fromHex("#1e6dbf"),
+
+                Text = Color3.fromHex("#a1c4e6"), -- Light blue text for readability
+                SubText = Color3.fromHex("#7fa1bf"),
+                Hover = Color3.fromHex("#004080"),
+                HoverChange = 0.1
+        },
+        ["Amethyst Dark"] = {
+                Name = "Amethyst Dark",
+                Accent = Color3.fromHex("#b133ff"),
+
+                AcrylicMain = Color3.fromHex("#120024"),
+                AcrylicBorder = Color3.fromHex("#4d057b"),
+                AcrylicGradient = ColorSequence.new(Color3.fromHex("#120024"), Color3.fromHex("#120024")),
+                AcrylicNoise = 0.92,
+
+                TitleBarLine = Color3.fromHex("#4d057b"),
+                Tab = Color3.fromHex("#e9d9f2"),
+
+                Element = Color3.fromHex("#25013c"),
+                ElementBorder = Color3.fromHex("#4d057b"),
+                InElementBorder = Color3.fromHex("#b133ff"),
+                ElementTransparency = 0.85,
+
+                ToggleSlider = Color3.fromHex("#7d16bf"),
+                ToggleToggled = Color3.fromHex("#120024"),
+
+                SliderRail = Color3.fromHex("#7d16bf"),
+
+                DropdownFrame = Color3.fromHex("#25013c"),
+                DropdownHolder = Color3.fromHex("#25013c"),
+                DropdownBorder = Color3.fromHex("#4d057b"),
+                DropdownOption = Color3.fromHex("#e9d9f2"),
+
+                Keybind = Color3.fromHex("#25013c"),
+
+                Input = Color3.fromHex("#180030"),
+                InputFocused = Color3.fromHex("#180030"),
+                InputIndicator = Color3.fromHex("#9e85ad"),
+
+                Dialog = Color3.fromHex("#25013c"),
+                DialogHolder = Color3.fromHex("#120024"),
+                DialogHolderLine = Color3.fromHex("#4d057b"),
+                DialogButton = Color3.fromHex("#25013c"),
+                DialogButtonBorder = Color3.fromHex("#4d057b"),
+                DialogBorder = Color3.fromHex("#4d057b"),
+                DialogInput = Color3.fromHex("#180030"),
+                DialogInputLine = Color3.fromHex("#b133ff"),
+
+                Text = Color3.fromHex("#e9d9f2"),
+                SubText = Color3.fromHex("#9e85ad"),
+                Hover = Color3.fromHex("#4d057b"),
+                HoverChange = 0.1
+        },
+        ["Crimson Dark"] = {
+                Name = "Crimson Dark",
+                Accent = Color3.fromHex("#ff3333"), -- Bright Crimson Red
+
+                AcrylicMain = Color3.fromHex("#240000"), -- Deep Maroon
+                AcrylicBorder = Color3.fromHex("#7b0505"), -- Dark Red
+                AcrylicGradient = ColorSequence.new(Color3.fromHex("#240000"), Color3.fromHex("#240000")),
+                AcrylicNoise = 0.92,
+
+                TitleBarLine = Color3.fromHex("#7b0505"), -- Dark Red
+                Tab = Color3.fromHex("#f2d9d9"), -- Soft Pinkish White
+
+                Element = Color3.fromHex("#3c0101"), -- Deep Red
+                ElementBorder = Color3.fromHex("#7b0505"), -- Dark Red
+                InElementBorder = Color3.fromHex("#ff3333"), -- Bright Crimson
+                ElementTransparency = 0.85,
+
+                ToggleSlider = Color3.fromHex("#bf1616"), -- Rich Red
+                ToggleToggled = Color3.fromHex("#240000"), -- Deep Maroon
+
+                SliderRail = Color3.fromHex("#bf1616"), -- Rich Red
+
+                DropdownFrame = Color3.fromHex("#3c0101"), -- Deep Red
+                DropdownHolder = Color3.fromHex("#3c0101"), -- Deep Red
+                DropdownBorder = Color3.fromHex("#7b0505"), -- Dark Red
+                DropdownOption = Color3.fromHex("#f2d9d9"), -- Soft Pinkish White
+
+                Keybind = Color3.fromHex("#3c0101"), -- Deep Red
+
+                Input = Color3.fromHex("#300000"), -- Dark Maroon
+                InputFocused = Color3.fromHex("#300000"), -- Dark Maroon
+                InputIndicator = Color3.fromHex("#ad8585"), -- Muted Red
+
+                Dialog = Color3.fromHex("#3c0101"), -- Deep Red
+                DialogHolder = Color3.fromHex("#240000"), -- Deep Maroon
+                DialogHolderLine = Color3.fromHex("#7b0505"), -- Dark Red
+                DialogButton = Color3.fromHex("#3c0101"), -- Deep Red
+                DialogButtonBorder = Color3.fromHex("#7b0505"), -- Dark Red
+                DialogBorder = Color3.fromHex("#7b0505"), -- Dark Red
+                DialogInput = Color3.fromHex("#300000"), -- Dark Maroon
+                DialogInputLine = Color3.fromHex("#ff3333"), -- Bright Crimson
+
+                Text = Color3.fromHex("#f2d9d9"), -- Soft Pinkish White
+                SubText = Color3.fromHex("#ad8585"), -- Muted Red
+                Hover = Color3.fromHex("#7b0505"), -- Dark Red
+                HoverChange = 0.1
+        },
+        ["Neon Crimson"] = {
+                Name = "Neon Crimson",
+                Accent = Color3.fromHex("#ff0055"), -- Neon Red-Pink
+
+                AcrylicMain = Color3.fromHex("#0a0005"), -- Deep Black-Red
+                AcrylicBorder = Color3.fromHex("#910027"), -- Intense Deep Red
+                AcrylicGradient = ColorSequence.new(Color3.fromHex("#0a0005"), Color3.fromHex("#0a0005")),
+                AcrylicNoise = 0.92,
+
+                TitleBarLine = Color3.fromHex("#910027"), -- Deep Red Border
+                Tab = Color3.fromHex("#ffccd9"), -- Soft Neon Pink
+
+                Element = Color3.fromHex("#220007"), -- Dark Red-Black
+                ElementBorder = Color3.fromHex("#910027"), -- Intense Deep Red
+                InElementBorder = Color3.fromHex("#ff0055"), -- Neon Red-Pink
+                ElementTransparency = 0.85,
+
+                ToggleSlider = Color3.fromHex("#d40040"), -- Bright Crimson
+                ToggleToggled = Color3.fromHex("#0a0005"), -- Deep Black-Red
+
+                SliderRail = Color3.fromHex("#d40040"), -- Bright Crimson
+
+                DropdownFrame = Color3.fromHex("#220007"), -- Dark Red-Black
+                DropdownHolder = Color3.fromHex("#220007"), -- Dark Red-Black
+                DropdownBorder = Color3.fromHex("#910027"), -- Intense Deep Red
+                DropdownOption = Color3.fromHex("#ffccd9"), -- Soft Neon Pink
+
+                Keybind = Color3.fromHex("#220007"), -- Dark Red-Black
+
+                Input = Color3.fromHex("#140005"), -- Deep Black-Red
+                InputFocused = Color3.fromHex("#140005"), -- Deep Black-Red
+                InputIndicator = Color3.fromHex("#ff8099"), -- Soft Neon Red
+
+                Dialog = Color3.fromHex("#220007"), -- Dark Red-Black
+                DialogHolder = Color3.fromHex("#0a0005"), -- Deep Black-Red
+                DialogHolderLine = Color3.fromHex("#910027"), -- Intense Deep Red
+                DialogButton = Color3.fromHex("#220007"), -- Dark Red-Black
+                DialogButtonBorder = Color3.fromHex("#910027"), -- Intense Deep Red
+                DialogBorder = Color3.fromHex("#910027"), -- Intense Deep Red
+                DialogInput = Color3.fromHex("#140005"), -- Deep Black-Red
+                DialogInputLine = Color3.fromHex("#ff0055"), -- Neon Red-Pink
+
+                Text = Color3.fromHex("#ffccd9"), -- Soft Neon Pink
+                SubText = Color3.fromHex("#ff8099"), -- Soft Neon Red
+                Hover = Color3.fromHex("#910027"), -- Intense Deep Red
+                HoverChange = 0.1
+        },
+        ["Neon Orange"] = {
+                Name = "Neon Orange",
+                Accent = Color3.fromHex("#ff6a00"), -- Bright Orange
+
+                AcrylicMain = Color3.fromHex("#0a0500"), -- Deep Black-Orange
+                AcrylicBorder = Color3.fromHex("#913200"), -- Deep Orange
+                AcrylicGradient = ColorSequence.new(Color3.fromHex("#0a0500"), Color3.fromHex("#0a0500")),
+                AcrylicNoise = 0.92,
+
+                TitleBarLine = Color3.fromHex("#913200"), -- Deep Orange Border
+                Tab = Color3.fromHex("#ffd9cc"), -- Soft Orange-White
+
+                Element = Color3.fromHex("#220e00"), -- Dark Orange-Black
+                ElementBorder = Color3.fromHex("#913200"), -- Deep Orange
+                InElementBorder = Color3.fromHex("#ff6a00"), -- Bright Orange
+                ElementTransparency = 0.85,
+
+                ToggleSlider = Color3.fromHex("#d45500"), -- Medium Orange
+                ToggleToggled = Color3.fromHex("#0a0500"), -- Deep Black-Orange
+
+                SliderRail = Color3.fromHex("#d45500"), -- Medium Orange
+
+                DropdownFrame = Color3.fromHex("#220e00"), -- Dark Orange-Black
+                DropdownHolder = Color3.fromHex("#220e00"), -- Dark Orange-Black
+                DropdownBorder = Color3.fromHex("#913200"), -- Deep Orange
+                DropdownOption = Color3.fromHex("#ffd9cc"), -- Soft Orange-White
+
+                Keybind = Color3.fromHex("#220e00"), -- Dark Orange-Black
+
+                Input = Color3.fromHex("#140800"), -- Deep Black-Orange
+                InputFocused = Color3.fromHex("#140800"), -- Deep Black-Orange
+                InputIndicator = Color3.fromHex("#ffa280"), -- Soft Orange
+
+                Dialog = Color3.fromHex("#220e00"), -- Dark Orange-Black
+                DialogHolder = Color3.fromHex("#0a0500"), -- Deep Black-Orange
+                DialogHolderLine = Color3.fromHex("#913200"), -- Deep Orange
+                DialogButton = Color3.fromHex("#220e00"), -- Dark Orange-Black
+                DialogButtonBorder = Color3.fromHex("#913200"), -- Deep Orange
+                DialogBorder = Color3.fromHex("#913200"), -- Deep Orange
+                DialogInput = Color3.fromHex("#140800"), -- Deep Black-Orange
+                DialogInputLine = Color3.fromHex("#ff6a00"), -- Bright Orange
+
+                Text = Color3.fromHex("#ffd9cc"), -- Soft Orange-White
+                SubText = Color3.fromHex("#ffa280"), -- Soft Orange
+                Hover = Color3.fromHex("#913200"), -- Deep Orange
+                HoverChange = 0.1
+        },
+        Ember = {
+                Name = "Ember",
+                Accent = Color3.fromRGB(217, 87, 0), -- Dark orange accent
+
+                AcrylicMain = Color3.fromRGB(20, 20, 20),
+                AcrylicBorder = Color3.fromRGB(130, 100, 70), -- Adjusted for orange theme
+                AcrylicGradient = ColorSequence.new(Color3.fromRGB(180, 100, 40), Color3.fromRGB(90, 40, 15)), -- Orange gradient
+                AcrylicNoise = 0.92,
+
+                TitleBarLine = Color3.fromRGB(120, 90, 60),
+                Tab = Color3.fromRGB(180, 150, 120),
+
+                Element = Color3.fromRGB(160, 130, 100), -- Changed to dark orange
+                ElementBorder = Color3.fromRGB(80, 60, 40),
+                InElementBorder = Color3.fromRGB(120, 100, 80),
+                ElementTransparency = 0.87,
+
+                ToggleSlider = Color3.fromRGB(160, 130, 100),
+                ToggleToggled = Color3.fromRGB(0, 0, 0),
+
+                SliderRail = Color3.fromRGB(160, 130, 100),
+
+                DropdownFrame = Color3.fromRGB(200, 170, 140),
+                DropdownHolder = Color3.fromRGB(90, 60, 30),
+                DropdownBorder = Color3.fromRGB(75, 50, 25),
+                DropdownOption = Color3.fromRGB(160, 130, 100),
+
+                Keybind = Color3.fromRGB(160, 130, 100),
+
+                Input = Color3.fromRGB(160, 130, 100),
+                InputFocused = Color3.fromRGB(35, 20, 10),
+                InputIndicator = Color3.fromRGB(190, 160, 130),
+                InputIndicatorFocus = Color3.fromRGB(217, 87, 0), -- Dark orange focus
+
+                Dialog = Color3.fromRGB(90, 60, 30),
+                DialogHolder = Color3.fromRGB(75, 45, 20),
+                DialogHolderLine = Color3.fromRGB(65, 40, 15),
+                DialogButton = Color3.fromRGB(90, 60, 30),
+                DialogButtonBorder = Color3.fromRGB(120, 90, 60),
+                DialogBorder = Color3.fromRGB(110, 80, 50),
+                DialogInput = Color3.fromRGB(100, 70, 40),
+                DialogInputLine = Color3.fromRGB(200, 170, 140),
+
+                Text = Color3.fromRGB(240, 240, 240),
+                SubText = Color3.fromRGB(170, 170, 170),
+                Hover = Color3.fromRGB(160, 130, 100),
+                HoverChange = 0.04,
+        },
+        Dark = {
+                Name = "Dark",
+                Accent = Color3.fromRGB(96, 205, 255),
+
+                AcrylicMain = Color3.fromRGB(60, 60, 60),
+                AcrylicBorder = Color3.fromRGB(90, 90, 90),
+                AcrylicGradient = ColorSequence.new(Color3.fromRGB(40, 40, 40), Color3.fromRGB(40, 40, 40)),
+                AcrylicNoise = 0.9,
+
+                TitleBarLine = Color3.fromRGB(75, 75, 75),
+                Tab = Color3.fromRGB(120, 120, 120),
+
+                Element = Color3.fromRGB(120, 120, 120),
+                ElementBorder = Color3.fromRGB(35, 35, 35),
+                InElementBorder = Color3.fromRGB(90, 90, 90),
+                ElementTransparency = 0.87,
+
+                ToggleSlider = Color3.fromRGB(120, 120, 120),
+                ToggleToggled = Color3.fromRGB(0, 0, 0),
+
+                SliderRail = Color3.fromRGB(120, 120, 120),
+
+                DropdownFrame = Color3.fromRGB(160, 160, 160),
+                DropdownHolder = Color3.fromRGB(45, 45, 45),
+                DropdownBorder = Color3.fromRGB(35, 35, 35),
+                DropdownOption = Color3.fromRGB(120, 120, 120),
+
+                Keybind = Color3.fromRGB(120, 120, 120),
+
+                Input = Color3.fromRGB(160, 160, 160),
+                InputFocused = Color3.fromRGB(10, 10, 10),
+                InputIndicator = Color3.fromRGB(150, 150, 150),
+
+                Dialog = Color3.fromRGB(45, 45, 45),
+                DialogHolder = Color3.fromRGB(35, 35, 35),
+                DialogHolderLine = Color3.fromRGB(30, 30, 30),
+                DialogButton = Color3.fromRGB(45, 45, 45),
+                DialogButtonBorder = Color3.fromRGB(80, 80, 80),
+                DialogBorder = Color3.fromRGB(70, 70, 70),
+                DialogInput = Color3.fromRGB(55, 55, 55),
+                DialogInputLine = Color3.fromRGB(160, 160, 160),
+
+                Text = Color3.fromRGB(240, 240, 240),
+                SubText = Color3.fromRGB(170, 170, 170),
+                Hover = Color3.fromRGB(120, 120, 120),
+                HoverChange = 0.07,
+        },
+        Darker = {
+                Name = "Darker",
+                Accent = Color3.fromRGB(72, 138, 182),
+
+                AcrylicMain = Color3.fromRGB(30, 30, 30),
+                AcrylicBorder = Color3.fromRGB(60, 60, 60),
+                AcrylicGradient = ColorSequence.new(Color3.fromRGB(25, 25, 25), Color3.fromRGB(15, 15, 15)),
+                AcrylicNoise = 0.94,
+
+                TitleBarLine = Color3.fromRGB(65, 65, 65),
+                Tab = Color3.fromRGB(100, 100, 100),
+
+                Element = Color3.fromRGB(70, 70, 70),
+                ElementBorder = Color3.fromRGB(25, 25, 25),
+                InElementBorder = Color3.fromRGB(55, 55, 55),
+                ElementTransparency = 0.82,
+
+                DropdownFrame = Color3.fromRGB(120, 120, 120),
+                DropdownHolder = Color3.fromRGB(35, 35, 35),
+                DropdownBorder = Color3.fromRGB(25, 25, 25),
+
+                Dialog = Color3.fromRGB(35, 35, 35),
+                DialogHolder = Color3.fromRGB(25, 25, 25),
+                DialogHolderLine = Color3.fromRGB(20, 20, 20),
+                DialogButton = Color3.fromRGB(35, 35, 35),
+                DialogButtonBorder = Color3.fromRGB(55, 55, 55),
+                DialogBorder = Color3.fromRGB(50, 50, 50),
+                DialogInput = Color3.fromRGB(45, 45, 45),
+                DialogInputLine = Color3.fromRGB(120, 120, 120),
+        },
+        Light = {
+                Name = "Light",
+                Accent = Color3.fromRGB(0, 103, 192),
+
+                AcrylicMain = Color3.fromRGB(200, 200, 200),
+                AcrylicBorder = Color3.fromRGB(120, 120, 120),
+                AcrylicGradient = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(255, 255, 255)),
+                AcrylicNoise = 0.96,
+
+                TitleBarLine = Color3.fromRGB(160, 160, 160),
+                Tab = Color3.fromRGB(90, 90, 90),
+
+                Element = Color3.fromRGB(255, 255, 255),
+                ElementBorder = Color3.fromRGB(180, 180, 180),
+                InElementBorder = Color3.fromRGB(150, 150, 150),
+                ElementTransparency = 0.65,
+
+                ToggleSlider = Color3.fromRGB(40, 40, 40),
+                ToggleToggled = Color3.fromRGB(255, 255, 255),
+
+                SliderRail = Color3.fromRGB(40, 40, 40),
+
+                DropdownFrame = Color3.fromRGB(200, 200, 200),
+                DropdownHolder = Color3.fromRGB(240, 240, 240),
+                DropdownBorder = Color3.fromRGB(200, 200, 200),
+                DropdownOption = Color3.fromRGB(150, 150, 150),
+
+                Keybind = Color3.fromRGB(120, 120, 120),
+
+                Input = Color3.fromRGB(200, 200, 200),
+                InputFocused = Color3.fromRGB(100, 100, 100),
+                InputIndicator = Color3.fromRGB(80, 80, 80),
+                InputIndicatorFocus = Color3.fromRGB(0, 103, 192),
+
+                Dialog = Color3.fromRGB(255, 255, 255),
+                DialogHolder = Color3.fromRGB(240, 240, 240),
+                DialogHolderLine = Color3.fromRGB(228, 228, 228),
+                DialogButton = Color3.fromRGB(255, 255, 255),
+                DialogButtonBorder = Color3.fromRGB(190, 190, 190),
+                DialogBorder = Color3.fromRGB(140, 140, 140),
+                DialogInput = Color3.fromRGB(250, 250, 250),
+                DialogInputLine = Color3.fromRGB(160, 160, 160),
+
+                Text = Color3.fromRGB(0, 0, 0),
+                SubText = Color3.fromRGB(40, 40, 40),
+                Hover = Color3.fromRGB(50, 50, 50),
+                HoverChange = 0.16,
+        },
+        Aqua = {
+                Name = "Aqua",
+                Accent = Color3.fromRGB(60, 165, 165),
+
+                AcrylicMain = Color3.fromRGB(20, 20, 20),
+                AcrylicBorder = Color3.fromRGB(50, 100, 100),
+                AcrylicGradient = ColorSequence.new(Color3.fromRGB(60, 140, 140), Color3.fromRGB(40, 80, 80)),
+                AcrylicNoise = 0.92,
+
+                TitleBarLine = Color3.fromRGB(60, 120, 120),
+                Tab = Color3.fromRGB(140, 180, 180),
+
+                Element = Color3.fromRGB(110, 160, 160),
+                ElementBorder = Color3.fromRGB(40, 70, 70),
+                InElementBorder = Color3.fromRGB(80, 110, 110),
+                ElementTransparency = 0.84,
+
+                ToggleSlider = Color3.fromRGB(110, 160, 160),
+                ToggleToggled = Color3.fromRGB(0, 0, 0),
+
+                SliderRail = Color3.fromRGB(110, 160, 160),
+
+                DropdownFrame = Color3.fromRGB(160, 200, 200),
+                DropdownHolder = Color3.fromRGB(40, 80, 80),
+                DropdownBorder = Color3.fromRGB(40, 65, 65),
+                DropdownOption = Color3.fromRGB(110, 160, 160),
+
+                Keybind = Color3.fromRGB(110, 160, 160),
+
+                Input = Color3.fromRGB(110, 160, 160),
+                InputFocused = Color3.fromRGB(20, 10, 30),
+                InputIndicator = Color3.fromRGB(130, 170, 170),
+                InputIndicatorFocus = Color3.fromRGB(60, 165, 165),
+
+                Dialog = Color3.fromRGB(40, 80, 80),
+                DialogHolder = Color3.fromRGB(30, 60, 60),
+                DialogHolderLine = Color3.fromRGB(25, 50, 50),
+                DialogButton = Color3.fromRGB(40, 80, 80),
+                DialogButtonBorder = Color3.fromRGB(80, 110, 110),
+                DialogBorder = Color3.fromRGB(50, 100, 100),
+                DialogInput = Color3.fromRGB(45, 90, 90),
+                DialogInputLine = Color3.fromRGB(130, 170, 170),
+
+                Text = Color3.fromRGB(240, 240, 240),
+                SubText = Color3.fromRGB(170, 170, 170),
+                Hover = Color3.fromRGB(110, 160, 160),
+                HoverChange = 0.04,
+        },
+        Amethyst = {
+                Name = "Amethyst",
+                Accent = Color3.fromRGB(97, 62, 167),
+
+                AcrylicMain = Color3.fromRGB(20, 20, 20),
+                AcrylicBorder = Color3.fromRGB(110, 90, 130),
+                AcrylicGradient = ColorSequence.new(Color3.fromRGB(85, 57, 139), Color3.fromRGB(40, 25, 65)),
+                AcrylicNoise = 0.92,
+
+                TitleBarLine = Color3.fromRGB(95, 75, 110),
+                Tab = Color3.fromRGB(160, 140, 180),
+
+                Element = Color3.fromRGB(140, 120, 160),
+                ElementBorder = Color3.fromRGB(60, 50, 70),
+                InElementBorder = Color3.fromRGB(100, 90, 110),
+                ElementTransparency = 0.87,
+
+                ToggleSlider = Color3.fromRGB(140, 120, 160),
+                ToggleToggled = Color3.fromRGB(0, 0, 0),
+
+                SliderRail = Color3.fromRGB(140, 120, 160),
+
+                DropdownFrame = Color3.fromRGB(170, 160, 200),
+                DropdownHolder = Color3.fromRGB(60, 45, 80),
+                DropdownBorder = Color3.fromRGB(50, 40, 65),
+                DropdownOption = Color3.fromRGB(140, 120, 160),
+
+                Keybind = Color3.fromRGB(140, 120, 160),
+
+                Input = Color3.fromRGB(140, 120, 160),
+                InputFocused = Color3.fromRGB(20, 10, 30),
+                InputIndicator = Color3.fromRGB(170, 150, 190),
+                InputIndicatorFocus = Color3.fromRGB(97, 62, 167),
+
+                Dialog = Color3.fromRGB(60, 45, 80),
+                DialogHolder = Color3.fromRGB(45, 30, 65),
+                DialogHolderLine = Color3.fromRGB(40, 25, 60),
+                DialogButton = Color3.fromRGB(60, 45, 80),
+                DialogButtonBorder = Color3.fromRGB(95, 80, 110),
+                DialogBorder = Color3.fromRGB(85, 70, 100),
+                DialogInput = Color3.fromRGB(70, 55, 85),
+                DialogInputLine = Color3.fromRGB(175, 160, 190),
+
+                Text = Color3.fromRGB(240, 240, 240),
+                SubText = Color3.fromRGB(170, 170, 170),
+                Hover = Color3.fromRGB(140, 120, 160),
+                HoverChange = 0.04,
+        },
+        Rose = {
+                Name = "Rose",
+                Accent = Color3.fromRGB(180, 55, 90),
+
+                AcrylicMain = Color3.fromRGB(40, 40, 40),
+                AcrylicBorder = Color3.fromRGB(130, 90, 110),
+                AcrylicGradient = ColorSequence.new(Color3.fromRGB(190, 60, 135), Color3.fromRGB(165, 50, 70)),
+                AcrylicNoise = 0.92,
+
+                TitleBarLine = Color3.fromRGB(140, 85, 105),
+                Tab = Color3.fromRGB(180, 140, 160),
+
+                Element = Color3.fromRGB(200, 120, 170),
+                ElementBorder = Color3.fromRGB(110, 70, 85),
+                InElementBorder = Color3.fromRGB(120, 90, 90),
+                ElementTransparency = 0.86,
+
+                ToggleSlider = Color3.fromRGB(200, 120, 170),
+                ToggleToggled = Color3.fromRGB(0, 0, 0),
+
+                SliderRail = Color3.fromRGB(200, 120, 170),
+
+                DropdownFrame = Color3.fromRGB(200, 160, 180),
+                DropdownHolder = Color3.fromRGB(120, 50, 75),
+                DropdownBorder = Color3.fromRGB(90, 40, 55),
+                DropdownOption = Color3.fromRGB(200, 120, 170),
+
+                Keybind = Color3.fromRGB(200, 120, 170),
+
+                Input = Color3.fromRGB(200, 120, 170),
+                InputFocused = Color3.fromRGB(20, 10, 30),
+                InputIndicator = Color3.fromRGB(170, 150, 190),
+                InputIndicatorFocus = Color3.fromRGB(180, 55, 90),
+
+                Dialog = Color3.fromRGB(120, 50, 75),
+                DialogHolder = Color3.fromRGB(95, 40, 60),
+                DialogHolderLine = Color3.fromRGB(90, 35, 55),
+                DialogButton = Color3.fromRGB(120, 50, 75),
+                DialogButtonBorder = Color3.fromRGB(155, 90, 115),
+                DialogBorder = Color3.fromRGB(100, 70, 90),
+                DialogInput = Color3.fromRGB(135, 55, 80),
+                DialogInputLine = Color3.fromRGB(190, 160, 180),
+
+                Text = Color3.fromRGB(240, 240, 240),
+                SubText = Color3.fromRGB(170, 170, 170),
+                Hover = Color3.fromRGB(200, 120, 170),
+                HoverChange = 0.04,
+        },
+        Sakura = {
+                Name = "Sakura",
+                Accent = Color3.fromRGB(252, 209, 215),
+
+                AcrylicMain = Color3.fromRGB(40, 40, 40),
+                AcrylicBorder = Color3.fromRGB(130, 90, 110),
+                AcrylicGradient = ColorSequence.new{
+                        ColorSequenceKeypoint.new(0, Color3.fromRGB(252, 209, 215)),
+                        ColorSequenceKeypoint.new(0.25, Color3.fromRGB(255, 231, 222)),
+                        ColorSequenceKeypoint.new(0.50, Color3.fromRGB(233, 177, 205)),
+                        ColorSequenceKeypoint.new(0.75, Color3.fromRGB(195, 130, 158)),
+                        ColorSequenceKeypoint.new(1, Color3.fromRGB(86, 33, 53)),
+                },
+                AcrylicNoise = 0.92,
+
+                TitleBarLine = Color3.fromRGB(140, 85, 105),
+                Tab = Color3.fromRGB(132, 89, 95),
+
+                Element = Color3.fromRGB(220, 140, 190),
+                ElementBorder = Color3.fromRGB(110, 70, 85),
+                InElementBorder = Color3.fromRGB(120, 90, 90),
+                ElementTransparency = 0.86,
+
+                ToggleSlider = Color3.fromRGB(252, 209, 215),
+                ToggleToggled = Color3.fromRGB(252, 209, 215),
+                TransparenToggle = 0.5,
+
+                SliderRail = Color3.fromRGB(252, 209, 215),
+
+                DropdownFrame = Color3.fromRGB(252, 209, 215),
+                DropdownHolder = Color3.fromRGB(156, 103, 123),
+                DropdownBorder = Color3.fromRGB(90, 40, 55),
+                DropdownOption = Color3.fromRGB(252, 209, 215),
+
+                Keybind = Color3.fromRGB(200, 120, 170),
+
+                Input = Color3.fromRGB(200, 120, 170),
+                InputFocused = Color3.fromRGB(200, 200, 200),
+                InputIndicator = Color3.fromRGB(170, 150, 190),
+                InputIndicatorFocus = Color3.fromRGB(252,209,215),
+
+                Dialog = Color3.fromRGB(120, 50, 75),
+                DialogHolder = Color3.fromRGB(95, 40, 60),
+                DialogHolderLine = Color3.fromRGB(90, 35, 55),
+                DialogButton = Color3.fromRGB(120, 50, 75),
+                DialogButtonBorder = Color3.fromRGB(155, 90, 115),
+                DialogBorder = Color3.fromRGB(100, 70, 90),
+                DialogInput = Color3.fromRGB(135, 55, 80),
+                DialogInputLine = Color3.fromRGB(190, 160, 180),
+
+                Text = Color3.fromRGB(240, 240, 240),
+                SubText = Color3.fromRGB(220, 220, 220),
+                Hover = Color3.fromRGB(200, 120, 170),
+                HoverChange = 0.04,
+        }
 }
 
 local Library = {
-        Version = "1.2.2",
+        Version = "1.1.0",
 
         OpenFrames = {},
         Options = {},
         Themes = Themes.Names,
-        Windows = {},
 
         Window = nil,
         WindowFrame = nil,
@@ -2858,6 +755,7 @@ local Library = {
         Acrylic = false,
         Transparency = true,
         MinimizeKeybind = nil,
+        MinimizerIcon = nil,
         MinimizeKey = Enum.KeyCode.LeftControl,
 }
 
@@ -2945,7 +843,7 @@ end
 
 function Linear:step(state, dt)
         local position = state.value
-        local velocity = self._velocity
+        local velocity = self._velocity -- Linear motion ignores the state's velocity
         local goal = self._targetValue
 
         local dPos = dt * velocity
@@ -3000,69 +898,83 @@ function Spring.new(targetValue, options)
 end
 
 function Spring:step(state, dt)
-
-
+        -- Cache frequently used values and operations
         local d = self._dampingRatio
         local f = self._frequency * 2 * math.pi
         local g = self._targetValue
         local p0 = state.value
         local v0 = state.velocity or 0
-
         local offset = p0 - g
         local decay = math.exp(-d * f * dt)
-
         local p1, v1
 
-        if d == 1 then
-                p1 = (offset * (1 + f * dt) + v0 * dt) * decay + g
-                v1 = (v0 * (1 - f * dt) - offset * (f * f * dt)) * decay
-        elseif d < 1 then
+        -- Pre-calculate common products
+        local f_dt = f * dt
+        local f_squared = f * f
+
+        -- Move conditional branches outside for better prediction
+        if d == 1 then -- Critically damped
+                p1 = (offset * (1 + f_dt) + v0 * dt) * decay + g
+                v1 = (v0 * (1 - f_dt) - offset * (f_squared * dt)) * decay
+        elseif d < 1 then -- Underdamped
                 local c = math.sqrt(1 - d * d)
+                local c_squared = c * c
+                local f_c = f * c
+                local f_c_dt = f_c * dt
 
-                local i = math.cos(f * c * dt)
-                local j = math.sin(f * c * dt)
+                local i = math.cos(f_c_dt)
+                local j = math.sin(f_c_dt)
 
-
+                -- Optimize z calculation
                 local z
                 if c > EPS then
                         z = j / c
                 else
                         local a = dt * f
-                        z = a + ((a * a) * (c * c) * (c * c) / 20 - c * c) * (a * a * a) / 6
+                        local a_squared = a * a
+                        local a_cubed = a_squared * a
+                        local c_squared_squared = c_squared * c_squared
+                        z = a + ((a_squared * c_squared_squared / 20 - c_squared) * a_cubed) / 6
                 end
 
-
+                -- Optimize y calculation
                 local y
-                if f * c > EPS then
-                        y = j / (f * c)
+                if f_c > EPS then
+                        y = j / f_c
                 else
-                        local b = f * c
-                        y = dt + ((dt * dt) * (b * b) * (b * b) / 20 - b * b) * (dt * dt * dt) / 6
+                        local b = f_c
+                        local b_squared = b * b
+                        local dt_squared = dt * dt
+                        local dt_cubed = dt_squared * dt
+                        y = dt + ((dt_squared * b_squared * b_squared / 20 - b_squared) * dt_cubed) / 6
                 end
 
                 p1 = (offset * (i + d * z) + v0 * y) * decay + g
                 v1 = (v0 * (i - z * d) - offset * (z * f)) * decay
-        else
+        else -- Overdamped
                 local c = math.sqrt(d * d - 1)
-
                 local r1 = -f * (d - c)
                 local r2 = -f * (d + c)
-
                 local co2 = (v0 - offset * r1) / (2 * f * c)
                 local co1 = offset - co2
-
                 local e1 = co1 * math.exp(r1 * dt)
                 local e2 = co2 * math.exp(r2 * dt)
-
                 p1 = e1 + e2 + g
                 v1 = e1 * r1 + e2 * r2
         end
 
-        local complete = math.abs(v1) < VELOCITY_THRESHOLD and math.abs(p1 - g) < POSITION_THRESHOLD
+        -- Combine the threshold check for early returns
+        if math.abs(v1) < VELOCITY_THRESHOLD and math.abs(p1 - g) < POSITION_THRESHOLD then
+                return {
+                        complete = true,
+                        value = g,
+                        velocity = v1,
+                }
+        end
 
         return {
-                complete = complete,
-                value = complete and g or p1,
+                complete = false,
+                value = p1,
                 velocity = v1,
         }
 end
@@ -3106,6 +1018,7 @@ function BaseMotor:stop()
                 self._connection = nil
         end
 end
+
 BaseMotor.destroy = BaseMotor.stop
 
 BaseMotor.step = noop
@@ -3235,7 +1148,7 @@ function GroupMotor:step(deltaTime)
         for _, motor in pairs(self._motors) do
                 local complete = motor:step(deltaTime)
                 if not complete then
-
+                        -- If any of the sub-motors are incomplete, the group motor will not be complete either
                         allMotorsComplete = false
                 end
         end
@@ -3322,6 +1235,7 @@ local Creator = {
                         TextColor3 = Color3.new(0, 0, 0),
                         BackgroundTransparency = 1,
                         TextSize = 14,
+                        AutoLocalize = false,
                 },
                 TextButton = {
                         BackgroundColor3 = Color3.new(1, 1, 1),
@@ -3381,36 +1295,18 @@ function Creator.Disconnect()
         end
 end
 
-Creator.Themes = Themes
-Creator.Theme = Creator.Theme or "Dark"
-
-function Creator.GetThemeProperty(Property)
-        local Theme = Creator.Themes[Creator.Theme]
-        if Theme then
-                return Theme[Property]
-        end
-        return Creator.Themes.Dark[Property]
-end
-
 function Creator.UpdateTheme()
-        if not Creator.Themes[Creator.Theme] then
-                Creator.Theme = "Dark"
-        end
-
         for Instance, Object in next, Creator.Registry do
                 for Property, ColorIdx in next, Object.Properties do
-                        local themeValue = Creator.GetThemeProperty(ColorIdx)
-                        if themeValue then
-                                Instance[Property] = themeValue
+                        local Theme_Property = Creator.GetThemeProperty(ColorIdx)
+                        if Theme_Property then
+                                Instance[Property] = Theme_Property
                         end
                 end
         end
 
-        local transparency = Creator.GetThemeProperty("ElementTransparency")
-        if transparency then
-                for _, Motor in next, Creator.TransparencyMotors do
-                        Motor:setGoal(Flipper.Instant.new(transparency))
-                end
+        for _, Motor in next, Creator.TransparencyMotors do
+                Motor:setGoal(Flipper.Instant.new(Creator.GetThemeProperty("ElementTransparency")))
         end
 end
 
@@ -3438,21 +1334,23 @@ function Creator.GetThemeProperty(Property)
         end
         return Themes["Dark"][Property]
 end
+
 function Creator.New(Name, Properties, Children)
         local Object = Instance.new(Name)
 
+        -- Default properties
         for Name, Value in next, Creator.DefaultProperties[Name] or {} do
                 Object[Name] = Value
         end
 
-
+        -- Properties
         for Name, Value in next, Properties or {} do
                 if Name ~= "ThemeTag" then
                         Object[Name] = Value
                 end
         end
 
-
+        -- Children
         for _, Child in next, Children or {} do
                 Child.Parent = Object
         end
@@ -3492,12 +1390,49 @@ Library.Creator = Creator
 
 local New = Creator.New
 
+
+local LibraryID = "Roblox/Ui"
+
+local PanelParent = LocalPlayer.PlayerGui
+local Panel = PanelParent:FindFirstChild(LibraryID)
+if Panel then
+        Panel:Destroy()
+end
+
 local GUI = New("ScreenGui", {
-        Parent = LocalPlayer:WaitForChild("PlayerGui"),
+        Parent = PanelParent,
+        Name = LibraryID,
 })
+
 Library.GUI = GUI
 ProtectGui(GUI)
 
+function Library:SafeCallbackToggles(Title, Function, ...)
+        if not Function then
+                return
+        end
+
+        local Success, Event = pcall(Function, ...)
+        if not Success then
+                local _, i = Event:find(":%d+: ")
+
+                if not i then
+                        return Library:Notify({
+                                Title = "Interface",
+                                Content = "Callback error",
+                                SubContent = Title,
+                                Duration = 5,
+                        })
+                end
+
+                return Library:Notify({
+                        Title = "Interface",
+                        Content = "Callback error",
+                        SubContent = Title,
+                        Duration = 5,
+                })
+        end
+end
 function Library:SafeCallback(Function, ...)
         if not Function then
                 return
@@ -3524,6 +1459,7 @@ function Library:SafeCallback(Function, ...)
                 })
         end
 end
+
 function Library:Round(Number, Factor)
         if Factor == 0 then
                 return math.floor(Number)
@@ -3560,7 +1496,7 @@ local function createAcrylic()
                 CanCollide = false,
                 Locked = true,
                 CastShadow = false,
-                Transparency = 0.95,
+                Transparency = 0.98,
         }, {
                 Creator.New("SpecialMesh", {
                         MeshType = Enum.MeshType.Brick,
@@ -3675,7 +1611,7 @@ function AcrylicBlur()
                 end
 
                 Blur.SetVisibility = function(Value)
-                        model.Transparency = Value and 0.95 or 1
+                        model.Transparency = Value and 0.98 or 1
                 end
 
                 Blur.Frame = comp
@@ -3812,16 +1748,47 @@ local Acrylic = {
 }
 
 function Acrylic.init()
+        local baseEffect = Instance.new("DepthOfFieldEffect")
+        baseEffect.FarIntensity = 0
+        baseEffect.InFocusRadius = 0.1
+        baseEffect.NearIntensity = 1
+
         local depthOfFieldDefaults = {}
 
         function Acrylic.Enable()
-        
+                for _, effect in pairs(depthOfFieldDefaults) do
+                        effect.Enabled = false
+                end
+                baseEffect.Parent = game:GetService("Lighting")
         end
 
         function Acrylic.Disable()
-        
+                for _, effect in pairs(depthOfFieldDefaults) do
+                        effect.Enabled = effect.enabled
+                end
+                baseEffect.Parent = nil
         end
 
+        local function registerDefaults()
+                local function register(object)
+                        if object:IsA("DepthOfFieldEffect") then
+                                depthOfFieldDefaults[object] = { enabled = object.Enabled }
+                        end
+                end
+
+                for _, child in pairs(game:GetService("Lighting"):GetChildren()) do
+                        register(child)
+                end
+
+                if game:GetService("Workspace").CurrentCamera then
+                        for _, child in pairs(game:GetService("Workspace").CurrentCamera:GetChildren()) do
+                                register(child)
+                        end
+                end
+        end
+
+        registerDefaults()
+        Acrylic.Enable()
 end
 
 local Components = {
@@ -3833,361 +1800,216 @@ local Components = {
         },
 }
 
-Components.Element = (function()
-        local New = Creator.New
+local New = Creator.New
+local Spring = Flipper.Spring.new
+local Instant = Flipper.Instant.new
+local AddSignal = Creator.AddSignal
 
-        local Spring = Flipper.Spring.new
+Components.Element = function(Title, Desc, Parent, Hover, Options)
+        local Element = { Original = { Text = "" } }
+        local Options = Options or {}
 
-        return function(Title, Desc, Parent, Hover, Options)
-                local Element = {}
-                local Options = Options or {}
+        Element.TitleLabel = New("TextLabel", {
+                FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal),
+                Text = Title,
+                TextColor3 = Color3.fromRGB(240, 240, 240),
+                TextSize = 13,
+                TextXAlignment = Enum.TextXAlignment.Left,
+                Size = UDim2.new(1, 0, 0, 14),
+                BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+                BackgroundTransparency = 1,
+                AutoLocalize = false,
+                ThemeTag = {
+                        TextColor3 = "Text",
+                },
+        })
 
-                Element.TitleLabel = New("TextLabel", {
-                        FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal),
+        Element.DescLabel = New("TextLabel", {
+                FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json"),
+                Text = Desc,
+                TextColor3 = Color3.fromRGB(200, 200, 200),
+                TextSize = 12,
+                TextWrapped = true,
+                TextXAlignment = Enum.TextXAlignment.Left,
+                BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+                AutomaticSize = Enum.AutomaticSize.Y,
+                BackgroundTransparency = 1,
+                Size = UDim2.new(1, 0, 0, 14),
+                AutoLocalize = false,
+                ThemeTag = {
+                        TextColor3 = "SubText",
+                },
+        })
+
+        Element.LabelHolder = New("Frame", {
+                AutomaticSize = Enum.AutomaticSize.Y,
+                BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+                BackgroundTransparency = 1,
+                Position = UDim2.fromOffset(10, 0),
+                Size = UDim2.new(1, -28, 0, 0),
+        }, {
+                New("UIListLayout", {
+                        SortOrder = Enum.SortOrder.LayoutOrder,
+                        VerticalAlignment = Enum.VerticalAlignment.Center,
+                }),
+                New("UIPadding", {
+                        PaddingBottom = UDim.new(0, 13),
+                        PaddingTop = UDim.new(0, 13),
+                }),
+                Element.TitleLabel,
+                Element.DescLabel,
+        })
+
+        Element.Border = New("UIStroke", {
+                Transparency = 0.5,
+                ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+                Color = Color3.fromRGB(0, 0, 0),
+                ThemeTag = {
+                        Color = "ElementBorder",
+                },
+        })
+
+        Element.Frame = New("TextButton", {
+                Visible = Options.Visible and Options.Visible or true,
+                Size = UDim2.new(1, 0, 0, 0),
+                BackgroundTransparency = 0.89,
+                BackgroundColor3 = Color3.fromRGB(130, 130, 130),
+                Parent = Parent,
+                AutomaticSize = Enum.AutomaticSize.Y,
+                Text = "",
+                LayoutOrder = 7,
+                ThemeTag = {
+                        BackgroundColor3 = "Element",
+                        BackgroundTransparency = "ElementTransparency",
+                },
+        }, {
+                New("UICorner", {
+                        CornerRadius = UDim.new(0, 4),
+                }),
+                Element.Border,
+                Element.LabelHolder,
+        })
+
+        function Element:SetTitle(Set)
+                Element.TitleLabel.Text = Set
+        end
+
+        function Element:Visible(Bool)
+                Element.Frame.Visible = Bool
+        end
+
+        function Element:SetDesc(Set)
+                if Set == nil then
+                        Set = ""
+                end
+                if Set == "" then
+                        Element.DescLabel.Visible = false
+                else
+                        Element.DescLabel.Visible = true
+                end
+                Element.DescLabel.Text = Set
+        end
+
+        function Element:AddText(Add)
+                if not string.find(Element.TitleLabel.Text, Add, 1, true) then
+                        Element.TitleLabel.Text = Element.TitleLabel.Text .. "" .. Add
+                end
+        end
+
+        function Element:GetOriginalText()
+                return Element.Original.Text
+        end
+
+        function Element:GetTitle()
+                return Element.TitleLabel.Text
+        end
+
+        function Element:GetDesc()
+                return Element.DescLabel.Text
+        end
+
+        function Element:Destroy()
+                Element.Frame:Destroy()
+        end
+
+        Element:SetTitle(Title)
+        Element:SetDesc(Desc)
+
+        Element.Original.Text = Title
+
+        if Hover then
+                local Themes = Library.Themes
+                local Motor, SetTransparency = Creator.SpringMotor(
+                        Creator.GetThemeProperty("ElementTransparency"),
+                        Element.Frame,
+                        "BackgroundTransparency",
+                        false,
+                        true
+                )
+
+                Creator.AddSignal(Element.Frame.MouseEnter, function()
+                        SetTransparency(Creator.GetThemeProperty("ElementTransparency") - Creator.GetThemeProperty("HoverChange"))
+                end)
+                Creator.AddSignal(Element.Frame.MouseLeave, function()
+                        SetTransparency(Creator.GetThemeProperty("ElementTransparency"))
+                end)
+                Creator.AddSignal(Element.Frame.MouseButton1Down, function()
+                        SetTransparency(Creator.GetThemeProperty("ElementTransparency") + Creator.GetThemeProperty("HoverChange"))
+                end)
+                Creator.AddSignal(Element.Frame.MouseButton1Up, function()
+                        SetTransparency(Creator.GetThemeProperty("ElementTransparency") - Creator.GetThemeProperty("HoverChange"))
+                end)
+        end
+
+        return Element
+end
+Components.Section = function(Title, Parent)
+        local Section = {}
+
+        Section.Layout = New("UIListLayout", {
+                Padding = UDim.new(0, 5),
+        })
+
+        Section.Container = New("Frame", {
+                Size = UDim2.new(1, 0, 0, 26),
+                Position = UDim2.fromOffset(0, 24),
+                BackgroundTransparency = 1,
+        }, {
+                Section.Layout,
+        })
+
+        Section.Root = New("Frame", {
+                BackgroundTransparency = 1,
+                Size = UDim2.new(1, 0, 0, 26),
+                LayoutOrder = 7,
+                Parent = Parent,
+        }, {
+                New("TextLabel", {
+                        RichText = true,
                         Text = Title,
-                        TextColor3 = Color3.fromRGB(240, 240, 240),
-                        TextSize = 13,
-                        TextXAlignment = Enum.TextXAlignment.Left,
-                        Size = UDim2.new(1, 0, 0, 14),
-                        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-                        BackgroundTransparency = 1,
-                        LayoutOrder = 2,
+                        TextTransparency = 0,
+                        FontFace = Font.new("rbxassetid://12187365364", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal),
+                        TextSize = 18,
+                        TextXAlignment = "Left",
+                        TextYAlignment = "Center",
+                        Size = UDim2.new(1, -16, 0, 18),
+                        Position = UDim2.fromOffset(0, 2),
+                        AutoLocalize = false,
                         ThemeTag = {
                                 TextColor3 = "Text",
                         },
-                })
+                }),
+                Section.Container,
+        })
 
-                Element.Header = New("Frame", {
-                        AutomaticSize = Enum.AutomaticSize.Y,
-                        BackgroundTransparency = 1,
-                        Size = UDim2.new(1, 0, 0, 14),
-                }, {
-                        New("UIListLayout", {
-                                Padding = UDim.new(0, 5),
-                                FillDirection = Enum.FillDirection.Horizontal,
-                                SortOrder = Enum.SortOrder.LayoutOrder,
-                                VerticalAlignment = Enum.VerticalAlignment.Center,
-                        }),
-                })
-
-                if Options and Options.Icon then
-                        local iconImage = Options.Icon
-                        pcall(function()
-                                if Library and Library.GetIcon then
-                                        local resolved = Library:GetIcon(Options.Icon)
-                                        if resolved then iconImage = resolved end
-                                end
-                        end)
-                        Element.IconImage = New("ImageLabel", {
-                                Image = iconImage,
-                                Size = UDim2.fromOffset(16, 16),
-                                BackgroundTransparency = 1,
-                                LayoutOrder = 1,
-                                ThemeTag = {
-                                        ImageColor3 = "Text",
-                                },
-                        })
-                        Element.IconImage.Parent = Element.Header
-                end
-
-                Element.TitleLabel.Parent = Element.Header
-
-                Element.DescLabel = New("TextLabel", {
-                        FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json"),
-                        Text = Desc,
-                        TextColor3 = Color3.fromRGB(200, 200, 200),
-                        TextSize = 12,
-                        TextWrapped = true,
-                        TextXAlignment = Enum.TextXAlignment.Left,
-                        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-                        AutomaticSize = Enum.AutomaticSize.Y,
-                        BackgroundTransparency = 1,
-                        Size = UDim2.new(1, 0, 0, 14),
-                        ThemeTag = {
-                                TextColor3 = "SubText",
-                        },
-                })
-
-                Element.LabelHolder = New("Frame", {
-                        AutomaticSize = Enum.AutomaticSize.Y,
-                        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-                        BackgroundTransparency = 1,
-                        Position = UDim2.fromOffset(10, 0),
-                        Size = UDim2.new(1, -28, 0, 0),
-                }, {
-                        New("UIListLayout", {
-                                SortOrder = Enum.SortOrder.LayoutOrder,
-                                VerticalAlignment = Enum.VerticalAlignment.Center,
-                        }),
-                        New("UIPadding", {
-                                PaddingBottom = UDim.new(0, 13),
-                                PaddingTop = UDim.new(0, 13),
-                        }),
-                        Element.Header,
-                        Element.DescLabel,
-                })
-
-                Element.Border = New("UIStroke", {
-                        Transparency = 0.5,
-                        ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-                        Color = Color3.fromRGB(0, 0, 0),
-                        ThemeTag = {
-                                Color = "ElementBorder",
-                        },
-                })
-
-                Element.Frame = New("TextButton", {
-                        Visible = Options.Visible and Options.Visible or true,
-                        Size = UDim2.new(1, 0, 0, 0),
-                        BackgroundTransparency = 0.89,
-                        BackgroundColor3 = Color3.fromRGB(130, 130, 130),
-                        Parent = Parent,
-                        AutomaticSize = Enum.AutomaticSize.Y,
-                        Text = "",
-                        LayoutOrder = 7,
-                        ThemeTag = {
-                                BackgroundColor3 = "Element",
-                                BackgroundTransparency = "ElementTransparency",
-                        },
-                }, {
-                        New("UICorner", {
-                                CornerRadius = UDim.new(0, 4),
-                        }),
-                        Element.Border,
-                        Element.LabelHolder,
-                })
-
-                function Element:SetTitle(Set)
-                        Element.TitleLabel.Text = Set
-                        local hasTitle = (Set ~= nil and Set ~= "")
-                        Element.Header.Visible = hasTitle
-
-                        if not hasTitle then
-                                if Element.IconImage then
-                                        if not Element.DescRow then
-                                                Element.DescRow = New("Frame", {
-                                                        AutomaticSize = Enum.AutomaticSize.Y,
-                                                        BackgroundTransparency = 1,
-                                                        Size = UDim2.new(1, 0, 0, 14),
-                                                        LayoutOrder = 2,
-                                                }, {
-                                                        New("UIListLayout", {
-                                                                Padding = UDim.new(0, 5),
-                                                                FillDirection = Enum.FillDirection.Horizontal,
-                                                                SortOrder = Enum.SortOrder.LayoutOrder,
-                                                                VerticalAlignment = Enum.VerticalAlignment.Center,
-                                                        }),
-                                                })
-                                                Element.DescRow.Parent = Element.LabelHolder
-                                        end
-
-                                        if not Element.DescIconImage then
-                                                Element.DescIconImage = New("ImageLabel", {
-                                                        Image = Element.IconImage.Image,
-                                                        Size = UDim2.fromOffset(16, 16),
-                                                        BackgroundTransparency = 1,
-                                                        LayoutOrder = 1,
-                                                        ThemeTag = {
-                                                                ImageColor3 = "Text",
-                                                        },
-                                                })
-                                                Element.DescIconImage.Parent = Element.DescRow
-                                        else
-                                                Element.DescIconImage.Image = Element.IconImage.Image
-                                                Element.DescIconImage.Parent = Element.DescRow
-                                        end
-
-                                        Element.DescLabel.Parent = Element.DescRow
-                                        Element.DescLabel.LayoutOrder = 2
-                                        Element.DescLabel.Size = UDim2.new(1, -24, 0, 14)
-                                else
-                                        if Element.DescRow then
-                                                Element.DescRow:Destroy()
-                                                Element.DescRow = nil
-                                                Element.DescIconImage = nil
-                                        end
-                                        Element.DescLabel.Parent = Element.LabelHolder
-                                        Element.DescLabel.LayoutOrder = 2
-                                        Element.DescLabel.Size = UDim2.new(1, 0, 0, 14)
-                                end
-                        else
-                                if Element.DescRow then
-                                        Element.DescRow:Destroy()
-                                        Element.DescRow = nil
-                                        Element.DescIconImage = nil
-                                end
-                                Element.DescLabel.Parent = Element.LabelHolder
-                                Element.DescLabel.LayoutOrder = 2
-                                Element.DescLabel.Size = UDim2.new(1, 0, 0, 14)
-                        end
-                        if Library.Windows and #Library.Windows > 0 then
-                                local currentWindow = Library.Windows[#Library.Windows]
-                                if currentWindow and currentWindow.AllElements and currentWindow.AllElements[Element.Frame] then
-                                        currentWindow.AllElements[Element.Frame].title = Set
-                                end
-                        end
-                end
-
-                function Element:Visible(Bool)
-                        Element.Frame.Visible = Bool
-                end
-
-                function Element:SetDesc(Set)
-                        if Set == nil then
-                                Set = ""
-                        end
-                        if Set == "" then
-                                Element.DescLabel.Visible = false
-                        else
-                                Element.DescLabel.Visible = true
-                        end
-                        Element.DescLabel.Text = Set
-                        if Library.Windows and #Library.Windows > 0 then
-                                local currentWindow = Library.Windows[#Library.Windows]
-                                if currentWindow and currentWindow.AllElements and currentWindow.AllElements[Element.Frame] then
-                                        currentWindow.AllElements[Element.Frame].description = Set
-                                end
-                        end
-                end
-
-                function Element:GetTitle()
-                        return Element.TitleLabel.Text
-                end
-
-                function Element:GetDesc()
-                        return Element.DescLabel.Text
-                end
-
-                function Element:Destroy()
-                        Element.Frame:Destroy()
-                end
-
-                Element.Header.Visible = not (Title == nil or Title == "")
-
-                Element:SetTitle(Title or "")
-                Element:SetDesc(Desc)
-
-
-                if Library.Windows and #Library.Windows > 0 then
-                        local currentWindow = Library.Windows[#Library.Windows]
-                        if currentWindow and currentWindow.RegisterElement then
-                                currentWindow.RegisterElement(Element.Frame, Title, "Element", Desc)
-                        end
-                end
-
-                if Hover then
-                        local Themes = Library.Themes
-                        local Motor, SetTransparency = Creator.SpringMotor(
-                                Creator.GetThemeProperty("ElementTransparency"),
-                                Element.Frame,
-                                "BackgroundTransparency",
-                                false,
-                                true
-                        )
-
-                        Creator.AddSignal(Element.Frame.MouseEnter, function()
-                                SetTransparency(Creator.GetThemeProperty("ElementTransparency") - Creator.GetThemeProperty("HoverChange"))
-                        end)
-                        Creator.AddSignal(Element.Frame.MouseLeave, function()
-                                SetTransparency(Creator.GetThemeProperty("ElementTransparency"))
-                        end)
-                        Creator.AddSignal(Element.Frame.MouseButton1Down, function()
-                                SetTransparency(Creator.GetThemeProperty("ElementTransparency") + Creator.GetThemeProperty("HoverChange"))
-                        end)
-                        Creator.AddSignal(Element.Frame.MouseButton1Up, function()
-                                SetTransparency(Creator.GetThemeProperty("ElementTransparency") - Creator.GetThemeProperty("HoverChange"))
-                        end)
-                end
-
-                return Element
-        end
-end)()
-Components.Section = (function()
-        local New = Creator.New
-
-        return function(Title, Parent, Icon)
-                local Section = {}
-
-                Section.Layout = New("UIListLayout", {
-                        Padding = UDim.new(0, 5),
-                })
-
-                Section.Container = New("Frame", {
-                        Size = UDim2.new(1, 0, 0, 26),
-                        Position = UDim2.fromOffset(0, 24),
-                        BackgroundTransparency = 1,
-                }, {
-                        Section.Layout,
-                })
-
-                local SectionHeader = New("Frame", {
-                        Size = UDim2.new(1, -16, 0, 18),
-                        Position = UDim2.fromOffset(0, 2),
-                        BackgroundTransparency = 1,
-                }, {
-                        New("UIListLayout", {
-                                Padding = UDim.new(0, 5),
-                                FillDirection = Enum.FillDirection.Horizontal,
-                                SortOrder = Enum.SortOrder.LayoutOrder,
-                                VerticalAlignment = Enum.VerticalAlignment.Center,
-                        }),
-                        Icon and New("ImageLabel", {
-                                Image = Icon,
-                                Size = UDim2.fromOffset(16, 16),
-                                BackgroundTransparency = 1,
-                                LayoutOrder = 1,
-                                ThemeTag = {
-                                        ImageColor3 = "Text",
-                                },
-                        }) or nil,
-                        New("TextLabel", {
-                                RichText = true,
-                                Text = Title,
-                                TextTransparency = 0,
-                                FontFace = Font.new("rbxassetid://12187365364", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal),
-                                TextSize = 18,
-                                TextXAlignment = "Left",
-                                TextYAlignment = "Center",
-                                Size = UDim2.fromScale(0, 1),
-                                AutomaticSize = Enum.AutomaticSize.X,
-                                BackgroundTransparency = 1,
-                                LayoutOrder = 2,
-                                ThemeTag = {
-                                        TextColor3 = "Text",
-                                },
-                        }),
-                })
-
-                Section.Root = New("Frame", {
-                        BackgroundTransparency = 1,
-                        Size = UDim2.new(1, 0, 0, 26),
-                        LayoutOrder = 7,
-                        Parent = Parent,
-                }, {
-                        SectionHeader,
-                        Section.Container,
-                })
-
-                Creator.AddSignal(Section.Layout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
-                        Section.Container.Size = UDim2.new(1, 0, 0, Section.Layout.AbsoluteContentSize.Y)
-                        Section.Root.Size = UDim2.new(1, 0, 0, Section.Layout.AbsoluteContentSize.Y + 25)
-                end)
-
-
-                if Library.Windows and #Library.Windows > 0 then
-                        local currentWindow = Library.Windows[#Library.Windows]
-                        if currentWindow and currentWindow.RegisterElement then
-                                currentWindow.RegisterElement(Section.Root, Title, "Section")
-                        end
-                end
-
-                return Section
-        end
-end)()
+        Creator.AddSignal(Section.Layout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
+                Section.Container.Size = UDim2.new(1, 0, 0, Section.Layout.AbsoluteContentSize.Y)
+                Section.Root.Size = UDim2.new(1, 0, 0, Section.Layout.AbsoluteContentSize.Y + 25)
+        end)
+        
+        return Section
+end
 Components.Tab = (function()
-        local New = Creator.New
-        local Spring = Flipper.Spring.new
-        local Instant = Flipper.Instant.new
         local Components = Components
 
         local TabModule = {
@@ -4196,6 +2018,7 @@ Components.Tab = (function()
                 Containers = {},
                 SelectedTab = 0,
                 TabCount = 0,
+                Callback = function()end
         }
 
         function TabModule:Init(Window)
@@ -4223,14 +2046,12 @@ Components.Tab = (function()
                         Type = "Tab",
                 }
 
-                if not fischbypass then 
-                        if Library:GetIcon(Icon) then
-                                Icon = Library:GetIcon(Icon)
-                        end
+                if Library:GetIcon(Icon) then
+                        Icon = Library:GetIcon(Icon)
+                end
 
-                        if Icon == "" or nil then
-                                Icon = nil
-                        end
+                if Icon == "" or nil then
+                        Icon = nil
                 end
 
                 Tab.Frame = New("TextButton", {
@@ -4246,7 +2067,7 @@ Components.Tab = (function()
                         }),
                         New("TextLabel", {
                                 AnchorPoint = Vector2.new(0, 0.5),
-                                Position = not fischbypass and Icon and UDim2.new(0, 30, 0.5, 0) or UDim2.new(0, 12, 0.5, 0),
+                                Position = Icon and UDim2.new(0, 30, 0.5, 0) or UDim2.new(0, 12, 0.5, 0),
                                 Text = Title,
                                 RichText = true,
                                 TextColor3 = Color3.fromRGB(255, 255, 255),
@@ -4261,6 +2082,7 @@ Components.Tab = (function()
                                 TextYAlignment = "Center",
                                 Size = UDim2.new(1, -12, 1, 0),
                                 BackgroundTransparency = 1,
+                                AutoLocalize = false,
                                 ThemeTag = {
                                         TextColor3 = "Text",
                                 },
@@ -4296,7 +2118,6 @@ Components.Tab = (function()
                         BorderSizePixel = 0,
                         CanvasSize = UDim2.fromScale(0, 0),
                         ScrollingDirection = Enum.ScrollingDirection.Y,
-                        ScrollingEnabled = true,
                 }, {
                         ContainerLayout,
                         New("UIPadding", {
@@ -4327,6 +2148,7 @@ Components.Tab = (function()
                 end)
                 Creator.AddSignal(Tab.Frame.MouseButton1Click, function()
                         TabModule:SelectTab(TabIndex)
+                        TabModule.Callback(TabIndex)
                 end)
 
                 TabModule.Containers[TabIndex] = Tab.ContainerFrame
@@ -4335,21 +2157,10 @@ Components.Tab = (function()
                 Tab.Container = Tab.ContainerFrame
                 Tab.ScrollFrame = Tab.Container
 
-                function Tab:AddSection(SectionTitle, SectionIcon)
+                function Tab:AddSection(SectionTitle)
                         local Section = { Type = "Section" }
 
-                        local Icon = SectionIcon
-                        if not fischbypass then 
-                                if Library:GetIcon(Icon) then
-                                        Icon = Library:GetIcon(Icon)
-                                end
-
-                                if Icon == "" or nil then
-                                        Icon = nil
-                                end
-                        end
-
-                        local SectionFrame = Components.Section(SectionTitle, Tab.Container, Icon)
+                        local SectionFrame = Components.Section(SectionTitle, Tab.Container)
                         Section.Container = SectionFrame.Container
                         Section.ScrollFrame = Tab.Container
 
@@ -4357,24 +2168,12 @@ Components.Tab = (function()
                         return Section
                 end
 
-                function Tab:AddDiscordInvite(...)
-                        local cfg = ...
-                        if type(cfg) ~= "table" then cfg = {} end
-                        local invite = cfg.Invite or cfg.Link or ""
-                        return self:AddButton({
-                                Title = cfg.Title or cfg.Name or "Discord",
-                                Callback = function()
-                                        pcall(setclipboard, invite)
-                                end
-                        })
-                end
-
-
-                function Tab:AddLeftGroupbox(name) return Tab:AddSection(name) end
-                function Tab:AddRightGroupbox(name) return Tab:AddSection(name) end
-
                 setmetatable(Tab, Elements)
                 return Tab
+        end
+
+        function TabModule:GetCurrentTab()
+                return self.SelectedTab
         end
 
         function TabModule:SelectTab(Tab)
@@ -4411,80 +2210,76 @@ Components.Tab = (function()
 
         return TabModule
 end)()
-Components.Button = (function()
-        local New = Creator.New
+Components.Button = function(Theme, Parent, DialogCheck)
+        DialogCheck = DialogCheck or false
+        local Button = {}
 
-        local Spring = Flipper.Spring.new
+        Button.Title = New("TextLabel", {
+                FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json"),
+                TextColor3 = Color3.fromRGB(200, 200, 200),
+                TextSize = 14,
+                TextWrapped = true,
+                TextXAlignment = Enum.TextXAlignment.Center,
+                TextYAlignment = Enum.TextYAlignment.Center,
+                BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+                AutomaticSize = Enum.AutomaticSize.Y,
+                BackgroundTransparency = 1,
+                Size = UDim2.fromScale(1, 1),
+                AutoLocalize = false,
+                ThemeTag = {
+                        TextColor3 = "Text",
+                },
+        })
 
-        return function(Theme, Parent, DialogCheck)
-                DialogCheck = DialogCheck or false
-                local Button = {}
+        Button.HoverFrame = New("Frame", {
+                Size = UDim2.fromScale(1, 1),
+                BackgroundTransparency = 1,
+                ThemeTag = {
+                        BackgroundColor3 = "Hover",
+                },
+        }, {
+                New("UICorner", {
+                        CornerRadius = UDim.new(0, 4),
+                }),
+        })
 
-                Button.Title = New("TextLabel", {
-                        FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json"),
-                        TextColor3 = Color3.fromRGB(200, 200, 200),
-                        TextSize = 14,
-                        TextWrapped = true,
-                        TextXAlignment = Enum.TextXAlignment.Center,
-                        TextYAlignment = Enum.TextYAlignment.Center,
-                        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-                        AutomaticSize = Enum.AutomaticSize.Y,
-                        BackgroundTransparency = 1,
-                        Size = UDim2.fromScale(1, 1),
+        Button.Frame = New("TextButton", {
+                Size = UDim2.new(0, 0, 0, 32),
+                Parent = Parent,
+                ThemeTag = {
+                        BackgroundColor3 = "DialogButton",
+                },
+        }, {
+                New("UICorner", {
+                        CornerRadius = UDim.new(0, 4),
+                }),
+                New("UIStroke", {
+                        ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+                        Transparency = 0.65,
                         ThemeTag = {
-                                TextColor3 = "Text",
+                                Color = "DialogButtonBorder",
                         },
-                })
+                }),
+                Button.HoverFrame,
+                Button.Title,
+        })
 
-                Button.HoverFrame = New("Frame", {
-                        Size = UDim2.fromScale(1, 1),
-                        BackgroundTransparency = 1,
-                        ThemeTag = {
-                                BackgroundColor3 = "Hover",
-                        },
-                }, {
-                        New("UICorner", {
-                                CornerRadius = UDim.new(0, 4),
-                        }),
-                })
+        local Motor, SetTransparency = Creator.SpringMotor(1, Button.HoverFrame, "BackgroundTransparency", DialogCheck)
+        Creator.AddSignal(Button.Frame.MouseEnter, function()
+                SetTransparency(0.97)
+        end)
+        Creator.AddSignal(Button.Frame.MouseLeave, function()
+                SetTransparency(1)
+        end)
+        Creator.AddSignal(Button.Frame.MouseButton1Down, function()
+                SetTransparency(1)
+        end)
+        Creator.AddSignal(Button.Frame.MouseButton1Up, function()
+                SetTransparency(0.97)
+        end)
 
-                Button.Frame = New("TextButton", {
-                        Size = UDim2.new(0, 0, 0, 32),
-                        Parent = Parent,
-                        ThemeTag = {
-                                BackgroundColor3 = "DialogButton",
-                        },
-                }, {
-                        New("UICorner", {
-                                CornerRadius = UDim.new(0, 4),
-                        }),
-                        New("UIStroke", {
-                                ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-                                Transparency = 0.65,
-                                ThemeTag = {
-                                        Color = "DialogButtonBorder",
-                                },
-                        }),
-                        Button.HoverFrame,
-                        Button.Title,
-                })
-                local Motor, SetTransparency = Creator.SpringMotor(1, Button.HoverFrame, "BackgroundTransparency", DialogCheck)
-                Creator.AddSignal(Button.Frame.MouseEnter, function()
-                        SetTransparency(0.97)
-                end)
-                Creator.AddSignal(Button.Frame.MouseLeave, function()
-                        SetTransparency(1)
-                end)
-                Creator.AddSignal(Button.Frame.MouseButton1Down, function()
-                        SetTransparency(1)
-                end)
-                Creator.AddSignal(Button.Frame.MouseButton1Up, function()
-                        SetTransparency(0.97)
-                end)
-
-                return Button
-        end
-end)()
+        return Button
+end
 Components.Dialog = (function()
         local Spring = Flipper.Spring.new
         local Instant = Flipper.Instant.new
@@ -4562,6 +2357,7 @@ Components.Dialog = (function()
                         Position = UDim2.fromOffset(20, 25),
                         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
                         BackgroundTransparency = 1,
+                        AutoLocalize = false,
                         ThemeTag = {
                                 TextColor3 = "Text",
                         },
@@ -4655,8 +2451,6 @@ Components.Notification = (function()
         local Notification = {}
 
         function Notification:Init(GUI)
-                Library.ActiveNotifications = Library.ActiveNotifications or {}
-
                 Notification.Holder = New("Frame", {
                         Position = UDim2.new(1, -30, 1, -30),
                         Size = UDim2.new(0, 310, 1, -30),
@@ -4674,10 +2468,11 @@ Components.Notification = (function()
         end
 
         function Notification:New(Config)
-                Config.Title = Config.Title or Config.Name or "Title"
+                Config.Title = Config.Title or "Title"
                 Config.Content = Config.Content or "Content"
                 Config.SubContent = Config.SubContent or ""
                 Config.Duration = Config.Duration or nil
+                Config.Buttons = Config.Buttons or {}
                 local NewNotification = {
                         Closed = false,
                 }
@@ -4697,6 +2492,7 @@ Components.Notification = (function()
                         Size = UDim2.new(1, -12, 0, 12),
                         TextWrapped = true,
                         BackgroundTransparency = 1,
+                        AutoLocalize = false,
                         ThemeTag = {
                                 TextColor3 = "Text",
                         },
@@ -4713,6 +2509,7 @@ Components.Notification = (function()
                         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
                         BackgroundTransparency = 1,
                         TextWrapped = true,
+                        AutoLocalize = false,
                         ThemeTag = {
                                 TextColor3 = "Text",
                         },
@@ -4729,6 +2526,7 @@ Components.Notification = (function()
                         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
                         BackgroundTransparency = 1,
                         TextWrapped = true,
+                        AutoLocalize = false,
                         ThemeTag = {
                                 TextColor3 = "SubText",
                         },
@@ -4808,28 +2606,6 @@ Components.Notification = (function()
                 Creator.AddSignal(NewNotification.CloseButton.MouseButton1Click, function()
                         NewNotification:Close()
                 end)
-                function NewNotification:ApplyTransparency()
-                        if Library.Theme == "Glass" and Library.UseAcrylic then
-                                local Value = Library.NotificationTransparency or 1
-
-                                local notifTransparency = 0.85 + (Value * 0.08)
-                                if Value > 1 then
-                                        notifTransparency = 0.93 + ((Value - 1) * 0.04)
-                                end
-
-                                local notifBackgroundTransparency = 0.8 + (Value * 0.1)
-                                if Value > 1 then
-                                        notifBackgroundTransparency = 0.9 + ((Value - 1) * 0.05)
-                                end
-
-                                if NewNotification.AcrylicPaint and NewNotification.AcrylicPaint.Model then
-                                        NewNotification.AcrylicPaint.Model.Transparency = math.min(notifTransparency, 0.97)
-                                end
-                                if NewNotification.AcrylicPaint and NewNotification.AcrylicPaint.Frame and NewNotification.AcrylicPaint.Frame.Background then
-                                        NewNotification.AcrylicPaint.Frame.Background.BackgroundTransparency = math.min(notifBackgroundTransparency, 0.95)
-                                end
-                        end
-                end
 
                 function NewNotification:Open()
                         local ContentSize = NewNotification.LabelHolder.AbsoluteSize.Y
@@ -4839,24 +2615,11 @@ Components.Notification = (function()
                                 Scale = Spring(0, { frequency = 5 }),
                                 Offset = Spring(0, { frequency = 5 }),
                         })
-
-                        task.defer(function()
-                                task.wait(0.1)
-                                NewNotification:ApplyTransparency()
-                        end)
                 end
 
                 function NewNotification:Close()
                         if not NewNotification.Closed then
                                 NewNotification.Closed = true
-
-                                for i, notif in pairs(Library.ActiveNotifications or {}) do
-                                        if notif == NewNotification then
-                                                table.remove(Library.ActiveNotifications, i)
-                                                break
-                                        end
-                                end
-
                                 task.spawn(function()
                                         RootMotor:setGoal({
                                                 Scale = Spring(1, { frequency = 5 }),
@@ -4871,8 +2634,6 @@ Components.Notification = (function()
                         end
                 end
 
-                table.insert(Library.ActiveNotifications, NewNotification)
-
                 NewNotification:Open()
                 if Config.Duration then
                         task.delay(Config.Duration, function()
@@ -4884,304 +2645,269 @@ Components.Notification = (function()
 
         return Notification
 end)()
-Components.Textbox = (function()
-        local New = Creator.New
+Components.Textbox = function(Parent, Acrylic)
+        Acrylic = Acrylic or false
+        local Textbox = {}
 
-        return function(Parent, Acrylic)
-                Acrylic = Acrylic or false
-                local Textbox = {}
+        Textbox.Input = New("TextBox", {
+                FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json"),
+                TextColor3 = Color3.fromRGB(200, 200, 200),
+                TextSize = 14,
+                TextXAlignment = Enum.TextXAlignment.Left,
+                TextYAlignment = Enum.TextYAlignment.Center,
+                BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+                AutomaticSize = Enum.AutomaticSize.Y,
+                BackgroundTransparency = 1,
+                Size = UDim2.fromScale(1, 1),
+                Position = UDim2.fromOffset(10, 0),
+                ThemeTag = {
+                        TextColor3 = "Text",
+                        PlaceholderColor3 = "SubText",
+                },
+        })
 
-                Textbox.Input = New("TextBox", {
-                        FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json"),
-                        TextColor3 = Color3.fromRGB(200, 200, 200),
-                        TextSize = 14,
-                        TextXAlignment = Enum.TextXAlignment.Left,
-                        TextYAlignment = Enum.TextYAlignment.Center,
-                        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-                        AutomaticSize = Enum.AutomaticSize.Y,
-                        BackgroundTransparency = 1,
-                        Size = UDim2.fromScale(1, 1),
-                        Position = UDim2.fromOffset(10, 0),
+        Textbox.Container = New("Frame", {
+                BackgroundTransparency = 1,
+                ClipsDescendants = true,
+                Position = UDim2.new(0, 6, 0, 0),
+                Size = UDim2.new(1, -12, 1, 0),
+        }, {
+                Textbox.Input,
+        })
+
+        Textbox.Indicator = New("Frame", {
+                Size = UDim2.new(1, -4, 0, 1),
+                Position = UDim2.new(0, 2, 1, 0),
+                AnchorPoint = Vector2.new(0, 1),
+                BackgroundTransparency = Acrylic and 0.5 or 0,
+                ThemeTag = {
+                        BackgroundColor3 = Acrylic and "InputIndicator" or "DialogInputLine",
+                },
+        })
+
+        Textbox.Frame = New("Frame", {
+                Size = UDim2.new(0, 0, 0, 30),
+                BackgroundTransparency = Acrylic and 0.9 or 0,
+                Parent = Parent,
+                ThemeTag = {
+                        BackgroundColor3 = Acrylic and "Input" or "DialogInput",
+                },
+        }, {
+                New("UICorner", {
+                        CornerRadius = UDim.new(0, 4),
+                }),
+                New("UIStroke", {
+                        ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+                        Transparency = Acrylic and 0.5 or 0.65,
                         ThemeTag = {
-                                TextColor3 = "Text",
-                                PlaceholderColor3 = "SubText",
+                                Color = Acrylic and "InElementBorder" or "DialogButtonBorder",
                         },
-                })
+                }),
+                Textbox.Indicator,
+                Textbox.Container,
+        })
 
-                Textbox.Container = New("Frame", {
-                        BackgroundTransparency = 1,
-                        ClipsDescendants = true,
-                        Position = UDim2.new(0, 6, 0, 0),
-                        Size = UDim2.new(1, -12, 1, 0),
-                }, {
-                        Textbox.Input,
-                })
+        local function Update()
+                local PADDING = 2
+                local Reveal = Textbox.Container.AbsoluteSize.X
 
-                Textbox.Indicator = New("Frame", {
-                        Size = UDim2.new(1, -4, 0, 1),
-                        Position = UDim2.new(0, 2, 1, 0),
-                        AnchorPoint = Vector2.new(0, 1),
-                        BackgroundTransparency = Acrylic and 0.5 or 0,
-                        ThemeTag = {
-                                BackgroundColor3 = Acrylic and "InputIndicator" or "DialogInputLine",
-                        },
-                })
+                if not Textbox.Input:IsFocused() or Textbox.Input.TextBounds.X <= Reveal - 2 * PADDING then
+                        Textbox.Input.Position = UDim2.new(0, PADDING, 0, 0)
+                else
+                        local Cursor = Textbox.Input.CursorPosition
+                        if Cursor ~= -1 then
+                                local subtext = string.sub(Textbox.Input.Text, 1, Cursor - 1)
+                                local width = TextService:GetTextSize(
+                                        subtext,
+                                        Textbox.Input.TextSize,
+                                        Textbox.Input.Font,
+                                        Vector2.new(math.huge, math.huge)
+                                ).X
 
-                Textbox.Frame = New("Frame", {
-                        Size = UDim2.new(0, 0, 0, 30),
-                        BackgroundTransparency = Acrylic and 0.9 or 0,
-                        Parent = Parent,
-                        ThemeTag = {
-                                BackgroundColor3 = Acrylic and "Input" or "DialogInput",
-                        },
-                }, {
-                        New("UICorner", {
-                                CornerRadius = UDim.new(0, 4),
-                        }),
-                        New("UIStroke", {
-                                ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-                                Transparency = Acrylic and 0.5 or 0.65,
-                                ThemeTag = {
-                                        Color = Acrylic and "InElementBorder" or "DialogButtonBorder",
-                                },
-                        }),
-                        Textbox.Indicator,
-                        Textbox.Container,
-                })
-
-                local function Update()
-                        local PADDING = 2
-                        local Reveal = Textbox.Container.AbsoluteSize.X
-
-                        if not Textbox.Input:IsFocused() or Textbox.Input.TextBounds.X <= Reveal - 2 * PADDING then
-                                Textbox.Input.Position = UDim2.new(0, PADDING, 0, 0)
-                        else
-                                local Cursor = Textbox.Input.CursorPosition
-                                if Cursor ~= -1 then
-                                        local subtext = string.sub(Textbox.Input.Text, 1, Cursor - 1)
-                                        local width = TextService:GetTextSize(
-                                                subtext,
-                                                Textbox.Input.TextSize,
-                                                Textbox.Input.Font,
-                                                Vector2.new(math.huge, math.huge)
-                                        ).X
-
-                                        local CurrentCursorPos = Textbox.Input.Position.X.Offset + width
-                                        if CurrentCursorPos < PADDING then
-                                                Textbox.Input.Position = UDim2.fromOffset(PADDING - width, 0)
-                                        elseif CurrentCursorPos > Reveal - PADDING - 1 then
-                                                Textbox.Input.Position = UDim2.fromOffset(Reveal - width - PADDING - 1, 0)
-                                        end
+                                local CurrentCursorPos = Textbox.Input.Position.X.Offset + width
+                                if CurrentCursorPos < PADDING then
+                                        Textbox.Input.Position = UDim2.fromOffset(PADDING - width, 0)
+                                elseif CurrentCursorPos > Reveal - PADDING - 1 then
+                                        Textbox.Input.Position = UDim2.fromOffset(Reveal - width - PADDING - 1, 0)
                                 end
                         end
                 end
-
-                task.spawn(Update)
-
-                Creator.AddSignal(Textbox.Input:GetPropertyChangedSignal("Text"), Update)
-                Creator.AddSignal(Textbox.Input:GetPropertyChangedSignal("CursorPosition"), Update)
-
-                Creator.AddSignal(Textbox.Input.Focused, function()
-                        Update()
-                        Textbox.Indicator.Size = UDim2.new(1, -2, 0, 2)
-                        Textbox.Indicator.Position = UDim2.new(0, 1, 1, 0)
-                        Textbox.Indicator.BackgroundTransparency = 0
-                        Creator.OverrideTag(Textbox.Frame, { BackgroundColor3 = Acrylic and "InputFocused" or "DialogHolder" })
-                        Creator.OverrideTag(Textbox.Indicator, { BackgroundColor3 = "InputIndicatorFocus" })
-                end)
-
-                Creator.AddSignal(Textbox.Input.FocusLost, function()
-                        Update()
-                        Textbox.Indicator.Size = UDim2.new(1, -4, 0, 1)
-                        Textbox.Indicator.Position = UDim2.new(0, 2, 1, 0)
-                        Textbox.Indicator.BackgroundTransparency = 0.5
-                        Creator.OverrideTag(Textbox.Frame, { BackgroundColor3 = Acrylic and "Input" or "DialogInput" })
-                        Creator.OverrideTag(Textbox.Indicator, { BackgroundColor3 = Acrylic and "InputIndicator" or "DialogInputLine" })
-                end)
-
-                return Textbox
-        end
-end)()
-Components.TitleBar = (function()
-        local New = Creator.New
-        local AddSignal = Creator.AddSignal
-
-        local function parseColor(value)
-                if typeof(value) == "Color3" then return value end
-                if typeof(value) == "string" then
-                        local hex = value:gsub("#","")
-                        if #hex == 6 then
-                                local r = tonumber(hex:sub(1,2), 16) or 255
-                                local g = tonumber(hex:sub(3,4), 16) or 255
-                                local b = tonumber(hex:sub(5,6), 16) or 255
-                                return Color3.fromRGB(r,g,b)
-                        end
-                end
-                return Themes[Library.Theme].SubText or Color3.fromRGB(170,170,170)
         end
 
-        return function(Config)
-                local TitleBar = {}
+        task.spawn(Update)
 
-                local function BarButton(Icon, Pos, Parent, Callback)
-                        local Button = {
-                                Callback = Callback or function() end,
-                        }
+        Creator.AddSignal(Textbox.Input:GetPropertyChangedSignal("Text"), Update)
+        Creator.AddSignal(Textbox.Input:GetPropertyChangedSignal("CursorPosition"), Update)
 
-                        Button.Frame = New("TextButton", {
-                                Size = UDim2.new(0, 34, 1, -8),
-                                AnchorPoint = Vector2.new(1, 0),
-                                BackgroundTransparency = 1,
-                                Parent = Parent,
-                                Position = Pos,
-                                Text = "",
-                                ThemeTag = {
-                                        BackgroundColor3 = "Text",
-                                },
-                        }, {
-                                New("UICorner", {
-                                        CornerRadius = UDim.new(0, 7),
-                                }),
-                                New("ImageLabel", {
-                                        Image = Icon,
-                                        Size = UDim2.fromOffset(16, 16),
-                                        Position = UDim2.fromScale(0.5, 0.5),
-                                        AnchorPoint = Vector2.new(0.5, 0.5),
-                                        BackgroundTransparency = 1,
-                                        Name = "Icon",
-                                        ThemeTag = {
-                                                ImageColor3 = "Text",
-                                        },
-                                }),
-                        })
+        Creator.AddSignal(Textbox.Input.Focused, function()
+                Update()
+                Textbox.Indicator.Size = UDim2.new(1, -2, 0, 2)
+                Textbox.Indicator.Position = UDim2.new(0, 1, 1, 0)
+                Textbox.Indicator.BackgroundTransparency = 0
+                Creator.OverrideTag(Textbox.Frame, { BackgroundColor3 = Acrylic and "InputFocused" or "DialogHolder" })
+                Creator.OverrideTag(Textbox.Indicator, { BackgroundColor3 = "InputIndicatorFocus" })
+        end)
 
-                        local Motor, SetTransparency = Creator.SpringMotor(1, Button.Frame, "BackgroundTransparency")
+        Creator.AddSignal(Textbox.Input.FocusLost, function()
+                Update()
+                Textbox.Indicator.Size = UDim2.new(1, -4, 0, 1)
+                Textbox.Indicator.Position = UDim2.new(0, 2, 1, 0)
+                Textbox.Indicator.BackgroundTransparency = 0.5
+                Creator.OverrideTag(Textbox.Frame, { BackgroundColor3 = Acrylic and "Input" or "DialogInput" })
+                Creator.OverrideTag(Textbox.Indicator, { BackgroundColor3 = Acrylic and "InputIndicator" or "DialogInputLine" })
+        end)
 
-                        AddSignal(Button.Frame.MouseEnter, function()
-                                SetTransparency(0.94)
-                        end)
-                        AddSignal(Button.Frame.MouseLeave, function()
-                                SetTransparency(1, true)
-                        end)
-                        AddSignal(Button.Frame.MouseButton1Down, function()
-                                SetTransparency(0.96)
-                        end)
-                        AddSignal(Button.Frame.MouseButton1Up, function()
-                                SetTransparency(0.94)
-                        end)
-                        AddSignal(Button.Frame.MouseButton1Click, Button.Callback)
+        return Textbox
+end
+Components.TitleBar = function(Config)
+        local TitleBar = {}
 
-                        Button.SetCallback = function(Func)
-                                Button.Callback = Func
-                        end
+        local function BarButton(Icon, Pos, Parent, Callback)
+                local Button = {
+                        Callback = Callback or function() end,
+                }
 
-                        return Button
-                end
-
-                TitleBar.Frame = New("Frame", {
-                        Size = UDim2.new(1, 0, 0, 42),
+                Button.Frame = New("TextButton", {
+                        Size = UDim2.new(0, 34, 1, -8),
+                        AnchorPoint = Vector2.new(1, 0),
                         BackgroundTransparency = 1,
-                        Parent = Config.Parent,
+                        Parent = Parent,
+                        Position = Pos,
+                        Text = "",
+                        ThemeTag = {
+                                BackgroundColor3 = "Text",
+                        },
                 }, {
-                        New("Frame", {
-                                Size = UDim2.new(1, -16, 1, 0),
-                                Position = UDim2.new(0, 12, 0, 0),
-                                BackgroundTransparency = 1,
-                        }, {
-                                New("UIListLayout", {
-                                        Padding = UDim.new(0, 5),
-                                        FillDirection = Enum.FillDirection.Horizontal,
-                                        SortOrder = Enum.SortOrder.LayoutOrder,
-                                        VerticalAlignment = Enum.VerticalAlignment.Center,
-                                }),
-
-                                Config.Icon and New("ImageLabel", {
-                                        Image = Config.Icon,
-                                        Size = UDim2.fromOffset(20, 20),
-                                        BackgroundTransparency = 1,
-                                        LayoutOrder = 1,
-                                        ThemeTag = {
-                                                ImageColor3 = "Text",
-                                        },
-                                }) or nil,
-
-                                New("TextLabel", {
-                                        RichText = true,
-                                        Text = Config.Title,
-                                        FontFace = Font.new(
-                                                "rbxasset://fonts/families/GothamSSm.json",
-                                                Enum.FontWeight.Regular,
-                                                Enum.FontStyle.Normal
-                                        ),
-                                        TextSize = 12,
-                                        TextXAlignment = "Left",
-                                        TextYAlignment = "Center",
-                                        Size = UDim2.fromScale(0, 1),
-                                        AutomaticSize = Enum.AutomaticSize.X,
-                                        BackgroundTransparency = 1,
-                                        LayoutOrder = Config.Icon and 2 or 1,
-                                        ThemeTag = {
-                                                TextColor3 = "Text",
-                                        },
-                                }),
-                                Config.SubTitle and New("TextLabel", {
-                                        RichText = true,
-                                        Text = Config.SubTitle,
-                                        TextTransparency = 0.4,
-                                        FontFace = Font.new(
-                                                "rbxasset://fonts/families/GothamSSm.json",
-                                                Enum.FontWeight.Regular,
-                                                Enum.FontStyle.Normal
-                                        ),
-                                        TextSize = 12,
-                                        TextXAlignment = "Left",
-                                        TextYAlignment = "Center",
-                                        Size = UDim2.fromScale(0, 1),
-                                        AutomaticSize = Enum.AutomaticSize.X,
-                                        BackgroundTransparency = 1,
-                                        LayoutOrder = Config.Icon and 3 or 2,
-                                        ThemeTag = {
-                                                TextColor3 = "Text",
-                                        },
-                                }) or nil,
-
+                        New("UICorner", {
+                                CornerRadius = UDim.new(0, 7),
                         }),
-                        New("Frame", {
-                                BackgroundTransparency = 0.5,
-                                Size = UDim2.new(1, 0, 0, 1),
-                                Position = UDim2.new(0, 0, 1, 0),
+                        New("ImageLabel", {
+                                Image = Icon,
+                                Size = UDim2.fromOffset(16, 16),
+                                Position = UDim2.fromScale(0.5, 0.5),
+                                AnchorPoint = Vector2.new(0.5, 0.5),
+                                BackgroundTransparency = 1,
+                                Name = "Icon",
                                 ThemeTag = {
-                                        BackgroundColor3 = "TitleBarLine",
+                                        ImageColor3 = "Text",
                                 },
                         }),
                 })
-                TitleBar.CloseButton = BarButton(Components.Assets.Close, UDim2.new(1, -4, 0, 4), TitleBar.Frame, function()
-                        Library.Window:Dialog({
-                                Title = "Close",
-                                Content = "Are you sure you want to unload the interface?",
-                                Buttons = {
-                                        {
-                                                Title = "Yes",
-                                                Callback = function()
-                                                        Library:Destroy()
-                                                end,
-                                        },
-                                        {
-                                                Title = "No",
-                                        },
-                                },
-                        })
-                end)
-                TitleBar.MaxButton = BarButton(Components.Assets.Max, UDim2.new(1, -40, 0, 4), TitleBar.Frame, function()
-                        Config.Window.Maximize(not Config.Window.Maximized)
-                end)
-                TitleBar.MinButton = BarButton(Components.Assets.Min, UDim2.new(1, -80, 0, 4), TitleBar.Frame, function()
-                        Library.Window:Minimize()
-                end)
 
-                return TitleBar
+                local Motor, SetTransparency = Creator.SpringMotor(1, Button.Frame, "BackgroundTransparency")
+
+                AddSignal(Button.Frame.MouseEnter, function()
+                        SetTransparency(0.94)
+                end)
+                AddSignal(Button.Frame.MouseLeave, function()
+                        SetTransparency(1, true)
+                end)
+                AddSignal(Button.Frame.MouseButton1Down, function()
+                        SetTransparency(0.96)
+                end)
+                AddSignal(Button.Frame.MouseButton1Up, function()
+                        SetTransparency(0.94)
+                end)
+                AddSignal(Button.Frame.MouseButton1Click, Button.Callback)
+
+                Button.SetCallback = function(Func)
+                        Button.Callback = Func
+                end
+
+                return Button
         end
-end)()
+
+        TitleBar.Frame = New("Frame", {
+                Size = UDim2.new(1, 0, 0, 42),
+                BackgroundTransparency = 1,
+                Parent = Config.Parent,
+        }, {
+                New("Frame", {
+                        Size = UDim2.new(1, -16, 1, 0),
+                        Position = UDim2.new(0, 16, 0, 0),
+                        BackgroundTransparency = 1,
+                }, {
+                        New("UIListLayout", {
+                                Padding = UDim.new(0, 5),
+                                FillDirection = Enum.FillDirection.Horizontal,
+                                SortOrder = Enum.SortOrder.LayoutOrder,
+                        }),
+                        New("TextLabel", {
+                                RichText = true,
+                                Text = Config.Title,
+                                FontFace = Font.new(
+                                        "rbxasset://fonts/families/GothamSSm.json",
+                                        Enum.FontWeight.Regular,
+                                        Enum.FontStyle.Normal
+                                ),
+                                TextSize = 12,
+                                TextXAlignment = "Left",
+                                TextYAlignment = "Center",
+                                Size = UDim2.fromScale(0, 1),
+                                AutomaticSize = Enum.AutomaticSize.X,
+                                BackgroundTransparency = 1,
+                                AutoLocalize = false,
+                                ThemeTag = {
+                                        TextColor3 = "Text",
+                                },
+                        }),
+                        New("TextLabel", {
+                                RichText = true,
+                                Text = Config.SubTitle,
+                                TextTransparency = 0.4,
+                                FontFace = Font.new(
+                                        "rbxasset://fonts/families/GothamSSm.json",
+                                        Enum.FontWeight.Regular,
+                                        Enum.FontStyle.Normal
+                                ),
+                                TextSize = 12,
+                                TextXAlignment = "Left",
+                                TextYAlignment = "Center",
+                                Size = UDim2.fromScale(0, 1),
+                                AutomaticSize = Enum.AutomaticSize.X,
+                                BackgroundTransparency = 1,
+                                AutoLocalize = false,
+                                ThemeTag = {
+                                        TextColor3 = "Text",
+                                },
+                        }),
+                }),
+                New("Frame", {
+                        BackgroundTransparency = 0.5,
+                        Size = UDim2.new(1, 0, 0, 1),
+                        Position = UDim2.new(0, 0, 1, 0),
+                        ThemeTag = {
+                                BackgroundColor3 = "TitleBarLine",
+                        },
+                }),
+        })
+
+        TitleBar.CloseButton = BarButton(Components.Assets.Close, UDim2.new(1, -4, 0, 4), TitleBar.Frame, function()
+                Library.Window:Dialog({
+                        Title = "Close",
+                        Content = "Are you sure you want to unload the interface?",
+                        Buttons = {
+                                {
+                                        Title = "Yes",
+                                        Callback = function()
+                                                Library:Destroy()
+                                        end,
+                                },
+                                {
+                                        Title = "No",
+                                },
+                        },
+                })
+        end)
+        TitleBar.MaxButton = BarButton(Components.Assets.Max, UDim2.new(1, -40, 0, 4), TitleBar.Frame, function()
+                Config.Window.Maximize(not Config.Window.Maximized)
+        end)
+        TitleBar.MinButton = BarButton(Components.Assets.Min, UDim2.new(1, -80, 0, 4), TitleBar.Frame, function()
+                Library.Window:Minimize()
+        end)
+
+        return TitleBar
+end
 Components.Window = (function()
         local Spring = Flipper.Spring.new
         local Instant = Flipper.Instant.new
@@ -5194,7 +2920,10 @@ Components.Window = (function()
                         Size = Config.Size,
                         CurrentPos = 0,
                         TabWidth = 0,
-                        Position = UDim2.fromOffset(0, 0),
+                        Position = UDim2.fromOffset(
+                                Camera.ViewportSize.X / 2 - Config.Size.X.Offset / 2,
+                                Camera.ViewportSize.Y / 2 - Config.Size.Y.Offset / 2
+                        ),
                 }
 
                 local Dragging, DragInput, MousePos, StartPos = false
@@ -5202,41 +2931,32 @@ Components.Window = (function()
                 local MinimizeNotif = false
 
                 Window.AcrylicPaint = Acrylic.AcrylicPaint()
-
-                local function CenterWindow()
-                        local vp = Camera.ViewportSize
-                        local x = math.max(0, (vp.X - Window.Size.X.Offset) / 2)
-                        local y = math.max(0, (vp.Y - Window.Size.Y.Offset) / 2)
-                        Window.Position = UDim2.fromOffset(math.floor(x), math.floor(y))
-                        if Window.Root then
-                                Window.Root.Position = Window.Position
-                        end
-                end
                 Window.TabWidth = Config.TabWidth
 
                 local Selector = New("Frame", {
                         Size = UDim2.fromOffset(4, 0),
                         BackgroundColor3 = Color3.fromRGB(76, 194, 255),
-                        Position = UDim2.fromOffset(0, (Window.TabHolderTop or 45) + 0),
+                        Position = UDim2.fromOffset(0, 17),
                         AnchorPoint = Vector2.new(0, 0.5),
                         ThemeTag = {
                                 BackgroundColor3 = "Accent",
                         },
                 }, {
                         New("UICorner", {
-                                CornerRadius = UDim.new(0, 9),
+                                CornerRadius = UDim.new(0, 2),
                         }),
                 })
+
+                local OFFSETY = 120
 
                 local ResizeStartFrame = New("Frame", {
                         Size = UDim2.fromOffset(20, 20),
                         BackgroundTransparency = 1,
-                        Position = UDim2.new(1, -20, 1, -2),
+                        Position = UDim2.new(1, -20, 1, -20),
                 })
 
                 Window.TabHolder = New("ScrollingFrame", {
-                        Size = UDim2.new(1, 0, 1, -45),
-                        Position = UDim2.new(0, 0, 0, 45),
+                        Size = UDim2.fromScale(1, 1),
                         BackgroundTransparency = 1,
                         ScrollBarImageTransparency = 1,
                         ScrollBarThickness = 0,
@@ -5249,125 +2969,38 @@ Components.Window = (function()
                         }),
                 })
 
-
-                local SearchElements = {}
-                local AllElements = {}
-
-                local function UpdateElementVisibility(searchTerm)
-                        searchTerm = string.lower(searchTerm or "")
-
-                        for element, data in pairs(AllElements) do
-                                if element and element.Parent then
-                                        local shouldShow = searchTerm == "" or 
-                                                string.find(string.lower(data.title), searchTerm, 1, true) or
-                                                (data.description and string.find(string.lower(data.description), searchTerm, 1, true))
-                                        element.Visible = shouldShow
-                                end
-                        end
-
-                        task.spawn(function()
-                                task.wait(0.01)
-                                if Window and Window.TabHolder then
-                                        for _, child in pairs(Window.TabHolder:GetChildren()) do
-                                                if child:IsA("ScrollingFrame") then
-                                                        local layout = child:FindFirstChild("UIListLayout")
-                                                        if layout then
-                                                                child.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 2)
-                                                        end
-                                                end
-                                        end
-                                end
-                        end)
-                end
-
-                local function RegisterElement(elementFrame, title, elementType, description)
-                        if elementFrame and title then
-                                AllElements[elementFrame] = {
-                                        title = title,
-                                        type = elementType or "Element",
-                                        description = description or ""
-                                }
-                        end
-                end
-
-
-                Window.ShowSearch = (Config.Search == nil) and true or (Config.Search and true or false)
-
-                local SearchFrame = New("Frame", {
-                        Size = UDim2.new(1, 0, 0, 35),
-                        Position = UDim2.new(0, 0, 0, 0),
+                local Icon = New("TextButton", {
                         BackgroundTransparency = 1,
-                        ZIndex = 10,
-                        Visible = Window.ShowSearch,
-                        ThemeTag = {
-                                BackgroundColor3 = "Element",
-                        },
+                        Size = UDim2.new(0, Window.TabWidth, 0, Window.TabWidth),
+                        Position = UDim2.new(0, 12, 0, (Window.TabWidth/4)- 20),
+                        BorderSizePixel = 0
                 }, {
-                        New("UICorner", {
-                                CornerRadius = UDim.new(1),
+                        New("UIPadding", {
+                                PaddingBottom = UDim.new(0, 2),
+                                PaddingLeft = UDim.new(0, 2),
+                                PaddingRight = UDim.new(0, 2),
+                                PaddingTop = UDim.new(0, 2),
                         }),
-                        New("UIStroke", {
-                                ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-                                Transparency = 0.8,
-                                Thickness = 1,
-                                ThemeTag = {
-                                        Color = "ElementBorder",
-                                },
-                        }),
+                        New("ImageLabel", {
+                                Image = Config.Image or "rbxassetid://112485471724320",
+                                Size = UDim2.new(1, 0, 1, 0),
+                                BackgroundTransparency = 1,
+                        }, {
+                                New("UIAspectRatioConstraint", {
+                                        AspectRatio = 1,
+                                        AspectType = Enum.AspectType.FitWithinMaxSize,
+                                })
+                        })
                 })
-
-                local SearchTextbox = Components.Textbox(SearchFrame, true)
-                SearchTextbox.Frame.Size = UDim2.new(1.21, -44, 1, -8)
-                SearchTextbox.Frame.Position = UDim2.new(0, 7, 0, 4)
-                SearchTextbox.Input.PlaceholderText = "Search here"
-                SearchTextbox.Input.Text = ""
-
-                local SearchIcon = New("ImageLabel", {
-                        Size = UDim2.fromOffset(18, 17),
-                        Position = UDim2.new(1, -18, 0.5, 0),
-                        AnchorPoint = Vector2.new(0.5, 0.5),
-                        BackgroundTransparency = 1,
-                        Image = "rbxassetid://10734943674",
-                        Parent = SearchFrame,
-                        ThemeTag = {
-                                ImageColor3 = "SubText",
-                        },
-                })
-
-
-                Creator.AddSignal(SearchTextbox.Input:GetPropertyChangedSignal("Text"), function()
-                        local searchText = SearchTextbox.Input.Text
-                        UpdateElementVisibility(searchText)
-                end)
-
-
-                Creator.AddSignal(SearchTextbox.Input.FocusLost, function(enterPressed)
-                end)
-
-                Creator.AddSignal(UserInputService.InputBegan, function(input, gameProcessed)
-                        if gameProcessed then return end
-
-                        if input.KeyCode == Enum.KeyCode.Escape and SearchTextbox.Input:IsFocused() then
-                                SearchTextbox.Input.Text = ""
-                                SearchTextbox.Input:ReleaseFocus()
-                        end
-                end)
-
-
-                Window.SearchElements = SearchElements
-                Window.AllElements = AllElements
-                Window.RegisterElement = RegisterElement
-                Window.UpdateElementVisibility = UpdateElementVisibility
 
                 local TabFrame = New("Frame", {
-                        Size = UDim2.new(0, Window.TabWidth, 1, Window.ShowSearch and -66 or -31),
-                        Position = UDim2.new(0, 12, 0, Window.ShowSearch and 54 or 19),
+                        Size = UDim2.new(0, Window.TabWidth, 1, -66 + -OFFSETY), -- []-66
+                        Position = UDim2.new(0, 12, 0, 54 + OFFSETY), --54
                         BackgroundTransparency = 1,
                         ClipsDescendants = true,
                 }, {
                         Window.TabHolder,
                         Selector,
-                        SearchFrame,
                 })
 
                 Window.TabDisplay = New("TextLabel", {
@@ -5381,6 +3014,7 @@ Components.Window = (function()
                         Size = UDim2.new(1, -16, 0, 28),
                         Position = UDim2.fromOffset(Window.TabWidth + 26, 56),
                         BackgroundTransparency = 1,
+                        AutoLocalize = false,
                         ThemeTag = {
                                 TextColor3 = "Text",
                         },
@@ -5416,117 +3050,15 @@ Components.Window = (function()
                         Window.ContainerCanvas,
                         TabFrame,
                         ResizeStartFrame,
+                        Icon
                 })
-
-                CenterWindow()
-                Creator.AddSignal(Camera:GetPropertyChangedSignal("ViewportSize"), function()
-                        CenterWindow()
-                end)
 
                 Window.TitleBar = Components.TitleBar({
                         Title = Config.Title,
                         SubTitle = Config.SubTitle,
-                        Icon = Config.Icon,
                         Parent = Window.Root,
                         Window = Window,
-                        UserInfoTitle = Config.UserInfoTitle,
-                        UserInfo = Config.UserInfo,
-                        UserInfoSubtitle = Config.UserInfoSubtitle,
-                        UserInfoSubtitleColor = Config.UserInfoSubtitleColor,
                 })
-
-                if Config.UserInfo then
-                        local function parseColor(value)
-                                if typeof(value) == "Color3" then return value end
-                                return Themes[Library.Theme].SubText or Color3.fromRGB(170,170,170)
-                        end
-
-                        local userInfoHeight = 56
-                        local UserInfoSection = New("Frame", {
-                                Name = "UserInfoSection",
-                                BackgroundTransparency = 1,
-                                Size = UDim2.new(1, 0, 0, userInfoHeight),
-                                Position = Config.UserInfoTop and UDim2.fromOffset(0, 0) or UDim2.new(0, 12, 1, -(userInfoHeight + 2)),
-                                Parent = TabFrame,
-                        })
-
-                        New("Frame", {
-                                Name = "UserInfoSeparator",
-                                BackgroundTransparency = 0.5,
-                                Size = UDim2.new(1, 0, 0, 1),
-                                Position = Config.UserInfoTop and UDim2.fromOffset(0, userInfoHeight + 2) or UDim2.new(0, 12, 1, -(userInfoHeight + 10)),
-                                Parent = TabFrame,
-                                ThemeTag = {
-                                        BackgroundColor3 = "TitleBarLine",
-                                },
-                        })
-
-                        local avatarSize = 28
-                        local Avatar = New("ImageLabel", {
-                                Name = "Avatar",
-                                BackgroundTransparency = 1,
-                                Size = UDim2.fromOffset(avatarSize, avatarSize),
-                                Position = UDim2.new(0, 0, 0.5, 0),
-                                AnchorPoint = Vector2.new(0, 0.5),
-                                Image = "rbxassetid://81511539298423",
-                                Parent = UserInfoSection,
-                        }, {
-                                New("UICorner", { CornerRadius = UDim.new(1, 0) }),
-                                New("UIStroke", { Transparency = 0.7, Thickness = 1, ThemeTag = { Color = "ElementBorder" } }),
-                        })
-
-                        pcall(function()
-                                local Players = game:GetService("Players")
-                                local content, isReady = Players:GetUserThumbnailAsync(Players.LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size100x100)
-                                if isReady and content then
-                                        Avatar.Image = content
-                                end
-                        end)
-
-                        local titleText = tostring((Config.UserInfoTitle ~= nil and Config.UserInfoTitle) or (LocalPlayer.Name or "User"))
-                        local subtitleText = (Config.UserInfoSubtitle ~= nil) and tostring(Config.UserInfoSubtitle) or ""
-
-                        New("TextLabel", {
-                                Name = "UserName",
-                                BackgroundTransparency = 1,
-                                TextXAlignment = Enum.TextXAlignment.Left,
-                                TextYAlignment = Enum.TextYAlignment.Bottom,
-                                FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal),
-                                TextSize = 13,
-                                Text = titleText,
-                                Size = UDim2.new(1, -avatarSize - 12, 0.5, 0),
-                                Position = UDim2.new(0, avatarSize + 12, 0, -2),
-                                Parent = UserInfoSection,
-                                ThemeTag = { TextColor3 = "Text" },
-                        })
-
-                        New("TextLabel", {
-                                Name = "UserSubtitle",
-                                BackgroundTransparency = 1,
-                                TextXAlignment = Enum.TextXAlignment.Left,
-                                TextYAlignment = Enum.TextYAlignment.Top,
-                                FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal),
-                                TextSize = 12,
-                                TextTransparency = 0.2,
-                                Text = subtitleText,
-                                TextColor3 = parseColor(Config.UserInfoSubtitleColor),
-                                Size = UDim2.new(1, -avatarSize - 12, 0.5, 0),
-                                Position = UDim2.new(0, avatarSize + 12, 0.5, 2),
-                                Parent = UserInfoSection,
-                        })
-
-                        if Config.UserInfoTop then
-                                TabFrame.Position = UDim2.new(0, 12, 0, 39)
-                                TabFrame.Size = UDim2.new(0, Window.TabWidth, 1, -31)
-                                SearchFrame.Position = UDim2.new(0, 0, 0, userInfoHeight + 6)
-                                Window.TabHolder.Position = UDim2.new(0, 0, 0, 45 + userInfoHeight + 6)
-                                Window.TabHolder.Size = UDim2.new(1, 0, 1, -(45 + userInfoHeight + 24))
-                                Window.TabHolderTop = 45 + userInfoHeight + 6
-                        else
-                                Window.TabHolder.Size = UDim2.new(1, 0, 1, -(45 + userInfoHeight + 24))
-                                Window.TabHolderTop = 45
-                        end
-                end
 
                 if Library.UseAcrylic then
                         Window.AcrylicPaint.AddParent(Window.Root)
@@ -5542,28 +3074,23 @@ Components.Window = (function()
                         Y = Window.Position.Y.Offset,
                 })
 
-                _G.CDDrag = 0
                 Window.SelectorPosMotor = Flipper.SingleMotor.new(17)
                 Window.SelectorSizeMotor = Flipper.SingleMotor.new(0)
                 Window.ContainerBackMotor = Flipper.SingleMotor.new(0)
                 Window.ContainerPosMotor = Flipper.SingleMotor.new(94)
 
                 SizeMotor:onStep(function(values)
-                        task.wait(_G.CDDrag / 10)
                         Window.Root.Size = UDim2.new(0, values.X, 0, values.Y)
                 end)
 
                 PosMotor:onStep(function(values)
-                        task.wait(_G.CDDrag / 10)
                         Window.Root.Position = UDim2.new(0, values.X, 0, values.Y)
                 end)
 
                 local LastValue = 0
                 local LastTime = 0
                 Window.SelectorPosMotor:onStep(function(Value)
-                        local base = Window.TabHolderTop or 45
-                        local verticalInset = 16
-                        Selector.Position = UDim2.new(0, 0, 0, base + Value + verticalInset)
+                        Selector.Position = UDim2.new(0, 0, 0, Value + 17)
                         local Now = tick()
                         local DeltaTime = Now - LastTime
 
@@ -5712,62 +3239,24 @@ Components.Window = (function()
                         end
                 end)
 
+                function Window:ToggleInterface()
+                        Window.Minimized = not Window.Minimized
+                        Window.Root.Visible = not Window.Minimized
+                end
+
                 function Window:Minimize()
                         Window.Minimized = not Window.Minimized
                         Window.Root.Visible = not Window.Minimized
-
-                        for _, Option in next, Library.Options do
-                                if Option and Option.Type == "Dropdown" and Option.Opened then
-                                        pcall(function()
-                                                Option:Close()
-                                        end)
-                                end
-                        end
                         if not MinimizeNotif then
                                 MinimizeNotif = true
                                 local Key = Library.MinimizeKeybind and Library.MinimizeKeybind.Value or Library.MinimizeKey.Name
-                                if not Mobile then Library:Notify({
+                                Library:Notify({
                                         Title = "Interface",
                                         Content = "Press " .. Key .. " to toggle the interface.",
                                         Duration = 6
-                                        })
-                                else 
-                                        Library:Notify({
-                                                Title = "Interface",
-                                                Content = "Tap to the button to toggle the interface.",
-                                                Duration = 6
-                                        })
-                                end
+                                })
                         end
-
-                        function Window:ToggleSearch()
-                                Window.ShowSearch = not Window.ShowSearch
-                                SearchFrame.Visible = Window.ShowSearch
-                                TabFrame.Size = UDim2.new(0, Window.TabWidth, 1, Window.ShowSearch and -66 or -31)
-                                TabFrame.Position = UDim2.new(0, 12, 0, Window.ShowSearch and 54 or 19)
-                        end
-
-                        if not RunService:IsStudio() and Library.Minimizer then
-                                pcall(function()
-                                        if Mobile then
-                                                local mobileButton = Library.Minimizer:FindFirstChild("TextButton")
-                                                if mobileButton then
-                                                        local imageLabel = mobileButton:FindFirstChild("ImageLabel")
-                                                        if imageLabel then
-                                                                imageLabel.Image = Window.Minimized and "rbxassetid://10734896384" or "rbxassetid://10734897102"
-                                                        end
-                                                end
-                                        else
-                                                local desktopButton = Library.Minimizer:FindFirstChild("TextButton")
-                                                if desktopButton then
-                                                        local imageLabel = desktopButton:FindFirstChild("ImageLabel")
-                                                        if imageLabel then
-                                                                imageLabel.Image = Window.Minimized and "rbxassetid://10734896384" or "rbxassetid://10734897102"
-                                                        end
-                                                end
-                                        end
-                                end)
-                        end
+                        --pcall(SwapIco)
                 end
 
                 function Window:Destroy()
@@ -5782,20 +3271,6 @@ Components.Window = (function()
                         local Dialog = DialogModule:Create()
                         Dialog.Title.Text = Config.Title
 
-                        local ContentHolder = New("ScrollingFrame", {
-                                BackgroundTransparency = 1,
-                                ScrollBarImageTransparency = 0.7,
-                                ScrollBarThickness = 4,
-                                BottomImage = "rbxassetid://6889812791",
-                                MidImage = "rbxassetid://6889812721",
-                                TopImage = "rbxassetid://6276641225",
-                                Position = UDim2.fromOffset(20, 60),
-                                Size = UDim2.new(1, -40, 1, -110),
-                                CanvasSize = UDim2.fromOffset(0, 0),
-                                AutomaticCanvasSize = Enum.AutomaticSize.Y,
-                                Parent = Dialog.Root,
-                        })
-
                         local Content = New("TextLabel", {
                                 FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json"),
                                 Text = Config.Content,
@@ -5803,12 +3278,15 @@ Components.Window = (function()
                                 TextSize = 14,
                                 TextXAlignment = Enum.TextXAlignment.Left,
                                 TextYAlignment = Enum.TextYAlignment.Top,
-                                AutomaticSize = Enum.AutomaticSize.Y,
-                                TextWrapped = true,
-                                Size = UDim2.new(1, -8, 0, 0),
+                                Size = UDim2.new(1, -40, 1, 0),
+                                Position = UDim2.fromOffset(20, 60),
                                 BackgroundTransparency = 1,
-                                Parent = ContentHolder,
-                                ThemeTag = { TextColor3 = "Text" },
+                                Parent = Dialog.Root,
+                                ClipsDescendants = false,
+                                AutoLocalize = false,
+                                ThemeTag = {
+                                        TextColor3 = "Text",
+                                },
                         })
 
                         New("UISizeConstraint", {
@@ -5817,16 +3295,12 @@ Components.Window = (function()
                                 Parent = Dialog.Root,
                         })
 
-                        local maxWidth = math.min(620, Window.Size.X.Offset - 120)
-                        local baseWidth = math.max(300, math.min(maxWidth, Content.TextBounds.X + 40))
-                        Dialog.Root.Size = UDim2.fromOffset(baseWidth, 165)
-                        ContentHolder.Size = UDim2.new(1, -40, 1, -110)
-                        task.defer(function()
-                                local contentHeight = Content.TextBounds.Y
-                                local desired = math.clamp(contentHeight + 110, 165, 420)
-                                Dialog.Root.Size = UDim2.fromOffset(baseWidth, desired)
-                                ContentHolder.CanvasSize = UDim2.fromOffset(0, contentHeight)
-                        end)
+                        Dialog.Root.Size = UDim2.fromOffset(Content.TextBounds.X + 40, 165)
+                        if Content.TextBounds.X + 40 > Window.Size.X.Offset - 120 then
+                                Dialog.Root.Size = UDim2.fromOffset(Window.Size.X.Offset - 120, 165)
+                                Content.TextWrapped = true
+                                Dialog.Root.Size = UDim2.fromOffset(Window.Size.X.Offset - 120, Content.TextBounds.Y + 150)
+                        end
 
                         for _, Button in next, Config.Buttons do
                                 Dialog:Button(Button.Title, Button.Callback)
@@ -5838,6 +3312,14 @@ Components.Window = (function()
                 local TabModule = Components.Tab:Init(Window)
                 function Window:AddTab(TabConfig)
                         return TabModule:New(TabConfig.Title, TabConfig.Icon, Window.TabHolder)
+                end
+
+                function Window:GetCurrentTab()
+                        return TabModule:GetCurrentTab()
+                end
+
+                function Window:TabChanged(func)
+                        TabModule.Callback = func
                 end
 
                 function Window:SelectTab(Tab)
@@ -5853,17 +3335,16 @@ Components.Window = (function()
                 return Window
         end
 end)()
+
 local ElementsTable = {}
-local AddSignal = Creator.AddSignal
 
 ElementsTable.Button = (function()
         local Element = {}
         Element.__index = Element
         Element.__type = "Button"
 
-        function Element:New(Idx, Config)
-			Config = Config or Idx
-                assert(Config.Title or Config.Name, "Button - Missing Title")
+        function Element:New(Config)
+                assert(Config.Title, "Button - Missing Title")
                 Config.Callback = Config.Callback or function() end
 
                 local ButtonFrame = Components.Element(Config.Title, Config.Description, self.Container, true, Config)
@@ -5895,10 +3376,12 @@ ElementsTable.Toggle = (function()
         Element.__type = "Toggle"
 
         function Element:New(Idx, Config)
-                assert(Config.Title or Config.Name, "Toggle - Missing Title")
+                assert(Config.Title, "Toggle - Missing Title")
 
                 local Toggle = {
-                        Value = GetSetting(Idx, Config.Default or false),
+                        OriginalTitle = Config.Title,
+                        OriginalDesc = Config.Description,
+                        Value = Config.Default or false,
                         Callback = Config.Callback or function(Value) end,
                         Type = "Toggle",
                 }
@@ -5907,8 +3390,10 @@ ElementsTable.Toggle = (function()
                 ToggleFrame.DescLabel.Size = UDim2.new(1, -54, 0, 14)
 
                 Toggle.SetTitle = ToggleFrame.SetTitle
+                Toggle.AddText = ToggleFrame.AddText
                 Toggle.SetDesc = ToggleFrame.SetDesc
                 Toggle.Visible = ToggleFrame.Visible
+                Toggle.GetOriginalText = ToggleFrame.GetOriginalText
                 Toggle.Elements = ToggleFrame
 
                 local ToggleCircle = New("ImageLabel", {
@@ -5969,9 +3454,12 @@ ElementsTable.Toggle = (function()
                         ):Play()
                         ToggleCircle.ImageTransparency = Toggle.Value and 0 or 0.5
 
-                        Library:SafeCallback(Toggle.Callback, Toggle.Value)
-                        Library:SafeCallback(Toggle.Changed, Toggle.Value)
-                        if Idx then _G.SaveData[Idx] = Toggle.Value; AutoSave() end
+                        Library:SafeCallbackToggles(Config.Title, Toggle.Callback, Toggle.Value)
+                        Library:SafeCallbackToggles(Config.Title, Toggle.Changed, Toggle.Value)
+                end
+
+                function Toggle:GetValue()
+                        return self.Value
                 end
 
                 function Toggle:Destroy()
@@ -5985,7 +3473,7 @@ ElementsTable.Toggle = (function()
 
                 Toggle:SetValue(Toggle.Value)
 
-                Library.Options[Idx] = Toggle
+                Library.Options[Idx] = Toggle   
                 return Toggle
         end
 
@@ -5995,7 +3483,6 @@ ElementsTable.Dropdown = (function()
         local Element = {}
         Element.__index = Element
         Element.__type = "Dropdown"
-        local New = Creator.New
 
         function Element:New(Idx, Config)
 
@@ -6007,8 +3494,7 @@ ElementsTable.Dropdown = (function()
                         Opened = false,
                         Type = "Dropdown",
                         Callback = Config.Callback or function() end,
-                        Search = (Config.Search == nil) and false or Config.Search,
-                        KeepSearch = Config.KeepSearch == true
+                        Searchable = Config.Searchable or false
                 }
 
                 if Dropdown.Multi and Config.AllowNull then
@@ -6023,9 +3509,11 @@ ElementsTable.Dropdown = (function()
                 Dropdown.Visible = DropdownFrame.Visible
                 Dropdown.Elements = DropdownFrame
 
-                local DropdownDisplay = New("TextLabel", {
+                local DropdownDisplay = New("TextBox", {
                         FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal),
                         Text = "",
+                        PlaceholderText = "Value",
+                        PlaceholderColor3 = Color3.fromRGB(240, 240, 240),
                         TextColor3 = Color3.fromRGB(240, 240, 240),
                         TextSize = 14,
                         AutomaticSize = Enum.AutomaticSize.Y,
@@ -6034,10 +3522,14 @@ ElementsTable.Dropdown = (function()
                         Size = UDim2.new(1, -40, 0.5, 0),
                         Position = UDim2.new(0, 8, 0.5, 0),
                         AnchorPoint = Vector2.new(0, 0.5),
+                        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
                         BackgroundTransparency = 1,
                         TextTruncate = Enum.TextTruncate.AtEnd,
+                        Interactable = false,
+                        AutoLocalize = false,
                         ThemeTag = {
                                 TextColor3 = "Text",
+                                PlaceholderColor3 = "Text"
                         },
                 })
 
@@ -6047,7 +3539,7 @@ ElementsTable.Dropdown = (function()
                         AnchorPoint = Vector2.new(1, 0.5),
                         Position = UDim2.new(1, -8, 0.5, 0),
                         BackgroundTransparency = 1,
-                        Rotation = 180,
+                        Rotation = 90,
                         ThemeTag = {
                                 ImageColor3 = "SubText",
                         },
@@ -6059,6 +3551,7 @@ ElementsTable.Dropdown = (function()
                         AnchorPoint = Vector2.new(1, 0.5),
                         BackgroundTransparency = 0.9,
                         Parent = DropdownFrame.Frame,
+                        AutoLocalize = false,
                         ThemeTag = {
                                 BackgroundColor3 = "DropdownFrame",
                         },
@@ -6093,90 +3586,10 @@ ElementsTable.Dropdown = (function()
                         ScrollBarThickness = 5,
                         BorderSizePixel = 0,
                         CanvasSize = UDim2.fromScale(0, 0),
-                        AutomaticCanvasSize = Enum.AutomaticSize.Y,
                         ScrollingDirection = Enum.ScrollingDirection.Y,
                 }, {
                         DropdownListLayout,
                 })
-
-                local SearchBar
-                local SearchBox
-                if Dropdown.Search then
-                        SearchBar = New("Frame", {
-                                Size = UDim2.new(1, -10, 0, 28),
-                                Position = UDim2.fromOffset(5, 5),
-                                BackgroundTransparency = 0.15,
-                                ThemeTag = { BackgroundColor3 = "DropdownFrame" },
-                                ZIndex = 24,
-                        }, {
-                                New("UICorner", { CornerRadius = UDim.new(0, 8) }),
-                                New("UIStroke", { Name = "Stroke", Transparency = 0.45, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, ThemeTag = { Color = "DropdownBorder" } }),
-                                New("ImageLabel", {
-                                        Image = "rbxassetid://10734943674",
-                                        BackgroundTransparency = 1,
-                                        Size = UDim2.fromOffset(16, 16),
-                                        Position = UDim2.fromOffset(8, 6),
-                                        ZIndex = 25,
-                                        ThemeTag = { ImageColor3 = "SubText" },
-                                }),
-                        })
-
-                        SearchBox = New("TextBox", {
-                                PlaceholderText = "Search",
-                                ClearTextOnFocus = false,
-                                Text = "",
-                                TextSize = 14,
-                                FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Normal),
-                                TextXAlignment = Enum.TextXAlignment.Left,
-                                TextColor3 = Color3.fromRGB(225, 225, 225),
-                                TextTransparency = 0.05,
-                                BackgroundTransparency = 1,
-                                ThemeTag = { TextColor3 = "SubText", PlaceholderColor3 = "SubText" },
-                                Parent = SearchBar,
-                                Size = UDim2.new(1, -34, 1, 0),
-                                Position = UDim2.fromOffset(28, 0),
-                                ZIndex = 24,
-                        })
-
-                        local SearchStroke = SearchBar:FindFirstChild("Stroke")
-                        Creator.AddSignal(SearchBox.Focused, function()
-                                Creator.OverrideTag(SearchBar, { BackgroundColor3 = "DropdownFrame" })
-                                if SearchStroke then
-                                        Creator.OverrideTag(SearchStroke, { Color = "Accent" })
-                                        SearchStroke.Transparency = 0.25
-                                end
-                        end)
-                        Creator.AddSignal(SearchBox.FocusLost, function()
-                                Creator.OverrideTag(SearchBar, { BackgroundColor3 = "DropdownFrame" })
-                                if SearchStroke then
-                                        Creator.OverrideTag(SearchStroke, { Color = "DropdownBorder" })
-                                        SearchStroke.Transparency = 0.45
-                                end
-                        end)
-
-                        DropdownScrollFrame.Position = UDim2.fromOffset(5, 38)
-                        DropdownScrollFrame.Size = UDim2.new(1, -5, 1, -43)
-
-                        local filterToken = 0
-                        local function ApplyFilter()
-                                filterToken += 1
-                                local myToken = filterToken
-                                task.delay(0.03, function()
-                                        if myToken ~= filterToken then return end
-                                        local text = (SearchBox.Text or ""):lower()
-                                        for _, element in next, DropdownScrollFrame:GetChildren() do
-                                                if not element:IsA("UIListLayout") then
-                                                        local value = element:FindFirstChild("ButtonLabel") and element.ButtonLabel.Text or ""
-                                                        element.Visible = text == "" or value:lower():find(text, 1, true) ~= nil
-                                                end
-                                        end
-                                        RecalculateCanvasSize()
-                                        RecalculateListSize()
-                                end)
-                        end
-
-                        Creator.AddSignal(SearchBox:GetPropertyChangedSignal("Text"), ApplyFilter)
-                end
 
                 local DropdownHolderFrame = New("Frame", {
                         Size = UDim2.fromScale(1, 0.6),
@@ -6184,7 +3597,6 @@ ElementsTable.Dropdown = (function()
                                 BackgroundColor3 = "DropdownHolder",
                         },
                 }, {
-                        SearchBar,
                         DropdownScrollFrame,
                         New("UICorner", {
                                 CornerRadius = UDim.new(0, 7),
@@ -6218,32 +3630,112 @@ ElementsTable.Dropdown = (function()
                                 MinSize = Vector2.new(170, 0),
                         }),
                 })
+ 
+                -- SEARCHABLE BOX --
+
+                local Border = New("UIStroke", {
+                        ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+                        Color = Color3.fromRGB(0, 0, 0),
+                        ThemeTag = {
+                                Color = "ElementBorder",
+                        },
+                })
+
+                local searchIcon = New("ImageLabel", {
+                        Image = "rbxassetid://10734943674",
+                        Size = UDim2.fromOffset(18, 18),
+                        AnchorPoint = Vector2.new(0, 0.5),
+                        Position = UDim2.new(0, 4, 0.5, 0),
+                        BackgroundTransparency = 1,
+                        Rotation = 0,
+                        ThemeTag = {
+                                ImageColor3 = "SubText",
+                        },
+                })
+
+                local SearchBase = New("Frame", {
+                        Visible = false,
+                        Size = UDim2.new(0, 170, 0, 30),
+                        Parent = Library.GUI,
+                        AutomaticSize = Enum.AutomaticSize.Y,
+                        ThemeTag = {
+                                BackgroundColor3 = "DropdownHolder",
+                        },
+                }, {
+                        New("UICorner", {
+                                CornerRadius = UDim.new(0, 4),
+                        }),
+                        searchIcon,
+                        Border,
+                })
+
+        local DropdownSearch = New("TextBox", {
+                        FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal),
+                        Text = "",
+                        PlaceholderText = "Search...",
+                        PlaceholderColor3 = Color3.fromRGB(240, 240, 240),
+            Parent = SearchBase,
+                        TextColor3 = Color3.fromRGB(240, 240, 240),
+                        TextSize = 14,
+                        TextYAlignment = Enum.TextYAlignment.Center,
+                        TextXAlignment = Enum.TextXAlignment.Left,
+                        Size = UDim2.new(1, -20, 1, 0),
+                        Position = UDim2.new(0.5, 18, 0.5, 0),
+                        AnchorPoint = Vector2.new(0.5, 0.5),
+                        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+                        BackgroundTransparency = 1,
+                        LayoutOrder = 7,
+                        TextTruncate = Enum.TextTruncate.AtEnd,
+                        Interactable = true,
+                        AutoLocalize = false,
+                        ThemeTag = {
+                                TextColor3 = "Text",
+                                PlaceholderColor3 = "Text"
+                        },
+                })
+
                 table.insert(Library.OpenFrames, DropdownHolderCanvas)
 
-                local function RecalculateListPosition()
-                        local Add = -40
-                        if Camera.ViewportSize.Y - DropdownInner.AbsolutePosition.Y < DropdownHolderCanvas.AbsoluteSize.Y - 5 then
-                                Add = DropdownHolderCanvas.AbsoluteSize.Y
-                                - 5
-                                - (Camera.ViewportSize.Y - DropdownInner.AbsolutePosition.Y)
-                                        + 40
-                        end
-                        DropdownHolderCanvas.Position =
-                                UDim2.fromOffset(DropdownInner.AbsolutePosition.X - 1, DropdownInner.AbsolutePosition.Y - 5 - Add)
-                end
+        local XADD = 195
+        local DEFAULT_Y_OFFSET_WITH_OBJ = -5
+        local DEFAULT_Y_OFFSET_WITHOUT_OBJ = 18
+        local MAX_DROPDOWN_ITEMS = 5
+
+        local MoveList = {
+            { Instance = DropdownHolderCanvas, YOffset = 35}, -- no custom offset
+            { Instance = SearchBase, YOffset = 0 }, -- custom Y offset
+        }
+
+        local function RecalculateListPosition()
+            local Add = 0
+            local availableSpace = Camera.ViewportSize.Y - DropdownInner.AbsolutePosition.Y
+            local neededSpace = DropdownHolderCanvas.AbsoluteSize.Y - 5
+
+            if availableSpace < neededSpace then
+                Add = neededSpace - availableSpace + 40
+            end
+
+            local defaultYOffset = (DEFAULT_Y_OFFSET_WITH_OBJ - Add) or DEFAULT_Y_OFFSET_WITHOUT_OBJ
+            local baseX = DropdownInner.AbsolutePosition.X - 1 + XADD
+            local baseY = DropdownInner.AbsolutePosition.Y + defaultYOffset
+
+            for _, entry in ipairs(MoveList) do
+                local inst = entry.Instance
+                local xOffset = entry.XOffset or 0
+                local yOffset = entry.YOffset or 0
+
+                inst.Position = UDim2.fromOffset(baseX + xOffset, baseY + yOffset)
+            end
+        end
+
 
                 local ListSizeX = 0
                 local function RecalculateListSize()
-                        local totalCount = #Dropdown.Values
-                        local itemHeight = 32
-                        local padding = 3
-                        local innerMargins = 10
-                        local estimatedContent = (totalCount > 0) and (totalCount * itemHeight + (totalCount - 1) * padding + innerMargins) or innerMargins
-                        local maxHeight = 392
-                        local many = totalCount > 10
-                        local targetHeight = math.min(estimatedContent, maxHeight)
-                        DropdownHolderCanvas.Size = UDim2.fromOffset(ListSizeX, targetHeight)
-                        DropdownHolderFrame.Size = UDim2.fromScale(1, many and 0.6 or 1)
+                        if #Dropdown.Values > MAX_DROPDOWN_ITEMS then
+                                DropdownHolderCanvas.Size = UDim2.fromOffset(ListSizeX, (39 * MAX_DROPDOWN_ITEMS) - 13)
+                        else
+                                DropdownHolderCanvas.Size = UDim2.fromOffset(ListSizeX, DropdownListLayout.AbsoluteContentSize.Y + 10)
+                        end
                 end
 
                 local function RecalculateCanvasSize()
@@ -6252,13 +3744,8 @@ ElementsTable.Dropdown = (function()
 
                 RecalculateListPosition()
                 RecalculateListSize()
-                RecalculateCanvasSize()
 
                 Creator.AddSignal(DropdownInner:GetPropertyChangedSignal("AbsolutePosition"), RecalculateListPosition)
-                Creator.AddSignal(DropdownListLayout:GetPropertyChangedSignal("AbsoluteContentSize"), function()
-                        RecalculateCanvasSize()
-                        RecalculateListSize()
-                end)
 
                 Creator.AddSignal(DropdownInner.MouseButton1Click, function()
                         if Dropdown.Opened then
@@ -6268,24 +3755,47 @@ ElementsTable.Dropdown = (function()
                         Dropdown:Open()
                 end)
 
-                Creator.AddSignal(DropdownInner.InputBegan, function(Input)
-                        if Input.UserInputType == Enum.UserInputType.Touch then
-                                if Dropdown.Opened then
-                                        Dropdown:Close()
-                                        return
+                Creator.AddSignal(DropdownSearch:GetPropertyChangedSignal("Text"), function()
+                        local Text = DropdownSearch.Text
+                        if #Text == 0 then
+                                for _, Element in next, DropdownScrollFrame:GetChildren() do
+                                        if not Element:IsA("UIListLayout") then
+                                                local Value = Element.ButtonLabel.Text
+                                                local Similar = Value:lower():match(Text:lower()) or Value:lower() == Text:lower()
+                                                Element.Visible = true
+                                        end
                                 end
-                                Dropdown:Open()
                         end
-                end)
-
-                Creator.AddSignal(DropdownDisplay:GetPropertyChangedSignal("Text"), function()
                         for _, Element in next, DropdownScrollFrame:GetChildren() do
                                 if not Element:IsA("UIListLayout") then
-                                        Element.Visible = true
+                                        local Value = Element.ButtonLabel.Text
+                                        local Similar = Value:lower():match(Text:lower()) or Value:lower() == Text:lower()
+                                        Element.Visible = Similar and true or false
                                 end
                         end
+                        -- TweenService:Create(
+                        --      DropdownHolderCanvas,
+                        --      TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
+                        --      { Size = UDim2.fromOffset(ListSizeX, DropdownListLayout.AbsoluteContentSize.Y + 10) }
+                        -- ):Play()
+
                         RecalculateListPosition()
                         RecalculateListSize()
+                end)
+
+                Creator.AddSignal(DropdownSearch.Focused, function()
+                        DropdownSearch.Text = ""
+                end)
+
+                Creator.AddSignal(DropdownSearch.FocusLost, function(Enter, Input)
+                        if #DropdownSearch.Text > 0 then
+                                local Tick = tick()
+                                repeat wait() until tick() - Tick > 5 or DropdownSearch:IsFocused()
+                                if not DropdownSearch:IsFocused() then
+                                        DropdownSearch.Text = ""
+                                        -- Dropdown:Display()
+                                end
+                        end
                 end)
 
                 Creator.AddSignal(UserInputService.InputBegan, function(Input)
@@ -6300,7 +3810,7 @@ ElementsTable.Dropdown = (function()
                                         or Mouse.Y < (AbsPos.Y - 20 - 1)
                                         or Mouse.Y > AbsPos.Y + AbsSize.Y
                                 then
-                                        Dropdown:Close()
+                                        -- Dropdown:Close()
                                 end
                         end
                 end)
@@ -6308,42 +3818,39 @@ ElementsTable.Dropdown = (function()
                 local ScrollFrame = self.ScrollFrame
                 function Dropdown:Open()
                         Dropdown.Opened = true
-                        for _, frame in ipairs(Library.OpenFrames) do
-                                if frame ~= DropdownHolderCanvas and frame.Visible then
-                                        frame.Visible = false
-                                end
-                        end
-                        if SearchBox and not Dropdown.KeepSearch then
-                                SearchBox.Text = ""
-                        end
+                        SearchBase.Visible = true
+                        -- DropdownDisplay.Interactable = Dropdown.Searchable and true or false
+                        ScrollFrame.ScrollingEnabled = false
                         DropdownHolderCanvas.Visible = true
                         TweenService:Create(
                                 DropdownHolderFrame,
                                 TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
-                                { Size = UDim2.fromScale(1, 0.6) }
+                                { Size = UDim2.fromScale(1, 1) }
                         ):Play()
                         TweenService:Create(
                                 DropdownIco,
                                 TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
-                                { Rotation = 0 }
+                                { Rotation = -90 }
                         ):Play()
+                        -- if Dropdown.Searchable then
+                        --      DropdownDisplay:CaptureFocus()
+                        -- end
                 end
 
                 function Dropdown:Close()
                         Dropdown.Opened = false
+                        SearchBase.Visible = false
+                        ScrollFrame.ScrollingEnabled = true
+                        DropdownDisplay.Interactable = false
                         DropdownHolderFrame.Size = UDim2.fromScale(1, 0.6)
                         DropdownHolderCanvas.Visible = false
                         TweenService:Create(
                                 DropdownIco,
                                 TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
-                                { Rotation = 180 }
+                                { Rotation = 90 }
                         ):Play()
+                        DropdownSearch:ReleaseFocus(false)
                         Dropdown:Display()
-                        for _, element in next, DropdownScrollFrame:GetChildren() do
-                                if not element:IsA("UIListLayout") then
-                                        element.Visible = true
-                                end
-                        end
                 end
 
                 function Dropdown:Display()
@@ -6351,7 +3858,7 @@ ElementsTable.Dropdown = (function()
                         local Str = ""
 
                         if Config.Multi then
-                                for Idx, Value in next, Values do
+                                for Idx, Value in next,Values do
                                         if Dropdown.Value[Value] then
                                                 Str = Str .. Value .. ", "
                                         end
@@ -6361,7 +3868,7 @@ ElementsTable.Dropdown = (function()
                                 Str = Dropdown.Value or ""
                         end
 
-                        DropdownDisplay.Text = (Str == "" and "--" or Str)
+                        DropdownDisplay.PlaceholderText = (Str == "" and "--" or Str)
                 end
 
                 function Dropdown:GetActiveValues()
@@ -6430,6 +3937,7 @@ ElementsTable.Dropdown = (function()
                                         Size = UDim2.fromScale(1, 1),
                                         Position = UDim2.fromOffset(10, 0),
                                         Name = "ButtonLabel",
+                                        AutoLocalize = false,
                                         ThemeTag = {
                                                 TextColor3 = "Text",
                                         },
@@ -6495,6 +4003,7 @@ ElementsTable.Dropdown = (function()
                                         SelectorSizeMotor:setGoal(Flipper.Spring.new(Selected and 14 or 6, { frequency = 6 }))
                                         SetSelTransparency(Selected and 0 or 1)
                                 end
+
                                 AddSignal(Button.Activated, function()
                                         local Try = not Selected
 
@@ -6514,7 +4023,11 @@ ElementsTable.Dropdown = (function()
 
                                                 Table:UpdateButton()
 
-                                                Dropdown:Display()
+                                                if Dropdown.Searchable and #DropdownDisplay.Text > 0 then
+
+                                                else
+                                                        Dropdown:Display()
+                                                end
 
                                                 Library:SafeCallback(Dropdown.Callback, Dropdown.Value)
                                                 Library:SafeCallback(Dropdown.Changed, Dropdown.Value)
@@ -6577,7 +4090,10 @@ ElementsTable.Dropdown = (function()
 
                         Library:SafeCallback(Dropdown.Callback, Dropdown.Value)
                         Library:SafeCallback(Dropdown.Changed, Dropdown.Value)
-                        if Idx then _G.SaveData[Idx] = Dropdown.Value; AutoSave() end
+                end
+
+                function Dropdown:GetValue()
+                        return self.Value
                 end
 
                 function Dropdown:Destroy()
@@ -6588,8 +4104,6 @@ ElementsTable.Dropdown = (function()
                 Dropdown:BuildDropdownList()
                 Dropdown:Display()
 
-                local _ddSaved = GetSetting(Idx, nil)
-                if _ddSaved ~= nil then Config.Default = _ddSaved end
                 local Defaults = {}
 
                 if type(Config.Default) == "string" then
@@ -6637,11 +4151,11 @@ ElementsTable.Paragraph = (function()
         Paragraph.__index = Paragraph
         Paragraph.__type = "Paragraph"
 
-        function Paragraph:New(Idx, Config)
-                Config = Config or Idx
+        function Paragraph:New(Config)
+                assert(Config.Title, "Paragraph - Missing Title")
                 Config.Content = Config.Content or ""
 
-                local Paragraph = Components.Element(Config.Title, Config.Content, self.Container, false, Config)
+                local Paragraph = Components.Element(Config.Title, Config.Content, Paragraph.Container, false, Config)
                 Paragraph.Frame.BackgroundTransparency = 0.92
                 Paragraph.Border.Transparency = 0.6
 
@@ -6661,7 +4175,7 @@ ElementsTable.Slider = (function()
         Element.__type = "Slider"
 
         function Element:New(Idx, Config)
-                assert(Config.Title or Config.Name, "Slider - Missing Title.")
+                assert(Config.Title, "Slider - Missing Title.")
                 assert(Config.Default, "Slider - Missing default value.")
                 assert(Config.Min, "Slider - Missing minimum value.")
                 assert(Config.Max, "Slider - Missing maximum value.")
@@ -6679,9 +4193,7 @@ ElementsTable.Slider = (function()
                 local Dragging = false
 
                 local SliderFrame = Components.Element(Config.Title, Config.Description, self.Container, false, Config)
-                if SliderFrame and SliderFrame.DescLabel then
-                        SliderFrame.DescLabel.Size = UDim2.new(1, -170, 0, 14)
-                end
+                SliderFrame.DescLabel.Size = UDim2.new(1, -170, 0, 14)
 
                 Slider.Elements = SliderFrame
                 Slider.SetTitle = SliderFrame.SetTitle
@@ -6717,9 +4229,10 @@ ElementsTable.Slider = (function()
                         }),
                 })
 
-                local SliderDisplay = New("TextLabel", {
+                local SliderDisplay = New("TextBox", {
                         FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json"),
-                        Text = "Value",
+                        Text = Config.Default,
+                        PlaceholderText = "",
                         TextSize = 12,
                         TextWrapped = true,
                         TextXAlignment = Enum.TextXAlignment.Right,
@@ -6731,38 +4244,6 @@ ElementsTable.Slider = (function()
                         ThemeTag = {
                                 TextColor3 = "SubText",
                         },
-                })
-
-                local SliderInput = New("TextBox", {
-                        FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json"),
-                        Text = "",
-                        TextSize = 12,
-                        TextXAlignment = Enum.TextXAlignment.Right,
-                        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-                        BackgroundTransparency = 0.8,
-                        Size = UDim2.new(0, 0, 0, 14),
-                        Position = UDim2.new(0, -4, 0.5, 0),
-                        AnchorPoint = Vector2.new(1, 0.5),
-                        PlaceholderText = "Value",
-                        ClearTextOnFocus = false,
-                        Visible = true,
-                        TextWrapped = false,
-                        TextTransparency = 1,
-                        BackgroundTransparency = 1,
-                        ThemeTag = {
-                                TextColor3 = "SubText",
-                                BackgroundColor3 = "Element",
-                        },
-                }, {
-                        New("UICorner", {
-                                CornerRadius = UDim.new(0, 3),
-                        }),
-                        New("UIStroke", {
-                                ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-                                Color = Color3.fromRGB(0, 0, 0),
-                                Transparency = 1,
-                                Thickness = 1,
-                        }),
                 })
 
                 local SliderInner = New("Frame", {
@@ -6782,133 +4263,24 @@ ElementsTable.Slider = (function()
                                 MaxSize = Vector2.new(150, math.huge),
                         }),
                         SliderDisplay,
-                        SliderInput,
                         SliderFill,
                         SliderRail,
                 })
 
-                local isHovering = false
-                local inputVisible = false
-
-                local function calculateInputWidth(text)
-                        local textSize = game:GetService("TextService"):GetTextSize(
-                                text or "0",
-                                12,
-                                Enum.Font.SourceSans,
-                                Vector2.new(1000, 14)
-                        )
-                        local padding = 8
-                        local minWidth = 25
-                        local maxWidth = 80
-                        return math.max(minWidth, math.min(maxWidth, textSize.X + padding))
-                end
-
-                Creator.AddSignal(SliderFrame.Frame.MouseEnter, function()
-                        isHovering = true
-                        if not SliderInput:IsFocused() then
-                                SliderDisplay.Visible = false
-                                SliderInput.Text = tostring(Slider.Value)
-                                
-                                local targetWidth = calculateInputWidth(tostring(Slider.Value))
-                                SliderInput.Size = UDim2.new(0, targetWidth, 0, 14)
-                                inputVisible = true
-                                
-                                local tweenInfo = TweenInfo.new(0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
-                                
-                                TweenService:Create(SliderInput, tweenInfo, {
-                                        TextTransparency = 0,
-                                        BackgroundTransparency = 0.8
-                                }):Play()
-                                
-                                TweenService:Create(SliderInput.UIStroke, tweenInfo, {
-                                        Transparency = 0.7
-                                }):Play()
-                        end
+                AddSignal(SliderDisplay.FocusLost, function(enter)
+                        local Text = SliderDisplay.Text
+                        if not enter then return end
+                        Slider:SetValue(tonumber(Text))
                 end)
 
-                Creator.AddSignal(SliderFrame.Frame.MouseLeave, function()
-                        isHovering = false
-                        if not SliderInput:IsFocused() and inputVisible then
-                                local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-                                
-                                TweenService:Create(SliderInput, tweenInfo, {
-                                        TextTransparency = 1,
-                                        BackgroundTransparency = 1
-                                }):Play()
-                                
-                                TweenService:Create(SliderInput.UIStroke, tweenInfo, {
-                                        Transparency = 1
-                                }):Play()
-                                
-                                task.wait(0.2)
-                                SliderDisplay.Visible = true
-                                inputVisible = false
-                        end
-                end)
-
-                Creator.AddSignal(SliderInput.Changed, function(property)
-                        if property == "Text" then
-                                local text = SliderInput.Text
-                                local cleanText = text:gsub("[^%d%.%-]", "")
-                                if cleanText:find("%-") and cleanText:find("%-") ~= 1 then
-                                        cleanText = cleanText:gsub("%-", "")
-                                end
-                                local dotCount = 0
-                                cleanText = cleanText:gsub("%.", function()
-                                        dotCount = dotCount + 1
-                                        return dotCount == 1 and "." or ""
-                                end)
-                                
-                                if cleanText ~= text then
-                                        SliderInput.Text = cleanText
-                                end
-                                
-                                if SliderInput.Visible then
-                                        local targetWidth = calculateInputWidth(cleanText)
-                                        SliderInput.Size = UDim2.new(0, targetWidth, 0, 14)
-                                end
-                        end
-                end)
-
-                Creator.AddSignal(SliderInput.FocusLost, function(enterPressed)
-                        local inputValue = tonumber(SliderInput.Text)
-                        if inputValue then
-                                Slider:SetValue(inputValue)
-                        else
-                                SliderInput.Text = tostring(Slider.Value)
-                        end
-                        
-                        if not isHovering then
-                                local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-                                
-                                TweenService:Create(SliderInput, tweenInfo, {
-                                        TextTransparency = 1,
-                                        BackgroundTransparency = 1
-                                }):Play()
-                                
-                                TweenService:Create(SliderInput.UIStroke, tweenInfo, {
-                                        Transparency = 1
-                                }):Play()
-                                
-                                task.wait(0.2)
-                                SliderDisplay.Visible = true
-                                inputVisible = false
-                        end
-                end)
-
-                Creator.AddSignal(SliderInput.Focused, function()
-                        SliderInput.Text = tostring(Slider.Value)
-                end)
-
-                Creator.AddSignal(SliderInput.InputBegan, function(Input)
-                        if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-                                Dragging = false
+                AddSignal(SliderDisplay:GetPropertyChangedSignal("Text"), function()
+                        if #SliderDisplay.Text > 0 and tonumber(SliderDisplay.Text) then
+                                Slider:SetValue(SliderDisplay.Text)
                         end
                 end)
 
                 Creator.AddSignal(SliderDot.InputBegan, function(Input)
-                        if
-                                Input.UserInputType == Enum.UserInputType.MouseButton1
+                        if Input.UserInputType == Enum.UserInputType.MouseButton1
                                 or Input.UserInputType == Enum.UserInputType.Touch
                         then
                                 Dragging = true
@@ -6925,32 +4297,16 @@ ElementsTable.Slider = (function()
                 end)
 
                 Creator.AddSignal(UserInputService.InputChanged, function(Input)
-                        if Dragging then
-                                local position = nil
-                                if Input.UserInputType == Enum.UserInputType.MouseMovement then
-                                        position = Input.Position
-                                elseif Input.UserInputType == Enum.UserInputType.Touch then
-                                        position = Input.Position
-                                end
-
-                                if position then
-                                        local SizeScale = math.clamp((position.X - SliderRail.AbsolutePosition.X) / SliderRail.AbsoluteSize.X, 0, 1)
-                                        Slider:SetValue(Slider.Min + ((Slider.Max - Slider.Min) * SizeScale))
-                                end
-                        end
-                end)
-
-                Creator.AddSignal(SliderRail.InputBegan, function(Input)
-                        if Input.UserInputType == Enum.UserInputType.Touch then
-                                Dragging = true
-                                local SizeScale = math.clamp((Input.Position.X - SliderRail.AbsolutePosition.X) / SliderRail.AbsoluteSize.X, 0, 1)
+                        if
+                                Dragging
+                                and (
+                                        Input.UserInputType == Enum.UserInputType.MouseMovement
+                                                or Input.UserInputType == Enum.UserInputType.Touch
+                                )
+                        then
+                                local SizeScale =
+                                        math.clamp((Input.Position.X - SliderRail.AbsolutePosition.X) / SliderRail.AbsoluteSize.X, 0, 1)
                                 Slider:SetValue(Slider.Min + ((Slider.Max - Slider.Min) * SizeScale))
-                        end
-                end)
-
-                Creator.AddSignal(SliderRail.InputEnded, function(Input)
-                        if Input.UserInputType == Enum.UserInputType.Touch then
-                                Dragging = false
                         end
                 end)
 
@@ -6960,20 +4316,23 @@ ElementsTable.Slider = (function()
                 end
 
                 function Slider:SetValue(Value)
-                        self.Value = Library:Round(math.clamp(Value, Slider.Min, Slider.Max), Slider.Rounding)
+                        Value = Value or self.Value
+
+                        if (not tonumber(Value)) and Value:len() > 0 then
+                                Value = self.Value
+                        end
+
+                        self.Value = Library:Round(math.clamp(Value, Slider.Min, Slider.Max), Slider.Rounding) or 0
                         SliderDot.Position = UDim2.new((self.Value - Slider.Min) / (Slider.Max - Slider.Min), -7, 0.5, 0)
                         SliderFill.Size = UDim2.fromScale((self.Value - Slider.Min) / (Slider.Max - Slider.Min), 1)
                         SliderDisplay.Text = tostring(self.Value)
-                        
-                        if SliderInput.Visible then
-                                SliderInput.Text = tostring(self.Value)
-                                local targetWidth = calculateInputWidth(tostring(self.Value))
-                                SliderInput.Size = UDim2.new(0, targetWidth, 0, 14)
-                        end
 
                         Library:SafeCallback(Slider.Callback, self.Value)
                         Library:SafeCallback(Slider.Changed, self.Value)
-                        if Idx then _G.SaveData[Idx] = self.Value; AutoSave() end
+                end
+
+                function Slider:GetValue()
+                        return self.Value
                 end
 
                 function Slider:Destroy()
@@ -6981,7 +4340,7 @@ ElementsTable.Slider = (function()
                         Library.Options[Idx] = nil
                 end
 
-                Slider:SetValue(GetSetting(Idx, Config.Default))
+                Slider:SetValue(Config.Default)
 
                 Library.Options[Idx] = Slider
                 return Slider
@@ -6995,11 +4354,11 @@ ElementsTable.Keybind = (function()
         Element.__type = "Keybind"
 
         function Element:New(Idx, Config)
-                assert(Config.Title or Config.Name, "KeyBind - Missing Title")
+                assert(Config.Title, "KeyBind - Missing Title")
                 assert(Config.Default, "KeyBind - Missing default value.")
 
                 local Keybind = {
-                        Value = GetSetting(Idx, Config.Default),
+                        Value = Config.Default,
                         Toggled = false,
                         Mode = Config.Mode or "Toggle",
                         Type = "Keybind",
@@ -7028,6 +4387,7 @@ ElementsTable.Keybind = (function()
                         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
                         AutomaticSize = Enum.AutomaticSize.X,
                         BackgroundTransparency = 1,
+                        AutoLocalize = false,
                         ThemeTag = {
                                 TextColor3 = "Text",
                         },
@@ -7096,6 +4456,10 @@ ElementsTable.Keybind = (function()
                         Keybind.Mode = Mode
                 end
 
+                function Keybind:GetValue()
+                        return self.Value
+                end
+
                 function Keybind:OnClick(Callback)
                         Keybind.Clicked = Callback
                 end
@@ -7148,7 +4512,6 @@ ElementsTable.Keybind = (function()
 
                                                         KeybindDisplayLabel.Text = Key
                                                         Keybind.Value = Key
-                                                        if Idx then _G.SaveData[Idx] = Key; AutoSave() end
 
                                                         Library:SafeCallback(Keybind.ChangedCallback, Input.KeyCode or Input.UserInputType)
                                                         Library:SafeCallback(Keybind.Changed, Input.KeyCode or Input.UserInputType)
@@ -7196,11 +4559,11 @@ ElementsTable.Colorpicker = (function()
         Element.__type = "Colorpicker"
 
         function Element:New(Idx, Config)
-                assert(Config.Title or Config.Name, "Colorpicker - Missing Title")
+                assert(Config.Title, "Colorpicker - Missing Title")
                 assert(Config.Default, "AddColorPicker: Missing default value.")
 
                 local Colorpicker = {
-                        Value = (function() local s=GetSetting(Idx,nil); return type(s)=="table" and Color3.fromRGB(s[1],s[2],s[3]) or Config.Default end)(),
+                        Value = Config.Default,
                         Transparency = Config.Transparency or 0,
                         Type = "Colorpicker",
                         Title = type(Config.Title) == "string" and Config.Title or "Colorpicker",
@@ -7280,6 +4643,7 @@ ElementsTable.Colorpicker = (function()
                                         Position = Pos,
                                         BackgroundTransparency = 1,
                                         Parent = Dialog.Root,
+                                        AutoLocalize = false,
                                         ThemeTag = {
                                                 TextColor3 = "Text",
                                         },
@@ -7322,6 +4686,7 @@ ElementsTable.Colorpicker = (function()
                                         CornerRadius = UDim.new(0, 4),
                                 }),
                         })
+
                         local OldColorFrameChecker = New("ImageLabel", {
                                 Image = "http://www.roblox.com/asset/?id=14204231522",
                                 ImageTransparency = 0.45,
@@ -7651,7 +5016,6 @@ ElementsTable.Colorpicker = (function()
 
                         Element.Library:SafeCallback(Colorpicker.Callback, Colorpicker.Value)
                         Element.Library:SafeCallback(Colorpicker.Changed, Colorpicker.Value)
-                        if Idx then _G.SaveData[Idx]={math.floor(Colorpicker.Value.R*255),math.floor(Colorpicker.Value.G*255),math.floor(Colorpicker.Value.B*255)}; AutoSave() end
                 end
 
                 function Colorpicker:SetValue(HSV, Transparency)
@@ -7682,12 +5046,6 @@ ElementsTable.Colorpicker = (function()
                         CreateColorDialog()
                 end)
 
-                Creator.AddSignal(ColorpickerFrame.Frame.InputBegan, function(Input)
-                        if Input.UserInputType == Enum.UserInputType.Touch then
-                                CreateColorDialog()
-                        end
-                end)
-
                 Colorpicker:Display()
 
                 Library.Options[Idx] = Colorpicker
@@ -7702,11 +5060,11 @@ ElementsTable.Input = (function()
         Element.__type = "Input"
 
         function Element:New(Idx, Config)
-                assert(Config.Title or Config.Name, "Input - Missing Title")
+                assert(Config.Title, "Input - Missing Title")
                 Config.Callback = Config.Callback or function() end
 
                 local Input = {
-                        Value = GetSetting(Idx, Config.Default or ""),
+                        Value = Config.Default or "",
                         Numeric = Config.Numeric or false,
                         Finished = Config.Finished or false,
                         Callback = Config.Callback or function(Value) end,
@@ -7714,6 +5072,7 @@ ElementsTable.Input = (function()
                 }
 
                 local InputFrame = Components.Element(Config.Title, Config.Description, self.Container, false)
+                InputFrame.DescLabel.Size = UDim2.new(1, -170, 0, 14)
 
                 Input.SetTitle = InputFrame.SetTitle
                 Input.SetDesc = InputFrame.SetDesc
@@ -7726,6 +5085,7 @@ ElementsTable.Input = (function()
                 Textbox.Frame.Size = UDim2.fromOffset(160, 30)
                 Textbox.Input.Text = Config.Default or ""
                 Textbox.Input.PlaceholderText = Config.Placeholder or ""
+                Textbox.MultiLine = Config.MultiLine or false
 
                 local Box = Textbox.Input
 
@@ -7735,7 +5095,8 @@ ElementsTable.Input = (function()
                         end
 
                         if Input.Numeric then
-                                if (not tonumber(Text)) and Text:len() > 0 then
+                                local number = tonumber(Text)
+                                if not number and Text:len() > 0 then
                                         Text = Input.Value
                                 end
                         end
@@ -7745,7 +5106,10 @@ ElementsTable.Input = (function()
 
                         Library:SafeCallback(Input.Callback, Input.Value)
                         Library:SafeCallback(Input.Changed, Input.Value)
-                        if Idx then _G.SaveData[Idx] = Input.Value; AutoSave() end
+                end
+
+                function Input:GetValue()
+                        return self.Value
                 end
 
                 if Input.Finished then
@@ -8441,6 +5805,7 @@ local Icons = {
         ["lucide-scissors"] = "rbxassetid://10734942778",
         ["lucide-screen-share"] = "rbxassetid://10734943193",
         ["lucide-screen-share-off"] = "rbxassetid://10734942967",
+        ["lucide-shell"] = "rbxassetid://83825045910816",
         ["lucide-scroll"] = "rbxassetid://10734943448",
         ["lucide-search"] = "rbxassetid://10734943674",
         ["lucide-send"] = "rbxassetid://10734943902",
@@ -8613,6 +5978,7 @@ local Icons = {
         ["lucide-webhook"] = "rbxassetid://17320556264",
         ["lucide-dumbbell"] = "rbxassetid://18273453053"
 }
+
 function Library:GetIcon(Name)
         if Name ~= nil and Icons["lucide-" .. Name] then
                 return Icons["lucide-" .. Name]
@@ -8627,16 +5993,15 @@ Elements.__namecall = function(Table, Key, ...)
 end
 
 for _, ElementComponent in pairs(ElementsTable) do
-        Elements["Add" .. ElementComponent.__type] = function(self, Config)
+        Elements["Add" .. ElementComponent.__type] = function(self, Idx, Config)
                 ElementComponent.Container = self.Container
                 ElementComponent.Type = self.Type
                 ElementComponent.ScrollFrame = self.ScrollFrame
                 ElementComponent.Library = Library
 
-                return ElementComponent:New(Config.Flag or Config.Idx, Config)
+                return ElementComponent:New(Idx, Config)
         end
 end
-
 
 Library.Elements = Elements
 
@@ -8722,6 +6087,7 @@ local SaveManager = {} do
                         self.Ignore[key] = true
                 end
         end
+
         function SaveManager:SetFolder(folder)
                 self.Folder = folder;
                 self:BuildFolderTree()
@@ -8738,11 +6104,11 @@ local SaveManager = {} do
                         objects = {}
                 }
 
-
                 for idx, option in next, SaveManager.Options do
-                        if self.Parser[option.Type] and not self.Ignore[idx] then
-                                table.insert(data.objects, self.Parser[option.Type].Save(idx, option))
-                        end
+                        if not self.Parser[option.Type] then continue end
+                        if self.Ignore[idx] then continue end
+
+                        table.insert(data.objects, self.Parser[option.Type].Save(idx, option))
                 end     
 
                 local success, encoded = pcall(httpService.JSONEncode, httpService, data)
@@ -8754,28 +6120,26 @@ local SaveManager = {} do
                 return true
         end
 
-        if not RunService:IsStudio() then
-                function SaveManager:Load(name)
-                        if (not name) then
-                                return false, "no config file is selected"
-                        end
-
-                        local file = self.Folder .. "/" .. name .. ".json"
-                        if not isfile(file) then return false, "Create Config Save File" end
-
-                        local success, decoded = pcall(httpService.JSONDecode, httpService, readfile(file))
-                        if not success then return false, "decode error" end
-
-                        for _, option in next, decoded.objects do
-                                if self.Parser[option.type] and not self.Ignore[option.idx] then
-                                        task.spawn(function() self.Parser[option.type].Load(option.idx, option) end)
-                                end
-                        end
-
-                        Fluent.SettingLoaded = true
-
-                        return true, decoded
+        function SaveManager:Load(name)
+                if (not name) then
+                        return false, "no config file is selected"
                 end
+
+                local file = self.Folder .. "/" .. name .. ".json"
+                if not isfile(file) then return false, "Create Config Save File" end
+
+                local success, decoded = pcall(httpService.JSONDecode, httpService, readfile(file))
+                if not success then return false, "decode error" end
+
+                for _, option in next, decoded.objects do
+                        if self.Parser[option.type] and not self.Ignore[option.idx] then
+                                task.spawn(function() self.Parser[option.type].Load(option.idx, option) end) -- task.spawn() so the config loading wont get stuck.
+                        end
+                end
+
+                Fluent.SettingLoaded = true
+
+                return true, decoded
         end
 
         function SaveManager:IgnoreThemeSettings()
@@ -8831,38 +6195,36 @@ local SaveManager = {} do
                 self.Options = library.Options
         end
 
-        if not RunService:IsStudio() then
-                function SaveManager:LoadAutoloadConfig()
-                        if isfile(self.Folder .. "/autoload.txt") then
-                                local name = readfile(self.Folder .. "/autoload.txt")
+        function SaveManager:LoadAutoloadConfig()
+                if isfile(self.Folder .. "/autoload.txt") then
+                        local name = readfile(self.Folder .. "/autoload.txt")
 
-                                local success, err = self:Load(name)
-                                if not success then
-                                        return self.Library:Notify({
-                                                Title = "Interface",
-                                                Content = "Config loader",
-                                                SubContent = "Failed to load autoload config: " .. err,
-                                                Duration = 7
-                                        })
-                                end
-
-                                self.Library:Notify({
+                        local success, err = self:Load(name)
+                        if not success then
+                                return self.Library:Notify({
                                         Title = "Interface",
                                         Content = "Config loader",
-                                        SubContent = string.format("Auto loaded config %q", name),
+                                        SubContent = "Failed to load autoload config: " .. err,
                                         Duration = 7
                                 })
                         end
+
+                        self.Library:Notify({
+                                Title = "Interface",
+                                Content = "Config loader",
+                                SubContent = string.format("Auto loaded config %q", name),
+                                Duration = 7
+                        })
                 end
         end
 
         function SaveManager:BuildConfigSection(tab)
                 assert(self.Library, "Must set SaveManager.Library")
 
-                local section = tab:AddSection("Configuration", "settings")
+                local section = tab:AddSection("Configuration")
 
-                section:AddInput({ Flag = "SaveManager_ConfigName", Title = "Config name" })
-                section:AddDropdown({ Flag = "SaveManager_ConfigList", Title = "Config list", Values = self:RefreshConfigList(), AllowNull = true })
+                section:AddInput("SaveManager_ConfigName",    { Title = "Config name" })
+                section:AddDropdown(" ", { Title = "Config list", Values = self:RefreshConfigList(), AllowNull = true })
 
                 section:AddButton({
                         Title = "Create config",
@@ -8968,9 +6330,7 @@ local SaveManager = {} do
                 SaveManager:SetIgnoreIndexes({ "SaveManager_ConfigList", "SaveManager_ConfigName" })
         end
 
-        if not RunService:IsStudio() then
-                SaveManager:BuildFolderTree()
-        end
+        -- SaveManager:BuildFolderTree()
 end
 
 local InterfaceManager = {} do
@@ -9021,8 +6381,7 @@ local InterfaceManager = {} do
                 local path = self.Folder .. "/options.json"
                 if isfile(path) then
                         local data = readfile(path)
-
-                        if not RunService:IsStudio() then local success, decoded = pcall(httpService.JSONDecode, httpService, data) end
+                        local success, decoded = pcall(httpService.JSONDecode, httpService, data)
 
                         if success then
                                 for i, v in next, decoded do
@@ -9031,16 +6390,14 @@ local InterfaceManager = {} do
                         end
                 end
         end
+
         function InterfaceManager:BuildInterfaceSection(tab)
                 assert(self.Library, "Must set InterfaceManager.Library")
                 local Library = self.Library
                 local Settings = InterfaceManager.Settings
 
-                InterfaceManager:LoadSettings()
-
-                local section = tab:AddSection("Interface", "monitor")
-                local InterfaceTheme = section:AddDropdown({
-                                Flag = "InterfaceTheme",
+                local section = tab:AddSection("Interface")
+                local InterfaceTheme = section:AddDropdown("InterfaceTheme", {
                         Title = "Theme",
                         Description = "Changes the interface theme.",
                         Values = Library.Themes,
@@ -9054,8 +6411,8 @@ local InterfaceManager = {} do
 
                 InterfaceTheme:SetValue(Settings.Theme)
 
-                if Library.UseAcrylic and not Mobile then
-                        section:AddToggle({ Flag = "AcrylicToggle",
+                if Library.UseAcrylic then
+                        section:AddToggle("AcrylicToggle", {
                                 Title = "Acrylic",
                                 Description = "The blurred background requires graphic quality 8+",
                                 Default = Settings.Acrylic,
@@ -9065,81 +6422,232 @@ local InterfaceManager = {} do
                                         InterfaceManager:SaveSettings()
                                 end
                         })
-                elseif Mobile then
-                        Settings.Acrylic = false
                 end
 
-                section:AddSlider({ Flag = "WindowTransparency",
-                        Title = "Window Transparency",
-                        Description = "Adjusts the window transparency.",
-                        Default = 1,
-                        Min = 0,
-                        Max = 3,
-                        Rounding = 1,
+                section:AddToggle("TransparentToggle", {
+                        Title = "Transparency",
+                        Description = "Makes the interface transparent.",
+                        Default = Library.Transparency,
                         Callback = function(Value)
-                                Library:SetWindowTransparency(Value)
+                                Library:ToggleTransparency(Value)
+                                Settings.Transparency = Value
+                                InterfaceManager:SaveSettings()
                         end
                 })
 
-
-                local MenuKeybind = section:AddKeybind({ Flag = "MenuKeybind", Title = "Minimize Bind", Default = Library.MinimizeKey.Name or Settings.MenuKeybind })
+                local MenuKeybind = section:AddKeybind("MenuKeybind", { Title = "Minimize Bind", Default = Library.MinimizeKey.Name or Settings.MenuKeybind })
                 MenuKeybind:OnChanged(function()
                         Settings.MenuKeybind = MenuKeybind.Value
                         InterfaceManager:SaveSettings()
                 end)
                 Library.MinimizeKeybind = MenuKeybind
+
+                InterfaceManager:LoadSettings()
         end
 end
 
 function Library:CreateWindow(Config)
-        assert(Config.Title or Config.Name, "Window - Missing Title")
-        if Config.ScriptFolder then _LibSaveFolder = Config.ScriptFolder end
-        LoadSettings()
+        assert(Config.Title, "Window - Missing Title")
 
         if Library.Window then
                 print("You cannot create more than one window.")
                 return
         end
 
-        Library.MinimizeKey = Config.MinimizeKey or Enum.KeyCode.LeftControl
+        Library.MinimizeKey = Config.MinimizeKey or Enum.KeyCode.RightControl
         Library.UseAcrylic = Config.Acrylic or false
         Library.Acrylic = Config.Acrylic or false
-        Library.Theme = Config.Theme or "Dark"
-
+        Library.Theme = Config.Theme or "Darker"
+        Library.Transparency = Config.Transparency or false
         if Config.Acrylic then
                 Acrylic.init()
-        end
-
-        local Icon = Config.Icon
-        if not fischbypass then 
-                if Library:GetIcon(Icon) then
-                        Icon = Library:GetIcon(Icon)
-                end
-
-                if Icon == "" or Icon == nil then
-                        Icon = nil
-                end
         end
 
         local Window = Components.Window({
                 Parent = GUI,
                 Size = Config.Size,
                 Title = Config.Title,
-                Icon = Icon,
                 SubTitle = Config.SubTitle,
                 TabWidth = Config.TabWidth,
-                Search = Config.Search,
-                UserInfoTitle = Config.UserInfoTitle,
-                UserInfo = Config.UserInfo,
-                UserInfoTop = Config.UserInfoTop,
-                UserInfoSubtitle = Config.UserInfoSubtitle,
-                UserInfoSubtitleColor = Config.UserInfoSubtitleColor,
+                Image = Config.Image,
         })
 
         Library.Window = Window
-        table.insert(Library.Windows, Window)
         InterfaceManager:SetTheme(Config.Theme)
         Library:SetTheme(Config.Theme)
+
+        local Dragging, DragInput, MousePos, StartPos = false
+
+        if not Config.NoMinimize then
+                local MinimizeButton = New("TextButton", {
+                        BackgroundTransparency = 1,
+                        Size = UDim2.new(1, 0, 1, 0),
+                        BorderSizePixel = 0
+                }, {
+                        New("UIPadding", {
+                                PaddingBottom = UDim.new(0, 2),
+                                PaddingLeft = UDim.new(0, 2),
+                                PaddingRight = UDim.new(0, 2),
+                                PaddingTop = UDim.new(0, 2),
+                        }),
+                        New("ImageLabel", {
+                                Image = Config.MinimizerIcon or "rbxassetid://9681970193",
+                                Size = UDim2.new(1, 0, 1, 0),
+                                BackgroundTransparency = 1,
+                        }, {
+                                New("UIAspectRatioConstraint", {
+                                        AspectRatio = 1,
+                                        AspectType = Enum.AspectType.FitWithinMaxSize,
+                                })
+                        })
+                })
+
+                local Minimizer = New("Frame", {
+                        Parent = GUI,
+                        Size = UDim2.new(0, 60, 0, 60),
+                        Position = UDim2.new(0.45, 0, 0.025, 0),
+                        BackgroundTransparency = 1,
+                        ZIndex = 999999999,
+                },
+                {
+                        New("Frame", {
+                                BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+                                Size = UDim2.new(1, 0, 1, 0),
+                                BackgroundTransparency = 0.5,
+                                BorderSizePixel = 0
+                        }, {
+                                New("UICorner", {
+                                        CornerRadius = UDim.new(0.25, 0),
+                                }),
+                                MinimizeButton
+                        })
+                })
+
+                local Dragging = false
+                local DragInput = nil
+                local MousePos = nil
+                local StartPos = nil
+
+                local RunService = game:GetService("RunService")
+                local updateConnection
+
+                local TweenService = game:GetService("TweenService")
+                local tweenInfo = TweenInfo.new(
+                        0.1,
+                        Enum.EasingStyle.Quad,
+                        Enum.EasingDirection.Out
+                )
+
+                local function ClampPosition(position)
+                        local screenSize = workspace.CurrentCamera.ViewportSize
+                        local frameSize = Minimizer.AbsoluteSize
+
+                        local minX = 0
+                        local maxX = screenSize.X - frameSize.X
+                        local minY = 0
+                        local maxY = screenSize.Y - frameSize.Y
+
+                        local newX = math.clamp(position.X.Offset, minX, maxX)
+                        local newY = math.clamp(position.Y.Offset, minY, maxY)
+
+                        return UDim2.new(position.X.Scale, newX, position.Y.Scale, newY)
+                end
+
+                local function UpdatePosition()
+                        if not Dragging or not DragInput or not MousePos then return end
+
+                        local Delta = DragInput.Position - MousePos
+                        local TargetPosition = UDim2.new(
+                                StartPos.X.Scale, 
+                                StartPos.X.Offset + Delta.X, 
+                                StartPos.Y.Scale, 
+                                StartPos.Y.Offset + Delta.Y
+                        )
+
+                        local tween = TweenService:Create(Minimizer, tweenInfo, {Position = TargetPosition})
+                        tween:Play()
+                end
+
+                Creator.AddSignal(Minimizer.InputBegan, function(Input)
+                        if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
+                                Dragging = true
+                                MousePos = Input.Position
+                                StartPos = Minimizer.Position
+
+                                Input.Changed:Connect(function()
+                                        if Input.UserInputState == Enum.UserInputState.End then
+                                                Dragging = false
+                                        end
+                                end)
+                        end
+                end)
+
+                Creator.AddSignal(MinimizeButton.InputBegan, function(Input)
+                        if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
+                                Dragging = true
+                                MousePos = Input.Position
+                                StartPos = Minimizer.Position
+
+                                Input.Changed:Connect(function()
+                                        if Input.UserInputState == Enum.UserInputState.End then
+                                                Dragging = false
+                                        end
+                                end)
+                        end
+                end)
+
+                Creator.AddSignal(MinimizeButton.InputChanged, function(Input)
+                        if (Input.UserInputType == Enum.UserInputType.MouseMovement or Input.UserInputType == Enum.UserInputType.Touch) then
+                                DragInput = Input
+                                UpdatePosition()
+                        end
+                end)
+
+                Creator.AddSignal(Minimizer.InputChanged, function(Input)
+                        if (Input.UserInputType == Enum.UserInputType.MouseMovement or Input.UserInputType == Enum.UserInputType.Touch) then
+                                DragInput = Input
+                                UpdatePosition()
+                        end
+                end)
+
+                Creator.AddSignal(RunService.Heartbeat, function()
+                        if Dragging and DragInput and MousePos then
+                                UpdatePosition()
+                        end
+                end)
+
+                AddSignal(MinimizeButton.MouseButton1Click, function()
+                        Window:Minimize()
+                end)
+        end
+
+        Creator.AddSignal(UserInputService.InputChanged, function(Input)
+                if Input == DragInput and Dragging then
+                        local GuiInset = game:GetService("GuiService"):GetGuiInset()
+                        local Delta = Input.Position - MousePos
+                        local ViewportSize = workspace.Camera.ViewportSize
+                        local CurrentX = StartPos.X.Scale + (Delta.X/ViewportSize.X)
+                        local CurrentY = StartPos.Y.Scale + (Delta.Y/ViewportSize.Y)
+
+                        if CurrentX<0 or CurrentX > (ViewportSize.X - Minimizer.AbsoluteSize.X)/ViewportSize.X then
+                                if CurrentX < 0 then
+                                        CurrentX = 0
+                                else
+                                        CurrentX = (ViewportSize.X - Minimizer.AbsoluteSize.X)/ViewportSize.X
+                                end
+                        end
+
+                        if CurrentY < 0 or CurrentY > ((ViewportSize.Y + GuiInset.Y) - Minimizer.AbsoluteSize.Y)/(ViewportSize.Y + GuiInset.Y) then
+                                if CurrentY < 0 then
+                                        CurrentY = 0
+                                else
+                                        CurrentY = ((ViewportSize.Y + GuiInset.Y) - Minimizer.AbsoluteSize.Y)/(ViewportSize.Y + GuiInset.Y)
+                                end
+                        end
+
+                        Minimizer.Position = UDim2.fromScale(CurrentX, CurrentY)
+                end
+        end)
 
         return Window
 end
@@ -9148,10 +6656,6 @@ function Library:SetTheme(Value)
         if Library.Window and table.find(Library.Themes, Value) then
                 Library.Theme = Value
                 Creator.UpdateTheme()
-
-                if Value == "Glass" then
-                        Library:SetWindowTransparency(0.9)
-                end
         end
 end
 
@@ -9170,8 +6674,11 @@ function Library:ToggleAcrylic(Value)
         if Library.Window then
                 if Library.UseAcrylic then
                         Library.Acrylic = Value
-                        if Library.Window.AcrylicPaint and Library.Window.AcrylicPaint.Model then
-                                Library.Window.AcrylicPaint.Model.Transparency = Value and 0.95 or 1
+                        Library.Window.AcrylicPaint.Model.Transparency = Value and 0.98 or 1
+                        if Value then
+                                Acrylic.Enable()
+                        else
+                                Acrylic.Disable()
                         end
                 end
         end
@@ -9180,42 +6687,6 @@ end
 function Library:ToggleTransparency(Value)
         if Library.Window then
                 Library.Window.AcrylicPaint.Frame.Background.BackgroundTransparency = Value and 0.35 or 0
-        end
-end
-function Library:SetWindowTransparency(Value)
-        if Library.Window and Library.UseAcrylic then
-                Value = math.clamp(Value, 0, 3)
-
-                if Library.Theme == "Glass" then
-                        local glassTransparency = 0.8 + (Value * 0.05)
-                        if Value > 1 then
-                                glassTransparency = 0.85 + ((Value - 1) * 0.04)
-                        end
-                        if Value > 2 then
-                                glassTransparency = 0.93 + ((Value - 2) * 0.04)
-                        end
-                        Library.Window.AcrylicPaint.Model.Transparency = math.min(glassTransparency, 0.99)
-
-                        local backgroundTransparency = 0.7 + (Value * 0.08)
-                        if Value > 1 then
-                                backgroundTransparency = 0.78 + ((Value - 1) * 0.07)
-                        end
-                        if Value > 2 then
-                                backgroundTransparency = 0.85 + ((Value - 2) * 0.1)
-                        end
-                        Library.Window.AcrylicPaint.Frame.Background.BackgroundTransparency = math.min(backgroundTransparency, 0.99)
-
-                        Library.NotificationTransparency = Value
-
-                        for _, notification in pairs(Library.ActiveNotifications or {}) do
-                                if notification and notification.ApplyTransparency then
-                                        notification:ApplyTransparency()
-                                end
-                        end
-                else
-                        Library.Window.AcrylicPaint.Model.Transparency = 0.98
-                        Library.Window.AcrylicPaint.Frame.Background.BackgroundTransparency = Value * 0.3
-                end
         end
 end
 
@@ -9228,50 +6699,33 @@ if getgenv then
 else
         Fluent = Library
 end
+local Window = Fluent:CreateWindow({
+    Title = "Fluent " .. Fluent.Version,
+    SubTitle = "by dawid",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = true, -- The blur may be detectable, setting this to false disables blur entirely
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.LeftControl -- Used when theres no MinimizeKeybind
+})
 
-local LonelyHubBtn = Instance.new("ScreenGui")
-local dutdit = Instance.new("Frame")
-local _UICorner = Instance.new("UICorner")
-local _ImageLabel = Instance.new("ImageLabel")
-local _TextButton = Instance.new("TextButton")
+local Tabs = {
+    Main = Window:AddTab({ Title = "Main", Icon = "home" }),
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+}
 
-LonelyHubBtn.Name = "Lonely Hub Btn"
-LonelyHubBtn.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-LonelyHubBtn.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+local MultiDropdown = Tabs.Main:AddDropdown("MultiDropdown", {
+    Title = "Dropdown",
+    Description = "You can select multiple values.",
+    Values = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen"},
+    Multi = true,
+    Default = {"seven", "twelve"},
+})
 
-dutdit.Name = "dut dit"
-dutdit.Parent = LonelyHubBtn
-dutdit.AnchorPoint = Vector2.new(0.1, 0.1)
-dutdit.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-dutdit.Position = UDim2.new(0, 20, 0.1, -6)
-dutdit.Size = UDim2.new(0, 50, 0, 50)
-dutdit.Active = true
-dutdit.Draggable = true
+MultiDropdown:SetValue({
+    three = true,
+    five = true,
+    seven = false
+})
 
-_UICorner.CornerRadius = UDim.new(1, 0)
-_UICorner.Parent = dutdit
-
-_ImageLabel.Parent = dutdit
-_ImageLabel.AnchorPoint = Vector2.new(0.5, 0.5)
-_ImageLabel.BackgroundTransparency = 1.0
-_ImageLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
-_ImageLabel.Size = UDim2.new(0, 40, 0, 40)
-_ImageLabel.Image = "rbxassetid://112485471724320"
-
-_TextButton.Parent = dutdit
-_TextButton.BackgroundTransparency = 1.0
-_TextButton.Size = UDim2.new(1, 0, 1, 0)
-_TextButton.Font = Enum.Font.SourceSans
-_TextButton.Text = ""
-_TextButton.TextColor3 = Color3.fromRGB(27, 42, 53)
-
-AddSignal(_TextButton.MouseButton1Click, function()
-        if Library.Window and Library.Window.Root then
-                Library.Window.Root.Visible = not Library.Window.Root.Visible
-                Library.Window.Minimized = not Library.Window.Root.Visible
-        end
-end)
-
-task.wait(0.01)
-
-return Library, SaveManager, InterfaceManager, Mobile
+return Library, SaveManager, InterfaceManager
