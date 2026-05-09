@@ -1793,10 +1793,10 @@ end
 
 local Components = {
         Assets = {
-                Close = "rbxassetid://112485471724320",
-                Min = "rbxassetid://112485471724320",
-                Max = "rbxassetid://112485471724320",
-                Restore = "rbxassetid://112485471724320",
+                Close = "rbxassetid://9886659671",
+                Min = "rbxassetid://9886659276",
+                Max = "rbxassetid://9886659406",
+                Restore = "rbxassetid://9886659001",
         },
 }
 
@@ -3350,7 +3350,7 @@ ElementsTable.Button = (function()
                 local ButtonFrame = Components.Element(Config.Title, Config.Description, self.Container, true, Config)
 
                 local ButtonIco = New("ImageLabel", {
-                        Image = "rbxassetid://112485471724320",
+                        Image = "rbxassetid://10709791437",
                         Size = UDim2.fromOffset(16, 16),
                         AnchorPoint = Vector2.new(1, 0.5),
                         Position = UDim2.new(1, -10, 0.5, 0),
@@ -3400,7 +3400,7 @@ ElementsTable.Toggle = (function()
                         AnchorPoint = Vector2.new(0, 0.5),
                         Size = UDim2.fromOffset(14, 14),
                         Position = UDim2.new(0, 2, 0.5, 0),
-                        Image = "rbxassetid://112485471724320",
+                        Image = "http://www.roblox.com/asset/?id=12266946128",
                         ImageTransparency = 0.5,
                         ThemeTag = {
                                 ImageColor3 = "ToggleSlider",
@@ -3534,7 +3534,7 @@ ElementsTable.Dropdown = (function()
                 })
 
                 local DropdownIco = New("ImageLabel", {
-                        Image = "rbxassetid://112485471724320",
+                        Image = "rbxassetid://10709790948",
                         Size = UDim2.fromOffset(16, 16),
                         AnchorPoint = Vector2.new(1, 0.5),
                         Position = UDim2.new(1, -8, 0.5, 0),
@@ -3609,7 +3609,7 @@ ElementsTable.Dropdown = (function()
                         }),
                         New("ImageLabel", {
                                 BackgroundTransparency = 1,
-                                Image = "rbxassetid://112485471724320",
+                                Image = "http://www.roblox.com/asset/?id=4805639000",
                                 ScaleType = Enum.ScaleType.Slice,
                                 SliceCenter = Rect.new(23, 23, 277, 277),
                                 Size = UDim2.fromScale(1, 1) + UDim2.fromOffset(30, 30),
@@ -3642,7 +3642,7 @@ ElementsTable.Dropdown = (function()
                 })
 
                 local searchIcon = New("ImageLabel", {
-                        Image = "rbxassetid://112485471724320",
+                        Image = "rbxassetid://10734943674",
                         Size = UDim2.fromOffset(18, 18),
                         AnchorPoint = Vector2.new(0, 0.5),
                         Position = UDim2.new(0, 4, 0.5, 0),
@@ -4204,7 +4204,7 @@ ElementsTable.Slider = (function()
                         AnchorPoint = Vector2.new(0, 0.5),
                         Position = UDim2.new(0, -7, 0.5, 0),
                         Size = UDim2.fromOffset(14, 14),
-                        Image = "rbxassetid://112485471724320",
+                        Image = "http://www.roblox.com/asset/?id=12266946128",
                         ThemeTag = {
                                 ImageColor3 = "Accent",
                         },
@@ -4601,7 +4601,7 @@ ElementsTable.Colorpicker = (function()
                         Position = UDim2.new(1, -10, 0.5, 0),
                         AnchorPoint = Vector2.new(1, 0.5),
                         Parent = ColorpickerFrame.Frame,
-                        Image = "rbxassetid://112485471724320",
+                        Image = "http://www.roblox.com/asset/?id=14204231522",
                         ImageTransparency = 0.45,
                         ScaleType = Enum.ScaleType.Tile,
                         TileSize = UDim2.fromOffset(40, 40),
@@ -4660,13 +4660,13 @@ ElementsTable.Colorpicker = (function()
                                 ScaleType = Enum.ScaleType.Fit,
                                 AnchorPoint = Vector2.new(0.5, 0.5),
                                 BackgroundTransparency = 1,
-                                Image = "rbxassetid://112485471724320",
+                                Image = "http://www.roblox.com/asset/?id=12266946128",
                         })
 
                         local SatVibMap = New("ImageLabel", {
                                 Size = UDim2.fromOffset(180, 160),
                                 Position = UDim2.fromOffset(20, 55),
-                                Image = "rbxassetid://112485471724320",
+                                Image = "http://www.roblox.com/asset/?id=14204231522",
                                 BackgroundColor3 = Colorpicker.Value,
                                 BackgroundTransparency = 0,
                                 Parent = Dialog.Root,
@@ -4688,7 +4688,7 @@ ElementsTable.Colorpicker = (function()
                         })
 
                         local OldColorFrameChecker = New("ImageLabel", {
-                                Image = "rbxassetid://112485471724320",
+                                Image = "http://www.roblox.com/asset/?id=14204231522",
                                 ImageTransparency = 0.45,
                                 ScaleType = Enum.ScaleType.Tile,
                                 TileSize = UDim2.fromOffset(40, 40),
@@ -4718,7 +4718,7 @@ ElementsTable.Colorpicker = (function()
                         })
 
                         local DialogDisplayFrameChecker = New("ImageLabel", {
-                                Image = "rbxassetid://112485471724320",
+                                Image = "http://www.roblox.com/asset/?id=14204231522",
                                 ImageTransparency = 0.45,
                                 ScaleType = Enum.ScaleType.Tile,
                                 TileSize = UDim2.fromOffset(40, 40),
@@ -4756,7 +4756,7 @@ ElementsTable.Colorpicker = (function()
 
                         local HueDrag = New("ImageLabel", {
                                 Size = UDim2.fromOffset(14, 14),
-                                Image = "rbxassetid://112485471724320",
+                                Image = "http://www.roblox.com/asset/?id=12266946128",
                                 Parent = HueDragHolder,
                                 ThemeTag = {
                                         ImageColor3 = "DialogInput",
@@ -4808,7 +4808,7 @@ ElementsTable.Colorpicker = (function()
 
                                 TransparencyDrag = New("ImageLabel", {
                                         Size = UDim2.fromOffset(14, 14),
-                                        Image = "rbxassetid://112485471724320",
+                                        Image = "http://www.roblox.com/asset/?id=12266946128",
                                         Parent = TransparencyDragHolder,
                                         ThemeTag = {
                                                 ImageColor3 = "DialogInput",
@@ -4840,7 +4840,7 @@ ElementsTable.Colorpicker = (function()
                                                 CornerRadius = UDim.new(1, 0),
                                         }),
                                         New("ImageLabel", {
-                                                Image = "rbxassetid://112485471724320",
+                                                Image = "http://www.roblox.com/asset/?id=14204231522",
                                                 ImageTransparency = 0.45,
                                                 ScaleType = Enum.ScaleType.Tile,
                                                 TileSize = UDim2.fromOffset(40, 40),
@@ -5299,11 +5299,11 @@ local Icons = {
         ["lucide-check-square"] = "rbxassetid://10709790537",
         ["lucide-chef-hat"] = "rbxassetid://10709790757",
         ["lucide-cherry"] = "rbxassetid://10709790875",
-        ["lucide-chevron-down"] = "rbxassetid://112485471724320",
+        ["lucide-chevron-down"] = "rbxassetid://10709790948",
         ["lucide-chevron-first"] = "rbxassetid://10709791015",
         ["lucide-chevron-last"] = "rbxassetid://10709791130",
         ["lucide-chevron-left"] = "rbxassetid://10709791281",
-        ["lucide-chevron-right"] = "rbxassetid://112485471724320",
+        ["lucide-chevron-right"] = "rbxassetid://10709791437",
         ["lucide-chevron-up"] = "rbxassetid://10709791523",
         ["lucide-chevrons-down"] = "rbxassetid://10709796864",
         ["lucide-chevrons-down-up"] = "rbxassetid://10709791632",
@@ -5807,7 +5807,7 @@ local Icons = {
         ["lucide-screen-share-off"] = "rbxassetid://10734942967",
         ["lucide-shell"] = "rbxassetid://83825045910816",
         ["lucide-scroll"] = "rbxassetid://10734943448",
-        ["lucide-search"] = "rbxassetid://112485471724320",
+        ["lucide-search"] = "rbxassetid://10734943674",
         ["lucide-send"] = "rbxassetid://10734943902",
         ["lucide-separator-horizontal"] = "rbxassetid://10734944115",
         ["lucide-separator-vertical"] = "rbxassetid://10734944326",
@@ -6350,370 +6350,4 @@ local InterfaceManager = {} do
                 self:BuildFolderTree()
         end
 
-        function InterfaceManager:SetLibrary(library)
-                self.Library = library
-        end
-
-        function InterfaceManager:BuildFolderTree()
-                local paths = {}
-
-                local parts = self.Folder:split("/")
-                for idx = 1, #parts do
-                        paths[#paths + 1] = table.concat(parts, "/", 1, idx)
-                end
-
-                table.insert(paths, self.Folder)
-                table.insert(paths, self.Folder .. "/")
-
-                for i = 1, #paths do
-                        local str = paths[i]
-                        if not isfolder(str) then
-                                makefolder(str)
-                        end
-                end
-        end
-
-        function InterfaceManager:SaveSettings()
-                writefile(self.Folder .. "/options.json", httpService:JSONEncode(InterfaceManager.Settings))
-        end
-
-        function InterfaceManager:LoadSettings()
-                local path = self.Folder .. "/options.json"
-                if isfile(path) then
-                        local data = readfile(path)
-                        local success, decoded = pcall(httpService.JSONDecode, httpService, data)
-
-                        if success then
-                                for i, v in next, decoded do
-                                        InterfaceManager.Settings[i] = v
-                                end
-                        end
-                end
-        end
-
-        function InterfaceManager:BuildInterfaceSection(tab)
-                assert(self.Library, "Must set InterfaceManager.Library")
-                local Library = self.Library
-                local Settings = InterfaceManager.Settings
-
-                local section = tab:AddSection("Interface")
-                local InterfaceTheme = section:AddDropdown("InterfaceTheme", {
-                        Title = "Theme",
-                        Description = "Changes the interface theme.",
-                        Values = Library.Themes,
-                        Default = self.Library.Theme,
-                        Callback = function(Value)
-                                Library:SetTheme(Value)
-                                Settings.Theme = Value
-                                InterfaceManager:SaveSettings()
-                        end
-                })
-
-                InterfaceTheme:SetValue(Settings.Theme)
-
-                if Library.UseAcrylic then
-                        section:AddToggle("AcrylicToggle", {
-                                Title = "Acrylic",
-                                Description = "The blurred background requires graphic quality 8+",
-                                Default = Settings.Acrylic,
-                                Callback = function(Value)
-                                        Library:ToggleAcrylic(Value)
-                                        Settings.Acrylic = Value
-                                        InterfaceManager:SaveSettings()
-                                end
-                        })
-                end
-
-                section:AddToggle("TransparentToggle", {
-                        Title = "Transparency",
-                        Description = "Makes the interface transparent.",
-                        Default = Library.Transparency,
-                        Callback = function(Value)
-                                Library:ToggleTransparency(Value)
-                                Settings.Transparency = Value
-                                InterfaceManager:SaveSettings()
-                        end
-                })
-
-                local MenuKeybind = section:AddKeybind("MenuKeybind", { Title = "Minimize Bind", Default = Library.MinimizeKey.Name or Settings.MenuKeybind })
-                MenuKeybind:OnChanged(function()
-                        Settings.MenuKeybind = MenuKeybind.Value
-                        InterfaceManager:SaveSettings()
-                end)
-                Library.MinimizeKeybind = MenuKeybind
-
-                InterfaceManager:LoadSettings()
-        end
-end
-
-function Library:CreateWindow(Config)
-        assert(Config.Title, "Window - Missing Title")
-
-        if Library.Window then
-                print("You cannot create more than one window.")
-                return
-        end
-
-        Library.MinimizeKey = Config.MinimizeKey or Enum.KeyCode.RightControl
-        Library.UseAcrylic = Config.Acrylic or false
-        Library.Acrylic = Config.Acrylic or false
-        Library.Theme = Config.Theme or "Darker"
-        Library.Transparency = Config.Transparency or false
-        if Config.Acrylic then
-                Acrylic.init()
-        end
-
-        local Window = Components.Window({
-                Parent = GUI,
-                Size = Config.Size,
-                Title = Config.Title,
-                SubTitle = Config.SubTitle,
-                TabWidth = Config.TabWidth,
-                Image = Config.Image,
-        })
-
-        Library.Window = Window
-        InterfaceManager:SetTheme(Config.Theme)
-        Library:SetTheme(Config.Theme)
-
-        local Dragging, DragInput, MousePos, StartPos = false
-
-        if not Config.NoMinimize then
-                local MinimizeButton = New("TextButton", {
-                        BackgroundTransparency = 1,
-                        Size = UDim2.new(1, 0, 1, 0),
-                        BorderSizePixel = 0
-                }, {
-                        New("UIPadding", {
-                                PaddingBottom = UDim.new(0, 2),
-                                PaddingLeft = UDim.new(0, 2),
-                                PaddingRight = UDim.new(0, 2),
-                                PaddingTop = UDim.new(0, 2),
-                        }),
-                        New("ImageLabel", {
-                                Image = Config.MinimizerIcon or "rbxassetid://112485471724320",
-                                Size = UDim2.new(1, 0, 1, 0),
-                                BackgroundTransparency = 1,
-                        }, {
-                                New("UIAspectRatioConstraint", {
-                                        AspectRatio = 1,
-                                        AspectType = Enum.AspectType.FitWithinMaxSize,
-                                })
-                        })
-                })
-
-                local Minimizer = New("Frame", {
-                        Parent = GUI,
-                        Size = UDim2.new(0, 60, 0, 60),
-                        Position = UDim2.new(0.45, 0, 0.025, 0),
-                        BackgroundTransparency = 1,
-                        ZIndex = 999999999,
-                },
-                {
-                        New("Frame", {
-                                BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-                                Size = UDim2.new(1, 0, 1, 0),
-                                BackgroundTransparency = 0.5,
-                                BorderSizePixel = 0
-                        }, {
-                                New("UICorner", {
-                                        CornerRadius = UDim.new(0.25, 0),
-                                }),
-                                MinimizeButton
-                        })
-                })
-
-                local Dragging = false
-                local DragInput = nil
-                local MousePos = nil
-                local StartPos = nil
-                local DragThreshold = 6
-                local DragStarted = false
-
-                local RunService = game:GetService("RunService")
-                local updateConnection
-
-                local TweenService = game:GetService("TweenService")
-                local tweenInfo = TweenInfo.new(
-                        0.1,
-                        Enum.EasingStyle.Quad,
-                        Enum.EasingDirection.Out
-                )
-
-                local function ClampPosition(position)
-                        local screenSize = workspace.CurrentCamera.ViewportSize
-                        local frameSize = Minimizer.AbsoluteSize
-
-                        local minX = 0
-                        local maxX = screenSize.X - frameSize.X
-                        local minY = 0
-                        local maxY = screenSize.Y - frameSize.Y
-
-                        local newX = math.clamp(position.X.Offset, minX, maxX)
-                        local newY = math.clamp(position.Y.Offset, minY, maxY)
-
-                        return UDim2.new(position.X.Scale, newX, position.Y.Scale, newY)
-                end
-
-                local function UpdatePosition()
-                        if not DragStarted or not DragInput or not MousePos then return end
-
-                        local Delta = DragInput.Position - MousePos
-                        local TargetPosition = UDim2.new(
-                                StartPos.X.Scale,
-                                StartPos.X.Offset + Delta.X,
-                                StartPos.Y.Scale,
-                                StartPos.Y.Offset + Delta.Y
-                        )
-
-                        local tween = TweenService:Create(Minimizer, tweenInfo, {Position = TargetPosition})
-                        tween:Play()
-                end
-
-                Creator.AddSignal(Minimizer.InputBegan, function(Input)
-                        if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
-                                Dragging = true
-                                DragStarted = false
-                                MousePos = Input.Position
-                                StartPos = Minimizer.Position
-
-                                Input.Changed:Connect(function()
-                                        if Input.UserInputState == Enum.UserInputState.End then
-                                                Dragging = false
-                                                DragStarted = false
-                                        end
-                                end)
-                        end
-                end)
-
-                Creator.AddSignal(MinimizeButton.InputBegan, function(Input)
-                        if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
-                                Dragging = true
-                                DragStarted = false
-                                MousePos = Input.Position
-                                StartPos = Minimizer.Position
-
-                                Input.Changed:Connect(function()
-                                        if Input.UserInputState == Enum.UserInputState.End then
-                                                Dragging = false
-                                                DragStarted = false
-                                        end
-                                end)
-                        end
-                end)
-
-                Creator.AddSignal(MinimizeButton.InputChanged, function(Input)
-                        if (Input.UserInputType == Enum.UserInputType.MouseMovement or Input.UserInputType == Enum.UserInputType.Touch) and Dragging and MousePos then
-                                local delta = (Input.Position - MousePos)
-                                if not DragStarted and (math.abs(delta.X) > DragThreshold or math.abs(delta.Y) > DragThreshold) then
-                                        DragStarted = true
-                                end
-                                DragInput = Input
-                                UpdatePosition()
-                        end
-                end)
-
-                Creator.AddSignal(Minimizer.InputChanged, function(Input)
-                        if (Input.UserInputType == Enum.UserInputType.MouseMovement or Input.UserInputType == Enum.UserInputType.Touch) and Dragging and MousePos then
-                                local delta = (Input.Position - MousePos)
-                                if not DragStarted and (math.abs(delta.X) > DragThreshold or math.abs(delta.Y) > DragThreshold) then
-                                        DragStarted = true
-                                end
-                                DragInput = Input
-                                UpdatePosition()
-                        end
-                end)
-
-                Creator.AddSignal(RunService.Heartbeat, function()
-                        if DragStarted and DragInput and MousePos then
-                                UpdatePosition()
-                        end
-                end)
-
-                AddSignal(MinimizeButton.MouseButton1Click, function()
-                        if not DragStarted then
-                                Window:Minimize()
-                        end
-                end)
-        end
-
-        Creator.AddSignal(UserInputService.InputChanged, function(Input)
-                if Input == DragInput and Dragging then
-                        local GuiInset = game:GetService("GuiService"):GetGuiInset()
-                        local Delta = Input.Position - MousePos
-                        local ViewportSize = workspace.Camera.ViewportSize
-                        local CurrentX = StartPos.X.Scale + (Delta.X/ViewportSize.X)
-                        local CurrentY = StartPos.Y.Scale + (Delta.Y/ViewportSize.Y)
-
-                        if CurrentX<0 or CurrentX > (ViewportSize.X - Minimizer.AbsoluteSize.X)/ViewportSize.X then
-                                if CurrentX < 0 then
-                                        CurrentX = 0
-                                else
-                                        CurrentX = (ViewportSize.X - Minimizer.AbsoluteSize.X)/ViewportSize.X
-                                end
-                        end
-
-                        if CurrentY < 0 or CurrentY > ((ViewportSize.Y + GuiInset.Y) - Minimizer.AbsoluteSize.Y)/(ViewportSize.Y + GuiInset.Y) then
-                                if CurrentY < 0 then
-                                        CurrentY = 0
-                                else
-                                        CurrentY = ((ViewportSize.Y + GuiInset.Y) - Minimizer.AbsoluteSize.Y)/(ViewportSize.Y + GuiInset.Y)
-                                end
-                        end
-
-                        Minimizer.Position = UDim2.fromScale(CurrentX, CurrentY)
-                end
-        end)
-
-        return Window
-end
-
-function Library:SetTheme(Value)
-        if Library.Window and table.find(Library.Themes, Value) then
-                Library.Theme = Value
-                Creator.UpdateTheme()
-        end
-end
-
-function Library:Destroy()
-        if Library.Window then
-                Library.Unloaded = true
-                if Library.UseAcrylic then
-                        Library.Window.AcrylicPaint.Model:Destroy()
-                end
-                Creator.Disconnect()
-                Library.GUI:Destroy()
-        end
-end
-
-function Library:ToggleAcrylic(Value)
-        if Library.Window then
-                if Library.UseAcrylic then
-                        Library.Acrylic = Value
-                        Library.Window.AcrylicPaint.Model.Transparency = Value and 0.98 or 1
-                        if Value then
-                                Acrylic.Enable()
-                        else
-                                Acrylic.Disable()
-                        end
-                end
-        end
-end
-
-function Library:ToggleTransparency(Value)
-        if Library.Window then
-                Library.Window.AcrylicPaint.Frame.Background.BackgroundTransparency = Value and 0.35 or 0
-        end
-end
-
-function Library:Notify(Config)
-        return NotificationModule:New(Config)
-end
-
-if getgenv then
-        getgenv().Fluent = Library
-else
-        Fluent = Library
-end
-
-return Library, SaveManager, InterfaceManager
+        func                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
