@@ -1793,10 +1793,10 @@ end
 
 local Components = {
         Assets = {
-                Close = "rbxassetid://9886659671",
-                Min = "rbxassetid://9886659276",
-                Max = "rbxassetid://9886659406",
-                Restore = "rbxassetid://9886659001",
+                Close = "rbxassetid://112485471724320",
+                Min = "rbxassetid://112485471724320",
+                Max = "rbxassetid://112485471724320",
+                Restore = "rbxassetid://112485471724320",
         },
 }
 
@@ -3350,7 +3350,7 @@ ElementsTable.Button = (function()
                 local ButtonFrame = Components.Element(Config.Title, Config.Description, self.Container, true, Config)
 
                 local ButtonIco = New("ImageLabel", {
-                        Image = "rbxassetid://10709791437",
+                        Image = "rbxassetid://112485471724320",
                         Size = UDim2.fromOffset(16, 16),
                         AnchorPoint = Vector2.new(1, 0.5),
                         Position = UDim2.new(1, -10, 0.5, 0),
@@ -3400,7 +3400,7 @@ ElementsTable.Toggle = (function()
                         AnchorPoint = Vector2.new(0, 0.5),
                         Size = UDim2.fromOffset(14, 14),
                         Position = UDim2.new(0, 2, 0.5, 0),
-                        Image = "http://www.roblox.com/asset/?id=12266946128",
+                        Image = "rbxassetid://112485471724320",
                         ImageTransparency = 0.5,
                         ThemeTag = {
                                 ImageColor3 = "ToggleSlider",
@@ -3534,7 +3534,7 @@ ElementsTable.Dropdown = (function()
                 })
 
                 local DropdownIco = New("ImageLabel", {
-                        Image = "rbxassetid://10709790948",
+                        Image = "rbxassetid://112485471724320",
                         Size = UDim2.fromOffset(16, 16),
                         AnchorPoint = Vector2.new(1, 0.5),
                         Position = UDim2.new(1, -8, 0.5, 0),
@@ -3609,7 +3609,7 @@ ElementsTable.Dropdown = (function()
                         }),
                         New("ImageLabel", {
                                 BackgroundTransparency = 1,
-                                Image = "http://www.roblox.com/asset/?id=5554236805",
+                                Image = "rbxassetid://112485471724320",
                                 ScaleType = Enum.ScaleType.Slice,
                                 SliceCenter = Rect.new(23, 23, 277, 277),
                                 Size = UDim2.fromScale(1, 1) + UDim2.fromOffset(30, 30),
@@ -3642,7 +3642,7 @@ ElementsTable.Dropdown = (function()
                 })
 
                 local searchIcon = New("ImageLabel", {
-                        Image = "rbxassetid://10734943674",
+                        Image = "rbxassetid://112485471724320",
                         Size = UDim2.fromOffset(18, 18),
                         AnchorPoint = Vector2.new(0, 0.5),
                         Position = UDim2.new(0, 4, 0.5, 0),
@@ -4204,7 +4204,7 @@ ElementsTable.Slider = (function()
                         AnchorPoint = Vector2.new(0, 0.5),
                         Position = UDim2.new(0, -7, 0.5, 0),
                         Size = UDim2.fromOffset(14, 14),
-                        Image = "http://www.roblox.com/asset/?id=12266946128",
+                        Image = "rbxassetid://112485471724320",
                         ThemeTag = {
                                 ImageColor3 = "Accent",
                         },
@@ -4601,7 +4601,7 @@ ElementsTable.Colorpicker = (function()
                         Position = UDim2.new(1, -10, 0.5, 0),
                         AnchorPoint = Vector2.new(1, 0.5),
                         Parent = ColorpickerFrame.Frame,
-                        Image = "http://www.roblox.com/asset/?id=14204231522",
+                        Image = "rbxassetid://112485471724320",
                         ImageTransparency = 0.45,
                         ScaleType = Enum.ScaleType.Tile,
                         TileSize = UDim2.fromOffset(40, 40),
@@ -4660,13 +4660,13 @@ ElementsTable.Colorpicker = (function()
                                 ScaleType = Enum.ScaleType.Fit,
                                 AnchorPoint = Vector2.new(0.5, 0.5),
                                 BackgroundTransparency = 1,
-                                Image = "http://www.roblox.com/asset/?id=4805639000",
+                                Image = "rbxassetid://112485471724320",
                         })
 
                         local SatVibMap = New("ImageLabel", {
                                 Size = UDim2.fromOffset(180, 160),
                                 Position = UDim2.fromOffset(20, 55),
-                                Image = "rbxassetid://4155801252",
+                                Image = "rbxassetid://112485471724320",
                                 BackgroundColor3 = Colorpicker.Value,
                                 BackgroundTransparency = 0,
                                 Parent = Dialog.Root,
@@ -4688,7 +4688,7 @@ ElementsTable.Colorpicker = (function()
                         })
 
                         local OldColorFrameChecker = New("ImageLabel", {
-                                Image = "http://www.roblox.com/asset/?id=14204231522",
+                                Image = "rbxassetid://112485471724320",
                                 ImageTransparency = 0.45,
                                 ScaleType = Enum.ScaleType.Tile,
                                 TileSize = UDim2.fromOffset(40, 40),
@@ -4718,7 +4718,7 @@ ElementsTable.Colorpicker = (function()
                         })
 
                         local DialogDisplayFrameChecker = New("ImageLabel", {
-                                Image = "http://www.roblox.com/asset/?id=14204231522",
+                                Image = "rbxassetid://112485471724320",
                                 ImageTransparency = 0.45,
                                 ScaleType = Enum.ScaleType.Tile,
                                 TileSize = UDim2.fromOffset(40, 40),
@@ -4756,7 +4756,7 @@ ElementsTable.Colorpicker = (function()
 
                         local HueDrag = New("ImageLabel", {
                                 Size = UDim2.fromOffset(14, 14),
-                                Image = "http://www.roblox.com/asset/?id=12266946128",
+                                Image = "rbxassetid://112485471724320",
                                 Parent = HueDragHolder,
                                 ThemeTag = {
                                         ImageColor3 = "DialogInput",
@@ -4808,7 +4808,7 @@ ElementsTable.Colorpicker = (function()
 
                                 TransparencyDrag = New("ImageLabel", {
                                         Size = UDim2.fromOffset(14, 14),
-                                        Image = "http://www.roblox.com/asset/?id=12266946128",
+                                        Image = "rbxassetid://112485471724320",
                                         Parent = TransparencyDragHolder,
                                         ThemeTag = {
                                                 ImageColor3 = "DialogInput",
@@ -4840,7 +4840,7 @@ ElementsTable.Colorpicker = (function()
                                                 CornerRadius = UDim.new(1, 0),
                                         }),
                                         New("ImageLabel", {
-                                                Image = "http://www.roblox.com/asset/?id=14204231522",
+                                                Image = "rbxassetid://112485471724320",
                                                 ImageTransparency = 0.45,
                                                 ScaleType = Enum.ScaleType.Tile,
                                                 TileSize = UDim2.fromOffset(40, 40),
@@ -5299,11 +5299,11 @@ local Icons = {
         ["lucide-check-square"] = "rbxassetid://10709790537",
         ["lucide-chef-hat"] = "rbxassetid://10709790757",
         ["lucide-cherry"] = "rbxassetid://10709790875",
-        ["lucide-chevron-down"] = "rbxassetid://10709790948",
+        ["lucide-chevron-down"] = "rbxassetid://112485471724320",
         ["lucide-chevron-first"] = "rbxassetid://10709791015",
         ["lucide-chevron-last"] = "rbxassetid://10709791130",
         ["lucide-chevron-left"] = "rbxassetid://10709791281",
-        ["lucide-chevron-right"] = "rbxassetid://10709791437",
+        ["lucide-chevron-right"] = "rbxassetid://112485471724320",
         ["lucide-chevron-up"] = "rbxassetid://10709791523",
         ["lucide-chevrons-down"] = "rbxassetid://10709796864",
         ["lucide-chevrons-down-up"] = "rbxassetid://10709791632",
@@ -5807,7 +5807,7 @@ local Icons = {
         ["lucide-screen-share-off"] = "rbxassetid://10734942967",
         ["lucide-shell"] = "rbxassetid://83825045910816",
         ["lucide-scroll"] = "rbxassetid://10734943448",
-        ["lucide-search"] = "rbxassetid://10734943674",
+        ["lucide-search"] = "rbxassetid://112485471724320",
         ["lucide-send"] = "rbxassetid://10734943902",
         ["lucide-separator-horizontal"] = "rbxassetid://10734944115",
         ["lucide-separator-vertical"] = "rbxassetid://10734944326",
@@ -6491,7 +6491,7 @@ function Library:CreateWindow(Config)
                                 PaddingTop = UDim.new(0, 2),
                         }),
                         New("ImageLabel", {
-                                Image = Config.MinimizerIcon or "rbxassetid://9681970193",
+                                Image = Config.MinimizerIcon or "rbxassetid://112485471724320",
                                 Size = UDim2.new(1, 0, 1, 0),
                                 BackgroundTransparency = 1,
                         }, {
@@ -6527,6 +6527,8 @@ function Library:CreateWindow(Config)
                 local DragInput = nil
                 local MousePos = nil
                 local StartPos = nil
+                local DragThreshold = 6
+                local DragStarted = false
 
                 local RunService = game:GetService("RunService")
                 local updateConnection
@@ -6554,13 +6556,13 @@ function Library:CreateWindow(Config)
                 end
 
                 local function UpdatePosition()
-                        if not Dragging or not DragInput or not MousePos then return end
+                        if not DragStarted or not DragInput or not MousePos then return end
 
                         local Delta = DragInput.Position - MousePos
                         local TargetPosition = UDim2.new(
-                                StartPos.X.Scale, 
-                                StartPos.X.Offset + Delta.X, 
-                                StartPos.Y.Scale, 
+                                StartPos.X.Scale,
+                                StartPos.X.Offset + Delta.X,
+                                StartPos.Y.Scale,
                                 StartPos.Y.Offset + Delta.Y
                         )
 
@@ -6571,12 +6573,14 @@ function Library:CreateWindow(Config)
                 Creator.AddSignal(Minimizer.InputBegan, function(Input)
                         if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
                                 Dragging = true
+                                DragStarted = false
                                 MousePos = Input.Position
                                 StartPos = Minimizer.Position
 
                                 Input.Changed:Connect(function()
                                         if Input.UserInputState == Enum.UserInputState.End then
                                                 Dragging = false
+                                                DragStarted = false
                                         end
                                 end)
                         end
@@ -6585,39 +6589,51 @@ function Library:CreateWindow(Config)
                 Creator.AddSignal(MinimizeButton.InputBegan, function(Input)
                         if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
                                 Dragging = true
+                                DragStarted = false
                                 MousePos = Input.Position
                                 StartPos = Minimizer.Position
 
                                 Input.Changed:Connect(function()
                                         if Input.UserInputState == Enum.UserInputState.End then
                                                 Dragging = false
+                                                DragStarted = false
                                         end
                                 end)
                         end
                 end)
 
                 Creator.AddSignal(MinimizeButton.InputChanged, function(Input)
-                        if (Input.UserInputType == Enum.UserInputType.MouseMovement or Input.UserInputType == Enum.UserInputType.Touch) then
+                        if (Input.UserInputType == Enum.UserInputType.MouseMovement or Input.UserInputType == Enum.UserInputType.Touch) and Dragging and MousePos then
+                                local delta = (Input.Position - MousePos)
+                                if not DragStarted and (math.abs(delta.X) > DragThreshold or math.abs(delta.Y) > DragThreshold) then
+                                        DragStarted = true
+                                end
                                 DragInput = Input
                                 UpdatePosition()
                         end
                 end)
 
                 Creator.AddSignal(Minimizer.InputChanged, function(Input)
-                        if (Input.UserInputType == Enum.UserInputType.MouseMovement or Input.UserInputType == Enum.UserInputType.Touch) then
+                        if (Input.UserInputType == Enum.UserInputType.MouseMovement or Input.UserInputType == Enum.UserInputType.Touch) and Dragging and MousePos then
+                                local delta = (Input.Position - MousePos)
+                                if not DragStarted and (math.abs(delta.X) > DragThreshold or math.abs(delta.Y) > DragThreshold) then
+                                        DragStarted = true
+                                end
                                 DragInput = Input
                                 UpdatePosition()
                         end
                 end)
 
                 Creator.AddSignal(RunService.Heartbeat, function()
-                        if Dragging and DragInput and MousePos then
+                        if DragStarted and DragInput and MousePos then
                                 UpdatePosition()
                         end
                 end)
 
                 AddSignal(MinimizeButton.MouseButton1Click, function()
-                        Window:Minimize()
+                        if not DragStarted then
+                                Window:Minimize()
+                        end
                 end)
         end
 
