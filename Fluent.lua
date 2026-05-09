@@ -6715,33 +6715,5 @@ if getgenv then
 else
         Fluent = Library
 end
-local Window = Fluent:CreateWindow({
-    Title = "Fluent " .. Fluent.Version,
-    SubTitle = "by dawid",
-    TabWidth = 160,
-    Size = UDim2.fromOffset(580, 460),
-    Acrylic = true, -- The blur may be detectable, setting this to false disables blur entirely
-    Theme = "Dark",
-    MinimizeKey = Enum.KeyCode.LeftControl -- Used when theres no MinimizeKeybind
-})
-
-local Tabs = {
-    Main = Window:AddTab({ Title = "Main", Icon = "home" }),
-    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
-}
-
-local MultiDropdown = Tabs.Main:AddDropdown("MultiDropdown", {
-    Title = "Dropdown",
-    Description = "You can select multiple values.",
-    Values = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen"},
-    Multi = true,
-    Default = {"seven", "twelve"},
-})
-
-MultiDropdown:SetValue({
-    three = true,
-    five = true,
-    seven = false
-})
 
 return Library, SaveManager, InterfaceManager
