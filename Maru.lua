@@ -303,7 +303,6 @@ function Library:AddWindows(ConfigWindow)
     local CCC = Instance.new("Folder")
     local UIPageLayout = Instance.new("UIPageLayout")
     local TOP = Instance.new("Frame")
-    local UIStroke_15 = Instance.new("UIStroke")
     local CloseUI = Instance.new("Frame")
     local UICorner_47 = Instance.new("UICorner")
     local LogoHut_2 = Instance.new("ImageLabel")
@@ -332,11 +331,6 @@ function Library:AddWindows(ConfigWindow)
     TOP.BorderSizePixel = 0
     TOP.Size = UDim2.new(1, 0, 0, 75)
 
-    UIStroke_15.Parent = AsamiDzGUI
-    UIStroke_15.Color = Config.UiStroke
-    UIStroke_15.Transparency = 0.210
-    UIStroke_15.Thickness = 1.200
-
     LogoHut.Name = "LogoHut"
     LogoHut.Parent = AsamiDzGUI
     LogoHut.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -344,7 +338,7 @@ function Library:AddWindows(ConfigWindow)
     LogoHut.BorderColor3 = Color3.fromRGB(0, 0, 0)
     LogoHut.BorderSizePixel = 0
     LogoHut.Position = UDim2.new(0.0222222228, 0, 0.0149999997, 0)
-    LogoHut.Size = UDim2.new(0, 55, 0, 55)
+    LogoHut.Size = UDim2.new(0, 45, 0, 45)
     LogoHut.Image = Config.LogoHub
 
     TabList.Name = "Tab List"
