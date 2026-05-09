@@ -6637,7 +6637,8 @@ ElementsTable.Paragraph = (function()
         Paragraph.__index = Paragraph
         Paragraph.__type = "Paragraph"
 
-        function Paragraph:New(Config)
+        function Paragraph:New(Idx, Config)
+                Config = Config or Idx
                 Config.Content = Config.Content or ""
 
                 local Paragraph = Components.Element(Config.Title, Config.Content, self.Container, false, Config)
