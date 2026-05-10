@@ -8706,8 +8706,6 @@ function Library:CreateWindow(Config)
         Position = UDim2.new(0.130987287, 0, 0.10569106, 0),
         BackgroundTransparency = 1,
         ZIndex = 999999999,
-        Active = true,
-        Draggable = true
     },
     {
         New("Frame", {
@@ -8722,6 +8720,61 @@ function Library:CreateWindow(Config)
             MinimizeButton
         })
     })
+
+    local dragButton = MinimizeButton
+    local dragObject = Minimizer
+    local dragging = false
+    local dragInput = nil
+    local dragStart = nil
+    local startPos = nil
+    local holdTime = 0.1
+    local holdStarted = 0
+
+    local function update(input)
+        local delta = input.Position - dragStart
+        dragObject.Position = UDim2.new(
+            startPos.X.Scale, startPos.X.Offset + delta.X,
+            startPos.Y.Scale, startPos.Y.Offset + delta.Y
+        )
+    end
+
+    dragButton.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            holdStarted = tick()
+            dragStart = input.Position
+            startPos = dragObject.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                    holdStarted = 0
+                end
+            end)
+        end
+    end)
+
+    dragButton.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = false
+            holdStarted = 0
+        end
+    end)
+
+    dragButton.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    RunService.RenderStepped:Connect(function()
+        if holdStarted > 0 and (tick() - holdStarted >= holdTime) and not dragging then
+            dragging = true
+        end
+
+        if dragging and dragInput then
+            update(dragInput)
+        end
+    end)
 
     AddSignal(MinimizeButton.MouseButton1Click, function()
         Window:Minimize()
