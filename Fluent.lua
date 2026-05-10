@@ -1,9 +1,3 @@
---[[
-        Credit:
-        Original Fluent : https://github.com/dawid-scripts/Fluent
-        Themes : https://github.com/ActualMasterOogway/Fluent-Renewed/
-]]
-
 local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
 local LocalPlayer = game:GetService("Players").LocalPlayer
@@ -23,7 +17,7 @@ local Themes = {
                 "Amethyst Maru",
                 "Crimson Dark",
                 "Ember",
-                "Neon Crimson",         
+                "Neon Crimson",
                 "Neon Orange",
                 "Dark Typewriter",
                 "VSC Dark High Contrast",
@@ -37,10 +31,10 @@ local Themes = {
                 "Sakura"
         },
         ["VSC Dark High Contrast"] = {
-                Accent = Color3.fromHex("#569cd6"), -- Based on keyword color
+                Accent = Color3.fromHex("#569cd6"),
 
-                AcrylicMain = Color3.fromHex("#000000"), -- editor.background
-                AcrylicBorder = Color3.fromHex("#FFFFFF"), -- Based on editor.foreground
+                AcrylicMain = Color3.fromHex("#000000"),
+                AcrylicBorder = Color3.fromHex("#FFFFFF"),
                 AcrylicGradient = ColorSequence.new(Color3.fromHex("#000000"), Color3.fromHex("#000000")),
                 AcrylicNoise = 1,
 
@@ -66,7 +60,7 @@ local Themes = {
 
                 Input = Color3.fromHex("#000000"),
                 InputFocused = Color3.fromHex("#000000"),
-                InputIndicator = Color3.fromHex("#7c7c7c"), -- Based on editorWhitespace.foreground
+                InputIndicator = Color3.fromHex("#7c7c7c"),
 
                 Dialog = Color3.fromHex("#000000"),
                 DialogHolder = Color3.fromHex("#000000"),
@@ -77,9 +71,9 @@ local Themes = {
                 DialogInput = Color3.fromHex("#000000"),
                 DialogInputLine = Color3.fromHex("#569cd6"),
 
-                Text = Color3.fromHex("#FFFFFF"), -- editor.foreground
-                SubText = Color3.fromHex("#9D9D9D"), -- descriptionForeground
-                Hover = Color3.fromHex("#383a49"), -- Based on actionBar.toggledBackground
+                Text = Color3.fromHex("#FFFFFF"),
+                SubText = Color3.fromHex("#9D9D9D"),
+                Hover = Color3.fromHex("#383a49"),
                 HoverChange = 0.1
         },
         ["Dark Typewriter"] = {
@@ -130,15 +124,15 @@ local Themes = {
         },
         ["Amethyst Maru"] = {
                 Name = "Amethyst Maru",
-                Accent = Color3.fromHex("#1e6dbf"), -- Dark blue accent
+                Accent = Color3.fromHex("#1e6dbf"),
 
-                AcrylicMain = Color3.fromHex("#001a33"), -- Dark blue background
-                AcrylicBorder = Color3.fromHex("#004080"), -- Slightly lighter border
+                AcrylicMain = Color3.fromHex("#001a33"),
+                AcrylicBorder = Color3.fromHex("#004080"),
                 AcrylicGradient = ColorSequence.new(Color3.fromHex("#001a33"), Color3.fromHex("#001a33")),
                 AcrylicNoise = 0.92,
 
                 TitleBarLine = Color3.fromHex("#004080"),
-                Tab = Color3.fromHex("#a1c4e6"), -- Light blue text
+                Tab = Color3.fromHex("#a1c4e6"),
 
                 Element = Color3.fromHex("#00264d"),
                 ElementBorder = Color3.fromHex("#004080"),
@@ -170,7 +164,7 @@ local Themes = {
                 DialogInput = Color3.fromHex("#001933"),
                 DialogInputLine = Color3.fromHex("#1e6dbf"),
 
-                Text = Color3.fromHex("#a1c4e6"), -- Light blue text for readability
+                Text = Color3.fromHex("#a1c4e6"),
                 SubText = Color3.fromHex("#7fa1bf"),
                 Hover = Color3.fromHex("#004080"),
                 HoverChange = 0.1
@@ -224,158 +218,158 @@ local Themes = {
         },
         ["Crimson Dark"] = {
                 Name = "Crimson Dark",
-                Accent = Color3.fromHex("#ff3333"), -- Bright Crimson Red
+                Accent = Color3.fromHex("#ff3333"),
 
-                AcrylicMain = Color3.fromHex("#240000"), -- Deep Maroon
-                AcrylicBorder = Color3.fromHex("#7b0505"), -- Dark Red
+                AcrylicMain = Color3.fromHex("#240000"),
+                AcrylicBorder = Color3.fromHex("#7b0505"),
                 AcrylicGradient = ColorSequence.new(Color3.fromHex("#240000"), Color3.fromHex("#240000")),
                 AcrylicNoise = 0.92,
 
-                TitleBarLine = Color3.fromHex("#7b0505"), -- Dark Red
-                Tab = Color3.fromHex("#f2d9d9"), -- Soft Pinkish White
+                TitleBarLine = Color3.fromHex("#7b0505"),
+                Tab = Color3.fromHex("#f2d9d9"),
 
-                Element = Color3.fromHex("#3c0101"), -- Deep Red
-                ElementBorder = Color3.fromHex("#7b0505"), -- Dark Red
-                InElementBorder = Color3.fromHex("#ff3333"), -- Bright Crimson
+                Element = Color3.fromHex("#3c0101"),
+                ElementBorder = Color3.fromHex("#7b0505"),
+                InElementBorder = Color3.fromHex("#ff3333"),
                 ElementTransparency = 0.85,
 
-                ToggleSlider = Color3.fromHex("#bf1616"), -- Rich Red
-                ToggleToggled = Color3.fromHex("#240000"), -- Deep Maroon
+                ToggleSlider = Color3.fromHex("#bf1616"),
+                ToggleToggled = Color3.fromHex("#240000"),
 
-                SliderRail = Color3.fromHex("#bf1616"), -- Rich Red
+                SliderRail = Color3.fromHex("#bf1616"),
 
-                DropdownFrame = Color3.fromHex("#3c0101"), -- Deep Red
-                DropdownHolder = Color3.fromHex("#3c0101"), -- Deep Red
-                DropdownBorder = Color3.fromHex("#7b0505"), -- Dark Red
-                DropdownOption = Color3.fromHex("#f2d9d9"), -- Soft Pinkish White
+                DropdownFrame = Color3.fromHex("#3c0101"),
+                DropdownHolder = Color3.fromHex("#3c0101"),
+                DropdownBorder = Color3.fromHex("#7b0505"),
+                DropdownOption = Color3.fromHex("#f2d9d9"),
 
-                Keybind = Color3.fromHex("#3c0101"), -- Deep Red
+                Keybind = Color3.fromHex("#3c0101"),
 
-                Input = Color3.fromHex("#300000"), -- Dark Maroon
-                InputFocused = Color3.fromHex("#300000"), -- Dark Maroon
-                InputIndicator = Color3.fromHex("#ad8585"), -- Muted Red
+                Input = Color3.fromHex("#300000"),
+                InputFocused = Color3.fromHex("#300000"),
+                InputIndicator = Color3.fromHex("#ad8585"),
 
-                Dialog = Color3.fromHex("#3c0101"), -- Deep Red
-                DialogHolder = Color3.fromHex("#240000"), -- Deep Maroon
-                DialogHolderLine = Color3.fromHex("#7b0505"), -- Dark Red
-                DialogButton = Color3.fromHex("#3c0101"), -- Deep Red
-                DialogButtonBorder = Color3.fromHex("#7b0505"), -- Dark Red
-                DialogBorder = Color3.fromHex("#7b0505"), -- Dark Red
-                DialogInput = Color3.fromHex("#300000"), -- Dark Maroon
-                DialogInputLine = Color3.fromHex("#ff3333"), -- Bright Crimson
+                Dialog = Color3.fromHex("#3c0101"),
+                DialogHolder = Color3.fromHex("#240000"),
+                DialogHolderLine = Color3.fromHex("#7b0505"),
+                DialogButton = Color3.fromHex("#3c0101"),
+                DialogButtonBorder = Color3.fromHex("#7b0505"),
+                DialogBorder = Color3.fromHex("#7b0505"),
+                DialogInput = Color3.fromHex("#300000"),
+                DialogInputLine = Color3.fromHex("#ff3333"),
 
-                Text = Color3.fromHex("#f2d9d9"), -- Soft Pinkish White
-                SubText = Color3.fromHex("#ad8585"), -- Muted Red
-                Hover = Color3.fromHex("#7b0505"), -- Dark Red
+                Text = Color3.fromHex("#f2d9d9"),
+                SubText = Color3.fromHex("#ad8585"),
+                Hover = Color3.fromHex("#7b0505"),
                 HoverChange = 0.1
         },
         ["Neon Crimson"] = {
                 Name = "Neon Crimson",
-                Accent = Color3.fromHex("#ff0055"), -- Neon Red-Pink
+                Accent = Color3.fromHex("#ff0055"),
 
-                AcrylicMain = Color3.fromHex("#0a0005"), -- Deep Black-Red
-                AcrylicBorder = Color3.fromHex("#910027"), -- Intense Deep Red
+                AcrylicMain = Color3.fromHex("#0a0005"),
+                AcrylicBorder = Color3.fromHex("#910027"),
                 AcrylicGradient = ColorSequence.new(Color3.fromHex("#0a0005"), Color3.fromHex("#0a0005")),
                 AcrylicNoise = 0.92,
 
-                TitleBarLine = Color3.fromHex("#910027"), -- Deep Red Border
-                Tab = Color3.fromHex("#ffccd9"), -- Soft Neon Pink
+                TitleBarLine = Color3.fromHex("#910027"),
+                Tab = Color3.fromHex("#ffccd9"),
 
-                Element = Color3.fromHex("#220007"), -- Dark Red-Black
-                ElementBorder = Color3.fromHex("#910027"), -- Intense Deep Red
-                InElementBorder = Color3.fromHex("#ff0055"), -- Neon Red-Pink
+                Element = Color3.fromHex("#220007"),
+                ElementBorder = Color3.fromHex("#910027"),
+                InElementBorder = Color3.fromHex("#ff0055"),
                 ElementTransparency = 0.85,
 
-                ToggleSlider = Color3.fromHex("#d40040"), -- Bright Crimson
-                ToggleToggled = Color3.fromHex("#0a0005"), -- Deep Black-Red
+                ToggleSlider = Color3.fromHex("#d40040"),
+                ToggleToggled = Color3.fromHex("#0a0005"),
 
-                SliderRail = Color3.fromHex("#d40040"), -- Bright Crimson
+                SliderRail = Color3.fromHex("#d40040"),
 
-                DropdownFrame = Color3.fromHex("#220007"), -- Dark Red-Black
-                DropdownHolder = Color3.fromHex("#220007"), -- Dark Red-Black
-                DropdownBorder = Color3.fromHex("#910027"), -- Intense Deep Red
-                DropdownOption = Color3.fromHex("#ffccd9"), -- Soft Neon Pink
+                DropdownFrame = Color3.fromHex("#220007"),
+                DropdownHolder = Color3.fromHex("#220007"),
+                DropdownBorder = Color3.fromHex("#910027"),
+                DropdownOption = Color3.fromHex("#ffccd9"),
 
-                Keybind = Color3.fromHex("#220007"), -- Dark Red-Black
+                Keybind = Color3.fromHex("#220007"),
 
-                Input = Color3.fromHex("#140005"), -- Deep Black-Red
-                InputFocused = Color3.fromHex("#140005"), -- Deep Black-Red
-                InputIndicator = Color3.fromHex("#ff8099"), -- Soft Neon Red
+                Input = Color3.fromHex("#140005"),
+                InputFocused = Color3.fromHex("#140005"),
+                InputIndicator = Color3.fromHex("#ff8099"),
 
-                Dialog = Color3.fromHex("#220007"), -- Dark Red-Black
-                DialogHolder = Color3.fromHex("#0a0005"), -- Deep Black-Red
-                DialogHolderLine = Color3.fromHex("#910027"), -- Intense Deep Red
-                DialogButton = Color3.fromHex("#220007"), -- Dark Red-Black
-                DialogButtonBorder = Color3.fromHex("#910027"), -- Intense Deep Red
-                DialogBorder = Color3.fromHex("#910027"), -- Intense Deep Red
-                DialogInput = Color3.fromHex("#140005"), -- Deep Black-Red
-                DialogInputLine = Color3.fromHex("#ff0055"), -- Neon Red-Pink
+                Dialog = Color3.fromHex("#220007"),
+                DialogHolder = Color3.fromHex("#0a0005"),
+                DialogHolderLine = Color3.fromHex("#910027"),
+                DialogButton = Color3.fromHex("#220007"),
+                DialogButtonBorder = Color3.fromHex("#910027"),
+                DialogBorder = Color3.fromHex("#910027"),
+                DialogInput = Color3.fromHex("#140005"),
+                DialogInputLine = Color3.fromHex("#ff0055"),
 
-                Text = Color3.fromHex("#ffccd9"), -- Soft Neon Pink
-                SubText = Color3.fromHex("#ff8099"), -- Soft Neon Red
-                Hover = Color3.fromHex("#910027"), -- Intense Deep Red
+                Text = Color3.fromHex("#ffccd9"),
+                SubText = Color3.fromHex("#ff8099"),
+                Hover = Color3.fromHex("#910027"),
                 HoverChange = 0.1
         },
         ["Neon Orange"] = {
                 Name = "Neon Orange",
-                Accent = Color3.fromHex("#ff6a00"), -- Bright Orange
+                Accent = Color3.fromHex("#ff6a00"),
 
-                AcrylicMain = Color3.fromHex("#0a0500"), -- Deep Black-Orange
-                AcrylicBorder = Color3.fromHex("#913200"), -- Deep Orange
+                AcrylicMain = Color3.fromHex("#0a0500"),
+                AcrylicBorder = Color3.fromHex("#913200"),
                 AcrylicGradient = ColorSequence.new(Color3.fromHex("#0a0500"), Color3.fromHex("#0a0500")),
                 AcrylicNoise = 0.92,
 
-                TitleBarLine = Color3.fromHex("#913200"), -- Deep Orange Border
-                Tab = Color3.fromHex("#ffd9cc"), -- Soft Orange-White
+                TitleBarLine = Color3.fromHex("#913200"),
+                Tab = Color3.fromHex("#ffd9cc"),
 
-                Element = Color3.fromHex("#220e00"), -- Dark Orange-Black
-                ElementBorder = Color3.fromHex("#913200"), -- Deep Orange
-                InElementBorder = Color3.fromHex("#ff6a00"), -- Bright Orange
+                Element = Color3.fromHex("#220e00"),
+                ElementBorder = Color3.fromHex("#913200"),
+                InElementBorder = Color3.fromHex("#ff6a00"),
                 ElementTransparency = 0.85,
 
-                ToggleSlider = Color3.fromHex("#d45500"), -- Medium Orange
-                ToggleToggled = Color3.fromHex("#0a0500"), -- Deep Black-Orange
+                ToggleSlider = Color3.fromHex("#d45500"),
+                ToggleToggled = Color3.fromHex("#0a0500"),
 
-                SliderRail = Color3.fromHex("#d45500"), -- Medium Orange
+                SliderRail = Color3.fromHex("#d45500"),
 
-                DropdownFrame = Color3.fromHex("#220e00"), -- Dark Orange-Black
-                DropdownHolder = Color3.fromHex("#220e00"), -- Dark Orange-Black
-                DropdownBorder = Color3.fromHex("#913200"), -- Deep Orange
-                DropdownOption = Color3.fromHex("#ffd9cc"), -- Soft Orange-White
+                DropdownFrame = Color3.fromHex("#220e00"),
+                DropdownHolder = Color3.fromHex("#220e00"),
+                DropdownBorder = Color3.fromHex("#913200"),
+                DropdownOption = Color3.fromHex("#ffd9cc"),
 
-                Keybind = Color3.fromHex("#220e00"), -- Dark Orange-Black
+                Keybind = Color3.fromHex("#220e00"),
 
-                Input = Color3.fromHex("#140800"), -- Deep Black-Orange
-                InputFocused = Color3.fromHex("#140800"), -- Deep Black-Orange
-                InputIndicator = Color3.fromHex("#ffa280"), -- Soft Orange
+                Input = Color3.fromHex("#140800"),
+                InputFocused = Color3.fromHex("#140800"),
+                InputIndicator = Color3.fromHex("#ffa280"),
 
-                Dialog = Color3.fromHex("#220e00"), -- Dark Orange-Black
-                DialogHolder = Color3.fromHex("#0a0500"), -- Deep Black-Orange
-                DialogHolderLine = Color3.fromHex("#913200"), -- Deep Orange
-                DialogButton = Color3.fromHex("#220e00"), -- Dark Orange-Black
-                DialogButtonBorder = Color3.fromHex("#913200"), -- Deep Orange
-                DialogBorder = Color3.fromHex("#913200"), -- Deep Orange
-                DialogInput = Color3.fromHex("#140800"), -- Deep Black-Orange
-                DialogInputLine = Color3.fromHex("#ff6a00"), -- Bright Orange
+                Dialog = Color3.fromHex("#220e00"),
+                DialogHolder = Color3.fromHex("#0a0500"),
+                DialogHolderLine = Color3.fromHex("#913200"),
+                DialogButton = Color3.fromHex("#220e00"),
+                DialogButtonBorder = Color3.fromHex("#913200"),
+                DialogBorder = Color3.fromHex("#913200"),
+                DialogInput = Color3.fromHex("#140800"),
+                DialogInputLine = Color3.fromHex("#ff6a00"),
 
-                Text = Color3.fromHex("#ffd9cc"), -- Soft Orange-White
-                SubText = Color3.fromHex("#ffa280"), -- Soft Orange
-                Hover = Color3.fromHex("#913200"), -- Deep Orange
+                Text = Color3.fromHex("#ffd9cc"),
+                SubText = Color3.fromHex("#ffa280"),
+                Hover = Color3.fromHex("#913200"),
                 HoverChange = 0.1
         },
         Ember = {
                 Name = "Ember",
-                Accent = Color3.fromRGB(217, 87, 0), -- Dark orange accent
+                Accent = Color3.fromRGB(217, 87, 0),
 
                 AcrylicMain = Color3.fromRGB(20, 20, 20),
-                AcrylicBorder = Color3.fromRGB(130, 100, 70), -- Adjusted for orange theme
-                AcrylicGradient = ColorSequence.new(Color3.fromRGB(180, 100, 40), Color3.fromRGB(90, 40, 15)), -- Orange gradient
+                AcrylicBorder = Color3.fromRGB(130, 100, 70),
+                AcrylicGradient = ColorSequence.new(Color3.fromRGB(180, 100, 40), Color3.fromRGB(90, 40, 15)),
                 AcrylicNoise = 0.92,
 
                 TitleBarLine = Color3.fromRGB(120, 90, 60),
                 Tab = Color3.fromRGB(180, 150, 120),
 
-                Element = Color3.fromRGB(160, 130, 100), -- Changed to dark orange
+                Element = Color3.fromRGB(160, 130, 100),
                 ElementBorder = Color3.fromRGB(80, 60, 40),
                 InElementBorder = Color3.fromRGB(120, 100, 80),
                 ElementTransparency = 0.87,
@@ -395,7 +389,7 @@ local Themes = {
                 Input = Color3.fromRGB(160, 130, 100),
                 InputFocused = Color3.fromRGB(35, 20, 10),
                 InputIndicator = Color3.fromRGB(190, 160, 130),
-                InputIndicatorFocus = Color3.fromRGB(217, 87, 0), -- Dark orange focus
+                InputIndicatorFocus = Color3.fromRGB(217, 87, 0),
 
                 Dialog = Color3.fromRGB(90, 60, 30),
                 DialogHolder = Color3.fromRGB(75, 45, 20),
@@ -843,7 +837,7 @@ end
 
 function Linear:step(state, dt)
         local position = state.value
-        local velocity = self._velocity -- Linear motion ignores the state's velocity
+        local velocity = self._velocity
         local goal = self._targetValue
 
         local dPos = dt * velocity
@@ -898,7 +892,7 @@ function Spring.new(targetValue, options)
 end
 
 function Spring:step(state, dt)
-        -- Cache frequently used values and operations
+
         local d = self._dampingRatio
         local f = self._frequency * 2 * math.pi
         local g = self._targetValue
@@ -908,15 +902,15 @@ function Spring:step(state, dt)
         local decay = math.exp(-d * f * dt)
         local p1, v1
 
-        -- Pre-calculate common products
+
         local f_dt = f * dt
         local f_squared = f * f
 
-        -- Move conditional branches outside for better prediction
-        if d == 1 then -- Critically damped
+
+        if d == 1 then
                 p1 = (offset * (1 + f_dt) + v0 * dt) * decay + g
                 v1 = (v0 * (1 - f_dt) - offset * (f_squared * dt)) * decay
-        elseif d < 1 then -- Underdamped
+        elseif d < 1 then
                 local c = math.sqrt(1 - d * d)
                 local c_squared = c * c
                 local f_c = f * c
@@ -925,7 +919,7 @@ function Spring:step(state, dt)
                 local i = math.cos(f_c_dt)
                 local j = math.sin(f_c_dt)
 
-                -- Optimize z calculation
+
                 local z
                 if c > EPS then
                         z = j / c
@@ -937,7 +931,7 @@ function Spring:step(state, dt)
                         z = a + ((a_squared * c_squared_squared / 20 - c_squared) * a_cubed) / 6
                 end
 
-                -- Optimize y calculation
+
                 local y
                 if f_c > EPS then
                         y = j / f_c
@@ -951,7 +945,7 @@ function Spring:step(state, dt)
 
                 p1 = (offset * (i + d * z) + v0 * y) * decay + g
                 v1 = (v0 * (i - z * d) - offset * (z * f)) * decay
-        else -- Overdamped
+        else
                 local c = math.sqrt(d * d - 1)
                 local r1 = -f * (d - c)
                 local r2 = -f * (d + c)
@@ -963,7 +957,7 @@ function Spring:step(state, dt)
                 v1 = e1 * r1 + e2 * r2
         end
 
-        -- Combine the threshold check for early returns
+
         if math.abs(v1) < VELOCITY_THRESHOLD and math.abs(p1 - g) < POSITION_THRESHOLD then
                 return {
                         complete = true,
@@ -1148,7 +1142,7 @@ function GroupMotor:step(deltaTime)
         for _, motor in pairs(self._motors) do
                 local complete = motor:step(deltaTime)
                 if not complete then
-                        -- If any of the sub-motors are incomplete, the group motor will not be complete either
+
                         allMotorsComplete = false
                 end
         end
@@ -1338,19 +1332,19 @@ end
 function Creator.New(Name, Properties, Children)
         local Object = Instance.new(Name)
 
-        -- Default properties
+
         for Name, Value in next, Creator.DefaultProperties[Name] or {} do
                 Object[Name] = Value
         end
 
-        -- Properties
+
         for Name, Value in next, Properties or {} do
                 if Name ~= "ThemeTag" then
                         Object[Name] = Value
                 end
         end
 
-        -- Children
+
         for _, Child in next, Children or {} do
                 Child.Parent = Object
         end
@@ -2006,7 +2000,7 @@ Components.Section = function(Title, Parent)
                 Section.Container.Size = UDim2.new(1, 0, 0, Section.Layout.AbsoluteContentSize.Y)
                 Section.Root.Size = UDim2.new(1, 0, 0, Section.Layout.AbsoluteContentSize.Y + 25)
         end)
-        
+
         return Section
 end
 Components.Tab = (function()
@@ -2994,8 +2988,8 @@ Components.Window = (function()
                 })
 
                 local TabFrame = New("Frame", {
-                        Size = UDim2.new(0, Window.TabWidth, 1, -66 + -OFFSETY), -- []-66
-                        Position = UDim2.new(0, 12, 0, 54 + OFFSETY), --54
+                        Size = UDim2.new(0, Window.TabWidth, 1, -66 + -OFFSETY),
+                        Position = UDim2.new(0, 12, 0, 54 + OFFSETY),
                         BackgroundTransparency = 1,
                         ClipsDescendants = true,
                 }, {
@@ -3256,7 +3250,7 @@ Components.Window = (function()
                                         Duration = 6
                                 })
                         end
-                        --pcall(SwapIco)
+
                 end
 
                 function Window:Destroy()
@@ -3473,7 +3467,7 @@ ElementsTable.Toggle = (function()
 
                 Toggle:SetValue(Toggle.Value)
 
-                Library.Options[Idx] = Toggle   
+                Library.Options[Idx] = Toggle
                 return Toggle
         end
 
@@ -3630,8 +3624,8 @@ ElementsTable.Dropdown = (function()
                                 MinSize = Vector2.new(170, 0),
                         }),
                 })
- 
-                -- SEARCHABLE BOX --
+
+
 
                 local Border = New("UIStroke", {
                         ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
@@ -3702,8 +3696,8 @@ ElementsTable.Dropdown = (function()
         local MAX_DROPDOWN_ITEMS = 5
 
         local MoveList = {
-            { Instance = DropdownHolderCanvas, YOffset = 35}, -- no custom offset
-            { Instance = SearchBase, YOffset = 0 }, -- custom Y offset
+            { Instance = DropdownHolderCanvas, YOffset = 35},
+            { Instance = SearchBase, YOffset = 0 },
         }
 
         local function RecalculateListPosition()
@@ -3773,11 +3767,11 @@ ElementsTable.Dropdown = (function()
                                         Element.Visible = Similar and true or false
                                 end
                         end
-                        -- TweenService:Create(
-                        --      DropdownHolderCanvas,
-                        --      TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
-                        --      { Size = UDim2.fromOffset(ListSizeX, DropdownListLayout.AbsoluteContentSize.Y + 10) }
-                        -- ):Play()
+
+
+
+
+
 
                         RecalculateListPosition()
                         RecalculateListSize()
@@ -3793,7 +3787,7 @@ ElementsTable.Dropdown = (function()
                                 repeat wait() until tick() - Tick > 5 or DropdownSearch:IsFocused()
                                 if not DropdownSearch:IsFocused() then
                                         DropdownSearch.Text = ""
-                                        -- Dropdown:Display()
+
                                 end
                         end
                 end)
@@ -3810,7 +3804,7 @@ ElementsTable.Dropdown = (function()
                                         or Mouse.Y < (AbsPos.Y - 20 - 1)
                                         or Mouse.Y > AbsPos.Y + AbsSize.Y
                                 then
-                                        -- Dropdown:Close()
+
                                 end
                         end
                 end)
@@ -3819,7 +3813,7 @@ ElementsTable.Dropdown = (function()
                 function Dropdown:Open()
                         Dropdown.Opened = true
                         SearchBase.Visible = true
-                        -- DropdownDisplay.Interactable = Dropdown.Searchable and true or false
+
                         ScrollFrame.ScrollingEnabled = false
                         DropdownHolderCanvas.Visible = true
                         TweenService:Create(
@@ -3832,9 +3826,9 @@ ElementsTable.Dropdown = (function()
                                 TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
                                 { Rotation = -90 }
                         ):Play()
-                        -- if Dropdown.Searchable then
-                        --      DropdownDisplay:CaptureFocus()
-                        -- end
+
+
+
                 end
 
                 function Dropdown:Close()
@@ -6020,11 +6014,11 @@ local SaveManager = {} do
         SaveManager.Ignore = {}
         SaveManager.Parser = {
                 Toggle = {
-                        Save = function(idx, object) 
-                                return { type = "Toggle", idx = idx, value = object.Value } 
+                        Save = function(idx, object)
+                                return { type = "Toggle", idx = idx, value = object.Value }
                         end,
                         Load = function(idx, data)
-                                if SaveManager.Options[idx] then 
+                                if SaveManager.Options[idx] then
                                         SaveManager.Options[idx]:SetValue(data.value)
                                 end
                         end,
@@ -6034,7 +6028,7 @@ local SaveManager = {} do
                                 return { type = "Slider", idx = idx, value = tostring(object.Value) }
                         end,
                         Load = function(idx, data)
-                                if SaveManager.Options[idx] then 
+                                if SaveManager.Options[idx] then
                                         SaveManager.Options[idx]:SetValue(data.value)
                                 end
                         end,
@@ -6044,7 +6038,7 @@ local SaveManager = {} do
                                 return { type = "Dropdown", idx = idx, value = object.Value, mutli = object.Multi }
                         end,
                         Load = function(idx, data)
-                                if SaveManager.Options[idx] then 
+                                if SaveManager.Options[idx] then
                                         SaveManager.Options[idx]:SetValue(data.value)
                                 end
                         end,
@@ -6054,7 +6048,7 @@ local SaveManager = {} do
                                 return { type = "Colorpicker", idx = idx, value = object.Value:ToHex(), transparency = object.Transparency }
                         end,
                         Load = function(idx, data)
-                                if SaveManager.Options[idx] then 
+                                if SaveManager.Options[idx] then
                                         SaveManager.Options[idx]:SetValueRGB(Color3.fromHex(data.value), data.transparency)
                                 end
                         end,
@@ -6064,7 +6058,7 @@ local SaveManager = {} do
                                 return { type = "Keybind", idx = idx, mode = object.Mode, key = object.Value }
                         end,
                         Load = function(idx, data)
-                                if SaveManager.Options[idx] then 
+                                if SaveManager.Options[idx] then
                                         SaveManager.Options[idx]:SetValue(data.key, data.mode)
                                 end
                         end,
@@ -6109,7 +6103,7 @@ local SaveManager = {} do
                         if self.Ignore[idx] then continue end
 
                         table.insert(data.objects, self.Parser[option.Type].Save(idx, option))
-                end     
+                end
 
                 local success, encoded = pcall(httpService.JSONEncode, httpService, data)
                 if not success then
@@ -6133,7 +6127,7 @@ local SaveManager = {} do
 
                 for _, option in next, decoded.objects do
                         if self.Parser[option.type] and not self.Ignore[option.idx] then
-                                task.spawn(function() self.Parser[option.type].Load(option.idx, option) end) -- task.spawn() so the config loading wont get stuck.
+                                task.spawn(function() self.Parser[option.type].Load(option.idx, option) end)
                         end
                 end
 
@@ -6143,7 +6137,7 @@ local SaveManager = {} do
         end
 
         function SaveManager:IgnoreThemeSettings()
-                self:SetIgnoreIndexes({ 
+                self:SetIgnoreIndexes({
                         "InterfaceTheme", "AcrylicToggle", "TransparentToggle", "MenuKeybind"
                 })
         end
@@ -6231,7 +6225,7 @@ local SaveManager = {} do
                         Callback = function()
                                 local name = SaveManager.Options.SaveManager_ConfigName.Value
 
-                                if name:gsub(" ", "") == "" then 
+                                if name:gsub(" ", "") == "" then
                                         return self.Library:Notify({
                                                 Title = "Interface",
                                                 Content = "Config loader",
@@ -6330,7 +6324,7 @@ local SaveManager = {} do
                 SaveManager:SetIgnoreIndexes({ "SaveManager_ConfigList", "SaveManager_ConfigName" })
         end
 
-        -- SaveManager:BuildFolderTree()
+
 end
 
 local InterfaceManager = {} do
