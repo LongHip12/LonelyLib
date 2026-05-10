@@ -3024,7 +3024,6 @@ local Library = {
 
 	OpenFrames = {},
 	Options = {},
-	Dropdowns = {},
 	Themes = Themes.Names,
 
 	Window = nil,
@@ -3126,7 +3125,7 @@ end
 
 function Linear:step(state, dt)
 	local position = state.value
-	local velocity = self._velocity 
+	local velocity = self._velocity -- Linear motion ignores the state's velocity
 	local goal = self._targetValue
 
 	local dPos = dt * velocity
@@ -3181,7 +3180,7 @@ function Spring.new(targetValue, options)
 end
 
 function Spring:step(state, dt)
-	
+	-- Cache frequently used values and operations
 	local d = self._dampingRatio
 	local f = self._frequency * 2 * math.pi
 	local g = self._targetValue
@@ -3191,15 +3190,15 @@ function Spring:step(state, dt)
 	local decay = math.exp(-d * f * dt)
 	local p1, v1
 
-	
+	-- Pre-calculate common products
 	local f_dt = f * dt
 	local f_squared = f * f
 
-	
-	if d == 1 then 
+	-- Move conditional branches outside for better prediction
+	if d == 1 then -- Critically damped
 		p1 = (offset * (1 + f_dt) + v0 * dt) * decay + g
 		v1 = (v0 * (1 - f_dt) - offset * (f_squared * dt)) * decay
-	elseif d < 1 then 
+	elseif d < 1 then -- Underdamped
 		local c = math.sqrt(1 - d * d)
 		local c_squared = c * c
 		local f_c = f * c
@@ -3208,7 +3207,7 @@ function Spring:step(state, dt)
 		local i = math.cos(f_c_dt)
 		local j = math.sin(f_c_dt)
 
-		
+		-- Optimize z calculation
 		local z
 		if c > EPS then
 			z = j / c
@@ -3220,7 +3219,7 @@ function Spring:step(state, dt)
 			z = a + ((a_squared * c_squared_squared / 20 - c_squared) * a_cubed) / 6
 		end
 
-		
+		-- Optimize y calculation
 		local y
 		if f_c > EPS then
 			y = j / f_c
@@ -3234,7 +3233,7 @@ function Spring:step(state, dt)
 
 		p1 = (offset * (i + d * z) + v0 * y) * decay + g
 		v1 = (v0 * (i - z * d) - offset * (z * f)) * decay
-	else 
+	else -- Overdamped
 		local c = math.sqrt(d * d - 1)
 		local r1 = -f * (d - c)
 		local r2 = -f * (d + c)
@@ -3246,7 +3245,7 @@ function Spring:step(state, dt)
 		v1 = e1 * r1 + e2 * r2
 	end
 
-	
+	-- Combine the threshold check for early returns
 	if math.abs(v1) < VELOCITY_THRESHOLD and math.abs(p1 - g) < POSITION_THRESHOLD then
 		return {
 			complete = true,
@@ -3431,7 +3430,7 @@ function GroupMotor:step(deltaTime)
 	for _, motor in pairs(self._motors) do
 		local complete = motor:step(deltaTime)
 		if not complete then
-			
+			-- If any of the sub-motors are incomplete, the group motor will not be complete either
 			allMotorsComplete = false
 		end
 	end
@@ -3621,19 +3620,19 @@ end
 function Creator.New(Name, Properties, Children)
 	local Object = Instance.new(Name)
 
-	
+	-- Default properties
 	for Name, Value in next, Creator.DefaultProperties[Name] or {} do
 		Object[Name] = Value
 	end
 
-	
+	-- Properties
 	for Name, Value in next, Properties or {} do
 		if Name ~= "ThemeTag" then
 			Object[Name] = Value
 		end
 	end
 
-	
+	-- Children
 	for _, Child in next, Children or {} do
 		Child.Parent = Object
 	end
@@ -3672,6 +3671,7 @@ end
 Library.Creator = Creator
 
 local New = Creator.New
+
 
 local LibraryID = "Roblox/Ui"
 
@@ -5276,8 +5276,8 @@ Components.Window = (function()
 		})
 
 		local TabFrame = New("Frame", {
-			Size = UDim2.new(0, Window.TabWidth, 1, -66 + -OFFSETY), 
-			Position = UDim2.new(0, 12, 0, 54 + OFFSETY), 
+			Size = UDim2.new(0, Window.TabWidth, 1, -66 + -OFFSETY), -- []-66
+			Position = UDim2.new(0, 12, 0, 54 + OFFSETY), --54
 			BackgroundTransparency = 1,
 			ClipsDescendants = true,
 		}, {
@@ -5524,23 +5524,11 @@ Components.Window = (function()
 		function Window:ToggleInterface()
 			Window.Minimized = not Window.Minimized
 			Window.Root.Visible = not Window.Minimized
-			if Window.Minimized then
-				for _, d in next, Library.Dropdowns do
-					if d.Opened then d:Close() end
-				end
-				Library.Dropdowns = {}
-			end
 		end
 
 		function Window:Minimize()
 			Window.Minimized = not Window.Minimized
 			Window.Root.Visible = not Window.Minimized
-			if Window.Minimized then
-				for _, d in next, Library.Dropdowns do
-					if d.Opened then d:Close() end
-				end
-				Library.Dropdowns = {}
-			end
 			if not MinimizeNotif then
 				MinimizeNotif = true
 				local Key = Library.MinimizeKeybind and Library.MinimizeKeybind.Value or Library.MinimizeKey.Name
@@ -5550,7 +5538,7 @@ Components.Window = (function()
 					Duration = 6
 				})
 			end
-			
+			--pcall(SwapIco)
 		end
 
 		function Window:Destroy()
@@ -6110,14 +6098,18 @@ ElementsTable.Dropdown = (function()
 		end)
 
 		local ScrollFrame = self.ScrollFrame
+
+		Library.Window.Root:GetPropertyChangedSignal("Visible"):Connect(function()
+			if not Library.Window.Root.Visible and Dropdown.Opened then
+				Dropdown:Close()
+			end
+		end)
+
 		function Dropdown:Open()
 			Dropdown.Opened = true
 			SearchBase.Visible = true
 			ScrollFrame.ScrollingEnabled = false
 			DropdownHolderCanvas.Visible = true
-			if not table.find(Library.Dropdowns, Dropdown) then
-				table.insert(Library.Dropdowns, Dropdown)
-			end
 			TweenService:Create(
 				DropdownHolderFrame,
 				TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
@@ -8339,7 +8331,7 @@ local SaveManager = {} do
 
 		for _, option in next, decoded.objects do
 			if self.Parser[option.type] and not self.Ignore[option.idx] then
-				task.spawn(function() self.Parser[option.type].Load(option.idx, option) end) 
+				task.spawn(function() self.Parser[option.type].Load(option.idx, option) end) -- task.spawn() so the config loading wont get stuck.
 			end
 		end
 
@@ -8536,7 +8528,7 @@ local SaveManager = {} do
 		SaveManager:SetIgnoreIndexes({ "SaveManager_ConfigList", "SaveManager_ConfigName" })
 	end
 
-	
+	-- SaveManager:BuildFolderTree()
 end
 
 local InterfaceManager = {} do
