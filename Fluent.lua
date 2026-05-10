@@ -8710,7 +8710,7 @@ function Library:CreateWindow(Config)
 			New("Frame", {
 				BackgroundColor3 = Color3.fromRGB(0, 0, 0),
 				Size = UDim2.new(1, 0, 1, 0),
-				BackgroundTransparency = 0.5,
+				BackgroundTransparency = 0,
 				BorderSizePixel = 0
 			}, {
 				New("UICorner", {
