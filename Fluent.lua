@@ -8701,8 +8701,8 @@ function Library:CreateWindow(Config)
 
 		local Minimizer = New("Frame", {
 			Parent = GUI,
-			Size = UDim2.new(0, 60, 0, 60),
-			Position = UDim2.new(0.45, 0, 0.025, 0),
+			Size = UDim2.new(0, 50, 0, 50),
+			Position = UDim2.new(0.130987287, 0, 0.10569106, 0)
 			BackgroundTransparency = 1,
 			ZIndex = 999999999,
 		},
