@@ -382,7 +382,7 @@ local Themes = {
 		SubText = Color3.fromRGB(220, 220, 220),
 		Hover = Color3.fromRGB(200, 120, 170),
 		HoverChange = 0.04,
-	}
+	},
 	Dark = {
         Name = "Dark",
         Accent = Color3.fromRGB(96, 205, 255),
