@@ -66,7 +66,7 @@ makedraggable = function(topbar, object)
                                         Dragging = false
                                 end
                         end)
-                end
+                end 
         end)
 
         topbar.InputChanged:Connect(function(input)
@@ -289,170 +289,179 @@ function Library:AddWindows(ConfigWindow)
         Config.UiStroke = Color3.fromRGB(ConfigWindow.RGB[1], ConfigWindow.RGB[2], ConfigWindow.RGB[3])
     end
     
-    local ScreenShit = Instance.new("ScreenGui")
-    local AsamiDzGUI = Instance.new("Frame")
-    local UICorner = Instance.new("UICorner")
-    local LogoHut = Instance.new("ImageLabel")
-    local TabList = Instance.new("Frame")
-    local UICorner_2 = Instance.new("UICorner")
-    local AsamiNigga = Instance.new("ScrollingFrame")
-    local UIPadding = Instance.new("UIPadding")
-    local UIListLayout = Instance.new("UIListLayout")
-    local Layout = Instance.new("Frame")
-    local LayoutReal = Instance.new("Frame")
-    local CCC = Instance.new("Folder")
-    local UIPageLayout = Instance.new("UIPageLayout")
-    local TOP = Instance.new("Frame")
-    local CloseUI = Instance.new("Frame")
-    local UICorner_47 = Instance.new("UICorner")
-    local LogoHut_2 = Instance.new("ImageLabel")
-    local Click_3 = Instance.new("TextButton")
+local ScreenShit = Instance.new("ScreenGui")
+	local AsamiDzGUI = Instance.new("Frame")
+	local UICorner = Instance.new("UICorner")
+	local TOP = Instance.new("Frame")
+	local LogoHut = Instance.new("ImageLabel")
+	local TabList = Instance.new("Frame")
+	local UICorner_2 = Instance.new("UICorner")
+	local AsamiNigga = Instance.new("ScrollingFrame")
+	local UIPadding = Instance.new("UIPadding")
+	local UIListLayout = Instance.new("UIListLayout")
+	local LayoutReal = Instance.new("Frame")
+	local CCC = Instance.new("Folder")
+	local Layout = Instance.new("Frame")
+	local UIPageLayout = Instance.new("UIPageLayout")
+	local Divider = Instance.new("Frame")
+	local CloseUI = Instance.new("Frame")
+	local UICorner_47 = Instance.new("UICorner")
+	local LogoHut_2 = Instance.new("ImageLabel")
+	local Click_3 = Instance.new("TextButton")
 
-    ScreenShit.Name = "ScreenShit"
-    ScreenShit.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+	ScreenShit.Name = "ScreenShit"
+	ScreenShit.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
-    AsamiDzGUI.Name = "AsamiDzGUI"
-    AsamiDzGUI.Parent = ScreenShit
-    AsamiDzGUI.AnchorPoint = Vector2.new(0.5, 0.5)
-    AsamiDzGUI.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
-    AsamiDzGUI.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    AsamiDzGUI.BorderSizePixel = 0
-    AsamiDzGUI.Position = UDim2.new(0.584039748, 0, 0.5, 0)
-    AsamiDzGUI.Size = UDim2.new(0, 481, 0, 332)
-    AsamiDzGUI.ClipsDescendants = true
+	AsamiDzGUI.Name = "Nousigi Hub GUI"
+	AsamiDzGUI.Parent = ScreenShit
+	AsamiDzGUI.AnchorPoint = Vector2.new(0.5, 0.5)
+	AsamiDzGUI.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
+	AsamiDzGUI.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	AsamiDzGUI.BorderSizePixel = 0
+	AsamiDzGUI.Position = UDim2.new(0.584039748, 0, 0.5, 0)
+	AsamiDzGUI.Size = UDim2.new(0, 481, 0, 332)
+	AsamiDzGUI.ClipsDescendants = true
 
-    UICorner.Parent = AsamiDzGUI
+	UICorner.Parent = AsamiDzGUI
 
-    TOP.Name = "TOP"
-    TOP.Parent = AsamiDzGUI
-    TOP.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    TOP.BackgroundTransparency = 1.000
-    TOP.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    TOP.BorderSizePixel = 0
-    TOP.Size = UDim2.new(1, 0, 0, 75)
+	TOP.Name = "TOP"
+	TOP.Parent = AsamiDzGUI
+	TOP.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TOP.BackgroundTransparency = 1.000
+	TOP.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TOP.BorderSizePixel = 0
+	TOP.Size = UDim2.new(1, 0, 0, 75)
 
-    LogoHut.Name = "LogoHut"
-    LogoHut.Parent = AsamiDzGUI
-    LogoHut.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    LogoHut.BackgroundTransparency = 1.000
-    LogoHut.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    LogoHut.BorderSizePixel = 0
-    LogoHut.Position = UDim2.new(0.0222222228, 0, 0.0149999997, 0)
-    LogoHut.Size = UDim2.new(0, 45, 0, 45)
-    LogoHut.Image = Config.LogoHub
+	LogoHut.Name = "LogoHut"
+	LogoHut.Parent = AsamiDzGUI
+	LogoHut.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	LogoHut.BackgroundTransparency = 1.000
+	LogoHut.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	LogoHut.BorderSizePixel = 0
+	LogoHut.Position = UDim2.new(0.02014325186610222, 0, 0.03006027452647686, 0)
+	LogoHut.Size = UDim2.new(0, 38, 0, 38)
+	LogoHut.Image = Config.LogoHub
 
-    TabList.Name = "Tab List"
-    TabList.Parent = AsamiDzGUI
-    TabList.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-    TabList.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    TabList.BorderSizePixel = 0
-    TabList.Position = UDim2.new(0.162222117, 0, 0.0350000001, 0)
-    TabList.Size = UDim2.new(0, 502, 0, 39)
+	TabList.Name = "Tab List"
+	TabList.Parent = AsamiDzGUI
+	TabList.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+	TabList.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TabList.BorderSizePixel = 0
+	TabList.Position = UDim2.new(0.12895801663398743, 0, 0.031987935304641724, 0)
+	TabList.Size = UDim2.new(0, 406, 0, 39)
 
-    UICorner_2.CornerRadius = UDim.new(0, 4)
-    UICorner_2.Parent = TabList
+	UICorner_2.CornerRadius = UDim.new(0, 4)
+	UICorner_2.Parent = TabList
 
-    AsamiNigga.Name = "AsamiNigga"
-    AsamiNigga.Parent = TabList
-    AsamiNigga.AnchorPoint = Vector2.new(0.5, 0.5)
-    AsamiNigga.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    AsamiNigga.BackgroundTransparency = 1.000
-    AsamiNigga.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    AsamiNigga.BorderSizePixel = 0
-    AsamiNigga.Position = UDim2.new(0.5, 0, 0.5, 0)
-    AsamiNigga.Size = UDim2.new(1, -7, 1, -7)
-    AsamiNigga.CanvasSize = UDim2.new(2, 0, 0, 0)
-    AsamiNigga.ScrollBarThickness = 0
+	AsamiNigga.Name = "AsamiNigga"
+	AsamiNigga.Parent = TabList
+	AsamiNigga.AnchorPoint = Vector2.new(0.5, 0.5)
+	AsamiNigga.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	AsamiNigga.BackgroundTransparency = 1.000
+	AsamiNigga.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	AsamiNigga.BorderSizePixel = 0
+	AsamiNigga.Position = UDim2.new(0.5, 0, 0.5, 0)
+	AsamiNigga.Size = UDim2.new(1, -7, 1, -7)
+	AsamiNigga.CanvasSize = UDim2.new(2, 0, 0, 0)
+	AsamiNigga.ScrollBarThickness = 0
 
-    game:GetService("RunService").Stepped:Connect(function()
-        AsamiNigga.CanvasSize = UDim2.new(0, UIListLayout.AbsoluteContentSize.X + 100, 0, 0)
-    end)
+	game:GetService("RunService").Stepped:Connect(function()
+		AsamiNigga.CanvasSize = UDim2.new(0, UIListLayout.AbsoluteContentSize.X + 100, 0, 0)
+	end)
 
-    UIPadding.Parent = AsamiNigga
-    UIPadding.PaddingBottom = UDim.new(0, 2)
-    UIPadding.PaddingLeft = UDim.new(0, 3)
-    UIPadding.PaddingRight = UDim.new(0, 3)
-    UIPadding.PaddingTop = UDim.new(0, 4)
+	UIPadding.Parent = AsamiNigga
+	UIPadding.PaddingBottom = UDim.new(0, 2)
+	UIPadding.PaddingLeft = UDim.new(0, 3)
+	UIPadding.PaddingRight = UDim.new(0, 3)
+	UIPadding.PaddingTop = UDim.new(0, 4)
 
-    UIListLayout.Parent = AsamiNigga
-    UIListLayout.FillDirection = Enum.FillDirection.Horizontal
-    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    UIListLayout.Padding = UDim.new(0, 12)
+	UIListLayout.Parent = AsamiNigga
+	UIListLayout.FillDirection = Enum.FillDirection.Horizontal
+	UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	UIListLayout.Padding = UDim.new(0, 12)
 
-    Layout.Name = "Layout"
-    Layout.Parent = CCC
-    Layout.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    Layout.BackgroundTransparency = 1.000
-    Layout.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    Layout.BorderSizePixel = 0
-    Layout.Position = UDim2.new(0.0222222917, 0, 0.170000002, 0)
-    Layout.Size = UDim2.new(1, 0, 0, 332)
+	Layout.Name = "Layout"
+	Layout.Parent = CCC
+	Layout.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Layout.BackgroundTransparency = 1.000
+	Layout.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Layout.BorderSizePixel = 0
+	Layout.Position = UDim2.new(0.0222222917, 0, 0.170000002, 0)
+	Layout.Size = UDim2.new(1, 0, 0, 332)
 
-    LayoutReal.Name = "LayoutReal"
-    LayoutReal.Parent = AsamiDzGUI
-    LayoutReal.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    LayoutReal.BackgroundTransparency = 1.000
-    LayoutReal.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    LayoutReal.BorderSizePixel = 0
-    LayoutReal.Size = UDim2.new(1, 0, 1, 0)
-    LayoutReal.ClipsDescendants = true
+	LayoutReal.Name = "LayoutReal"
+	LayoutReal.Parent = AsamiDzGUI
+	LayoutReal.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	LayoutReal.BackgroundTransparency = 1.000
+	LayoutReal.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	LayoutReal.BorderSizePixel = 0
+	LayoutReal.Size = UDim2.new(1, 0, 1, 0)
+	LayoutReal.ClipsDescendants = true
 
-    CCC.Name = "CCC"
-    CCC.Parent = LayoutReal
+	CCC.Name = "CCC"
+	CCC.Parent = LayoutReal
 
-    UIPageLayout.Parent = CCC
-    UIPageLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    UIPageLayout.TweenTime = 0.350
-    UIPageLayout.GamepadInputEnabled = false
-    UIPageLayout.ScrollWheelInputEnabled = false
-    UIPageLayout.TouchInputEnabled = false
+	UIPageLayout.Parent = CCC
+	UIPageLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	UIPageLayout.TweenTime = 0
+	UIPageLayout.GamepadInputEnabled = false
+	UIPageLayout.ScrollWheelInputEnabled = false
+	UIPageLayout.TouchInputEnabled = false
 
-    CloseUI.Name = "CloseUI"
-    CloseUI.Parent = ScreenShit
-    CloseUI.BackgroundColor3 = Color3.fromRGB(19, 19, 19)
-    CloseUI.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    CloseUI.BorderSizePixel = 0
-    CloseUI.Position = UDim2.new(0.130987287, 0, 0.10569106, 0)
-    CloseUI.Size = UDim2.new(0, 45, 0, 45)
-    CloseUI.Draggable = true
-    CloseUI.Active = true
-    
-    UICorner_47.Parent = CloseUI
-    
-    LogoHut_2.Name = "LogoHut"
-    LogoHut_2.Parent = CloseUI
-    LogoHut_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    LogoHut_2.BackgroundTransparency = 1.000
-    LogoHut_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    LogoHut_2.BorderSizePixel = 0
-    LogoHut_2.Position = UDim2.new(0.0222222228, 0, 0.0149999997, 0)
-    LogoHut_2.Size = UDim2.new(1, 0, 1, 0)
-    LogoHut_2.Image = Config.LogoHub
-    
-    Click_3.Name = "Click"
-    Click_3.Parent = CloseUI
-    Click_3.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    Click_3.BackgroundTransparency = 1.000
-    Click_3.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    Click_3.BorderSizePixel = 0
-    Click_3.Size = UDim2.new(1, 0, 1, 0)
-    Click_3.Font = Enum.Font.SourceSans
-    Click_3.Text = ""
-    Click_3.TextColor3 = Color3.fromRGB(0, 0, 0)
-    Click_3.TextSize = 14.000
-    Click_3.Activated:Connect(function()
-        if AsamiDzGUI.Visible == true then
-            AsamiDzGUI.Visible = false
-        else
-            AsamiDzGUI.Visible = true
-        end
-    end)
+	Divider.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+	Divider.Name = "Divider"
+	Divider.Parent = AsamiDzGUI
+	Divider.Position = UDim2.new(0, 0, 0.17168675363063812, 0)
+	Divider.Size = UDim2.new(0, 481, 0, 1)
+	Divider.Selectable = false
 
-    makedraggable(Click_3, CloseUI)
-    makedraggable(TOP, AsamiDzGUI)
-    
-    local CountTab = 1
-    local TabFunc = {}
+	CloseUI.Name = "CloseUI"
+	CloseUI.Parent = ScreenShit
+	CloseUI.BackgroundColor3 = Color3.fromRGB(19, 19, 19)
+	CloseUI.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	CloseUI.BorderSizePixel = 0
+	CloseUI.Position = UDim2.new(0.130987287, 0, 0.10569106, 0)
+	CloseUI.Size = UDim2.new(0, 45, 0, 45)
+	CloseUI.Draggable = true
+	CloseUI.Active = true
+
+	UICorner_47.Parent = CloseUI
+    UICorner_47.CornerRadius = UDim.new(0, 9)
+
+	LogoHut_2.Name = "LogoHut"
+	LogoHut_2.Parent = CloseUI
+	LogoHut_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	LogoHut_2.BackgroundTransparency = 1.000
+	LogoHut_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	LogoHut_2.BorderSizePixel = 0
+	LogoHut_2.Position = UDim2.new(0.0222222228, 0, 0.0149999997, 0)
+	LogoHut_2.Size = UDim2.new(1, 0, 1, 0)
+	LogoHut_2.Image = Config.LogoHub
+
+	Click_3.Name = "Click"
+	Click_3.Parent = CloseUI
+	Click_3.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Click_3.BackgroundTransparency = 1.000
+	Click_3.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Click_3.BorderSizePixel = 0
+	Click_3.Size = UDim2.new(1, 0, 1, 0)
+	Click_3.Font = Enum.Font.SourceSans
+	Click_3.Text = ""
+	Click_3.TextColor3 = Color3.fromRGB(0, 0, 0)
+	Click_3.TextSize = 14.000
+	Click_3.Activated:Connect(function()
+		if AsamiDzGUI.Visible == true then
+			AsamiDzGUI.Visible = false
+		else
+			AsamiDzGUI.Visible = true
+		end
+	end)
+
+	makedraggable(Click_3, CloseUI)
+	makedraggable(TOP, AsamiDzGUI)
+
+	local CountTab = 1
+	local TabFunc = {}
     
     function TabFunc:AddTab(cf)
         cf = cf or {}
@@ -827,17 +836,22 @@ function Library:AddWindows(ConfigWindow)
 
                 function ToggleFunc:Set(Value)
                     if Value then
-                        TweenService:Create(Title_2, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
-                        TweenService:Create(Check_2, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 19, 0, 19)}):Play()
-                        TweenService:Create(ImageLabel, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Size = UDim2.new(1, -5, 1, -5)}):Play()
+                        Title_2.TextColor3 = Color3.fromRGB(255, 255, 255)
+                        Check_2.Size = UDim2.new(0, 19, 0, 19)
+                        ImageLabel.Size = UDim2.new(1, -5, 1, -5)
                     else
-                        TweenService:Create(Title_2, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {TextColor3 = Color3.fromRGB(144, 144, 144)}):Play()
-                        TweenService:Create(Check_2, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 0, 0, 0)}):Play()
-                        TweenService:Create(ImageLabel, TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Size = UDim2.new(0, 0, 0, 0)}):Play()
+                        Title_2.TextColor3 = Color3.fromRGB(144, 144, 144)
+                        Check_2.Size = UDim2.new(0, 0, 0, 0)
+                        ImageLabel.Size = UDim2.new(0, 0, 0, 0)
                     end
+
                     Toggled = Value
                     cffe.Callback(Toggled)
-                    if cffe.Flag then _G.SaveData[cffe.Flag] = Toggled; AutoSave() end
+
+                    if cffe.Flag then
+                        _G.SaveData[cffe.Flag] = Toggled
+                        AutoSave()
+                    end
                 end
     
                 if cffe.Default then
@@ -1232,11 +1246,12 @@ function Library:AddWindows(ConfigWindow)
                 Title_8.BorderSizePixel = 0
                 Title_8.Position = UDim2.new(0, 0, 0, 7)
                 Title_8.Size = UDim2.new(1, 0, 0, 20)
-                Title_8.Font = Enum.Font.ArialBold
+                Title_8.Font = Enum.Font.Arial
                 Title_8.Text = title
                 Title_8.TextColor3 = Color3.fromRGB(255, 255, 255)
                 Title_8.TextSize = 13.000
                 Title_8.TextXAlignment = Enum.TextXAlignment.Left
+                Title_8.TextYAlignment = Enum.TextYAlignment.Top
 
                 Desc_8.Name = "Desc"
                 Desc_8.Parent = Paragraph
@@ -1246,7 +1261,7 @@ function Library:AddWindows(ConfigWindow)
                 Desc_8.BorderSizePixel = 0
                 Desc_8.Position = UDim2.new(0, 0, 0, 27)
                 Desc_8.Size = UDim2.new(1, 0, 1, -7)
-                Desc_8.Font = Enum.Font.ArialBold
+                Desc_8.Font = Enum.Font.Arial
                 Desc_8.Text = desc
                 Desc_8.TextColor3 = Color3.fromRGB(144, 144, 144)
                 Desc_8.TextSize = 12.000
