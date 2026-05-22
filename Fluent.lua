@@ -5816,8 +5816,18 @@ ElementsTable.Dropdown = (function()
 			Searchable = Config.Searchable or false
 		}
 
-		if Dropdown.Multi and Config.AllowNull then
-			Dropdown.Value = {}
+		if Dropdown.Multi then
+			if type(Config.Default) == "table" then
+				local nTable = {}
+				for _, v in next, Config.Default do
+					if table.find(Dropdown.Values, v) then
+						nTable[v] = true
+					end
+				end
+				Dropdown.Value = nTable
+			else
+				Dropdown.Value = {}
+			end
 		end
 
 		local DropdownFrame = Components.Element(Config.Title, Config.Description, self.Container, false, Config)
@@ -6357,10 +6367,10 @@ ElementsTable.Slider = (function()
 		end
 
 		assert(Config.Title, "Slider - Missing Title.")
-		assert(Config.Default, "Slider - Missing default value.")
-		assert(Config.Min, "Slider - Missing minimum value.")
-		assert(Config.Max, "Slider - Missing maximum value.")
-		assert(Config.Rounding, "Slider - Missing rounding value.")
+		assert(Config.Default ~= nil, "Slider - Missing default value.")
+		assert(Config.Min ~= nil, "Slider - Missing minimum value.")
+		assert(Config.Max ~= nil, "Slider - Missing maximum value.")
+		assert(Config.Rounding ~= nil, "Slider - Missing rounding value.")
 
 		local Slider = {
 			Value = nil,
@@ -6455,20 +6465,23 @@ ElementsTable.Slider = (function()
 		end)
 
 		AddSignal(SliderDisplay:GetPropertyChangedSignal("Text"), function()
-			if #SliderDisplay.Text > 0 and tonumber(SliderDisplay.Text) then
+			if Slider.Value ~= nil and not Dragging and #SliderDisplay.Text > 0 and tonumber(SliderDisplay.Text) then
 				Slider:SetValue(SliderDisplay.Text)
 			end
 		end)
 
-		Creator.AddSignal(SliderDot.InputBegan, function(Input)
+		Creator.AddSignal(SliderInner.InputBegan, function(Input)
 			if Input.UserInputType == Enum.UserInputType.MouseButton1
 				or Input.UserInputType == Enum.UserInputType.Touch
 			then
 				Dragging = true
+				local SizeScale =
+					math.clamp((Input.Position.X - SliderRail.AbsolutePosition.X) / SliderRail.AbsoluteSize.X, 0, 1)
+				Slider:SetValue(Slider.Min + ((Slider.Max - Slider.Min) * SizeScale))
 			end
 		end)
 
-		Creator.AddSignal(SliderDot.InputEnded, function(Input)
+		Creator.AddSignal(UserInputService.InputEnded, function(Input)
 			if
 				Input.UserInputType == Enum.UserInputType.MouseButton1
 				or Input.UserInputType == Enum.UserInputType.Touch
