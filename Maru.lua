@@ -1,4 +1,4 @@
-local TweenService = game:service"TweenService"
+local TweenService = game:GetService("TweenService")
 local plr = game.Players.LocalPlayer
 local uis = game:GetService("UserInputService")
 local mouse = plr:GetMouse()
