@@ -408,9 +408,10 @@ local ScreenShit = Instance.new("ScreenGui")
 	UIPageLayout.ScrollWheelInputEnabled = false
 	UIPageLayout.TouchInputEnabled = false
 
-	Divider.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+	Divider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	Divider.Name = "Divider"
 	Divider.Parent = AsamiDzGUI
+	Đivier.Transparency = 0.25
 	Divider.Position = UDim2.new(0, 0, 0.17168675363063812, 0)
 	Divider.Size = UDim2.new(0, 481, 0, 1)
 	Divider.Selectable = false
