@@ -3684,6 +3684,7 @@ end
 local GUI = New("ScreenGui", {
 	Parent = PanelParent,
 	Name = LibraryID,
+	DisplayOrder = 999999999999,
 })
 
 Library.GUI = GUI
