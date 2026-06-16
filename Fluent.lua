@@ -5817,6 +5817,7 @@ ElementsTable.Dropdown = (function()
 			Searchable = Config.Searchable or false,
 			AllowNull = Config.AllowNull or false,
 			Changed = nil,
+			_buttons = {},
 		}
 
 		if Dropdown.Multi then
@@ -6069,6 +6070,7 @@ ElementsTable.Dropdown = (function()
 		Dropdown._scroll = DropdownScrollFrame
 		Dropdown._layout = DropdownListLayout
 		Dropdown._search = DropdownSearch
+		Dropdown.ScrollFrame = self.ScrollFrame
 
 		function Dropdown:Open()
 			if OpenDropdown and OpenDropdown ~= self then
@@ -6152,8 +6154,8 @@ ElementsTable.Dropdown = (function()
 					element:Destroy()
 				end
 			end
+			self._buttons = {}
 			for Idx, Value in next, self.Values do
-				local Table = {}
 				local ButtonSelector = New("Frame", {
 					Size = UDim2.fromOffset(4, 14),
 					BackgroundColor3 = Color3.fromRGB(76, 194, 255),
@@ -6195,12 +6197,16 @@ ElementsTable.Dropdown = (function()
 				SelectorSizeMotor:onStep(function(value)
 					ButtonSelector.Size = UDim2.new(0, 4, 0, value)
 				end)
-				function Table:UpdateButton()
-					Selected = self.Multi and self.Value[Value] or self.Value == Value
-					SetBackTransparency(Selected and 0.89 or 1)
-					SelectorSizeMotor:setGoal(Flipper.Spring.new(Selected and 14 or 6, { frequency = 6 }))
-					SetSelTransparency(Selected and 0 or 1)
-				end
+				
+				local buttonData = {
+					UpdateButton = function()
+						local isSelected = self.Multi and self.Value[Value] or self.Value == Value
+						SetBackTransparency(isSelected and 0.89 or 1)
+						SelectorSizeMotor:setGoal(Flipper.Spring.new(isSelected and 14 or 6, { frequency = 6 }))
+						SetSelTransparency(isSelected and 0 or 1)
+					end
+				}
+				
 				AddSignal(Button.Activated, function()
 					local Try = not Selected
 					if self:GetActiveValues() == 1 and not Try and not self.AllowNull then
@@ -6212,26 +6218,26 @@ ElementsTable.Dropdown = (function()
 					else
 						Selected = Try
 						self.Value = Selected and Value or nil
-						for _, OtherButton in next, self._buttons do
-							OtherButton:UpdateButton()
+						for _, otherButton in next, self._buttons do
+							otherButton:UpdateButton()
 						end
 					end
-					Table:UpdateButton()
+					buttonData:UpdateButton()
 					self:Display()
 					Library:SafeCallback(self.Callback, self.Value)
 					if self.Changed then
 						Library:SafeCallback(self.Changed, self.Value)
 					end
 				end)
+				
 				local visible = true
 				if searchText ~= "" then
 					local text = tostring(Value):lower()
 					visible = string.find(text, searchText, 1, true) ~= nil
 				end
 				Button.Visible = visible
-				Table:UpdateButton()
-				if not self._buttons then self._buttons = {} end
-				self._buttons[Button] = Table
+				buttonData:UpdateButton()
+				table.insert(self._buttons, buttonData)
 			end
 			self._layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
 				self._scroll.CanvasSize = UDim2.new(0, 0, 0, self._layout.AbsoluteContentSize.Y + 8)
@@ -6324,8 +6330,6 @@ ElementsTable.Dropdown = (function()
 				end
 			end
 		end)
-
-		self.ScrollFrame = self.ScrollFrame
 
 		Library.Window.Root:GetPropertyChangedSignal("Visible"):Connect(function()
 			if not Library.Window.Root.Visible and self.Opened then
