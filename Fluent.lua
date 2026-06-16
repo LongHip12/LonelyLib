@@ -5929,10 +5929,10 @@ ElementsTable.Dropdown = (function()
 			),
 			Text = Config.Title or "Dropdown",
 			TextColor3 = Color3.fromRGB(240, 240, 240),
-			TextSize = 18,
+			TextSize = 16,
 			TextXAlignment = Enum.TextXAlignment.Left,
 			TextTruncate = Enum.TextTruncate.AtEnd,
-			Size = UDim2.new(1, -40, 0, 22),
+			Size = UDim2.new(0, 100, 0, 34),
 			Position = UDim2.fromOffset(20, 16),
 			BackgroundTransparency = 1,
 			AutoLocalize = false,
@@ -5963,8 +5963,8 @@ ElementsTable.Dropdown = (function()
 		})
 
 		local SearchBase = New("Frame", {
-			Size = UDim2.new(1, -84, 0, 34),
-			Position = UDim2.fromOffset(20, 50),
+			Size = UDim2.new(1, -190, 0, 34),
+			Position = UDim2.fromOffset(126, 16),
 			ThemeTag = {
 				BackgroundColor3 = "DropdownHolder",
 			},
@@ -5993,7 +5993,7 @@ ElementsTable.Dropdown = (function()
 
 		local CloseButton = New("TextButton", {
 			Size = UDim2.fromOffset(34, 34),
-			Position = UDim2.new(1, -20, 0, 50),
+			Position = UDim2.new(1, -20, 0, 16),
 			AnchorPoint = Vector2.new(1, 0),
 			BackgroundTransparency = 1,
 			Text = "",
@@ -6015,8 +6015,8 @@ ElementsTable.Dropdown = (function()
 		})
 
 		local DropdownScrollFrame = New("ScrollingFrame", {
-			Size = UDim2.new(1, -40, 1, -114),
-			Position = UDim2.fromOffset(20, 94),
+			Size = UDim2.new(1, -40, 1, -84),
+			Position = UDim2.fromOffset(20, 64),
 			BackgroundTransparency = 1,
 			BottomImage = "rbxassetid://6889812791",
 			MidImage = "rbxassetid://6889812721",
@@ -6091,7 +6091,6 @@ ElementsTable.Dropdown = (function()
 			SetScale(1)
 			TweenService:Create(Dropdown._ico, TweenInfo.new(0.2), { Rotation = -90 }):Play()
 			Dropdown:RefreshList()
-			Dropdown._search:CaptureFocus()
 		end
 
 		function Dropdown:Close()
