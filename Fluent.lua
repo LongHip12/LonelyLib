@@ -6073,89 +6073,89 @@ ElementsTable.Dropdown = (function()
 		Dropdown.ScrollFrame = self.ScrollFrame
 
 		function Dropdown:Open()
-			if OpenDropdown and OpenDropdown ~= self then
+			if OpenDropdown and OpenDropdown ~= Dropdown then
 				OpenDropdown:Close()
 			end
-			self.Opened = true
-			OpenDropdown = self
-			if self.ScrollFrame then
-				self.ScrollFrame.ScrollingEnabled = false
+			Dropdown.Opened = true
+			OpenDropdown = Dropdown
+			if Dropdown.ScrollFrame then
+				Dropdown.ScrollFrame.ScrollingEnabled = false
 			end
-			self._overlay.Visible = true
-			self._popup.Visible = true
-			self._overlay.BackgroundTransparency = 1
-			self._scale.Scale = 0.9
-			self._popup.BackgroundTransparency = 1
-			TweenService:Create(self._overlay, TweenInfo.new(0.2), { BackgroundTransparency = 0.6 }):Play()
-			TweenService:Create(self._popup, TweenInfo.new(0.2), { BackgroundTransparency = 0 }):Play()
-			TweenService:Create(self._scale, TweenInfo.new(0.25, Enum.EasingStyle.Back), { Scale = 1 }):Play()
-			TweenService:Create(self._ico, TweenInfo.new(0.2), { Rotation = -90 }):Play()
-			self:RefreshList()
-			self._search:CaptureFocus()
+			Dropdown._overlay.Visible = true
+			Dropdown._popup.Visible = true
+			Dropdown._overlay.BackgroundTransparency = 1
+			Dropdown._scale.Scale = 0.9
+			Dropdown._popup.BackgroundTransparency = 1
+			TweenService:Create(Dropdown._overlay, TweenInfo.new(0.2), { BackgroundTransparency = 0.6 }):Play()
+			TweenService:Create(Dropdown._popup, TweenInfo.new(0.2), { BackgroundTransparency = 0 }):Play()
+			TweenService:Create(Dropdown._scale, TweenInfo.new(0.25, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+			TweenService:Create(Dropdown._ico, TweenInfo.new(0.2), { Rotation = -90 }):Play()
+			Dropdown:RefreshList()
+			Dropdown._search:CaptureFocus()
 		end
 
 		function Dropdown:Close()
-			if OpenDropdown == self then
+			if OpenDropdown == Dropdown then
 				OpenDropdown = nil
 			end
-			self.Opened = false
-			if self.ScrollFrame then
-				self.ScrollFrame.ScrollingEnabled = true
+			Dropdown.Opened = false
+			if Dropdown.ScrollFrame then
+				Dropdown.ScrollFrame.ScrollingEnabled = true
 			end
-			TweenService:Create(self._overlay, TweenInfo.new(0.2), { BackgroundTransparency = 1 }):Play()
-			TweenService:Create(self._popup, TweenInfo.new(0.15, Enum.EasingStyle.Quart), { BackgroundTransparency = 1 }):Play()
-			TweenService:Create(self._scale, TweenInfo.new(0.15, Enum.EasingStyle.Quart), { Scale = 0.9 }):Play()
-			TweenService:Create(self._ico, TweenInfo.new(0.2), { Rotation = 90 }):Play()
+			TweenService:Create(Dropdown._overlay, TweenInfo.new(0.2), { BackgroundTransparency = 1 }):Play()
+			TweenService:Create(Dropdown._popup, TweenInfo.new(0.15, Enum.EasingStyle.Quart), { BackgroundTransparency = 1 }):Play()
+			TweenService:Create(Dropdown._scale, TweenInfo.new(0.15, Enum.EasingStyle.Quart), { Scale = 0.9 }):Play()
+			TweenService:Create(Dropdown._ico, TweenInfo.new(0.2), { Rotation = 90 }):Play()
 			task.delay(0.25, function()
-				self._overlay.Visible = false
-				self._popup.Visible = false
-				self._search.Text = ""
-				self:Display()
+				Dropdown._overlay.Visible = false
+				Dropdown._popup.Visible = false
+				Dropdown._search.Text = ""
+				Dropdown:Display()
 			end)
 		end
 
 		function Dropdown:Display()
 			local Str = ""
-			if self.Multi then
-				for _, Value in next, self.Values do
-					if self.Value[Value] then
+			if Dropdown.Multi then
+				for _, Value in next, Dropdown.Values do
+					if Dropdown.Value[Value] then
 						Str = Str .. Value .. ", "
 					end
 				end
 				Str = Str:sub(1, #Str - 2)
 			else
-				Str = self.Value or ""
+				Str = Dropdown.Value or ""
 			end
 			if Str == "" then
-				self._display.Text = ""
-				self._display.PlaceholderText = "--"
+				Dropdown._display.Text = ""
+				Dropdown._display.PlaceholderText = "--"
 			else
-				self._display.Text = Str
-				self._display.PlaceholderText = ""
+				Dropdown._display.Text = Str
+				Dropdown._display.PlaceholderText = ""
 			end
 		end
 
 		function Dropdown:GetActiveValues()
-			if self.Multi then
+			if Dropdown.Multi then
 				local T = {}
-				for Value, Bool in next, self.Value do
+				for Value, Bool in next, Dropdown.Value do
 					table.insert(T, Value)
 				end
 				return T
 			else
-				return self.Value and 1 or 0
+				return Dropdown.Value and 1 or 0
 			end
 		end
 
 		function Dropdown:RefreshList()
-			local searchText = self._search.Text:lower()
-			for _, element in next, self._scroll:GetChildren() do
+			local searchText = Dropdown._search.Text:lower()
+			for _, element in next, Dropdown._scroll:GetChildren() do
 				if not element:IsA("UIListLayout") and not element:IsA("UIPadding") then
 					element:Destroy()
 				end
 			end
-			self._buttons = {}
-			for Idx, Value in next, self.Values do
+			Dropdown._buttons = {}
+			for Idx, Value in next, Dropdown.Values do
 				local ButtonSelector = New("Frame", {
 					Size = UDim2.fromOffset(4, 14),
 					BackgroundColor3 = Color3.fromRGB(76, 194, 255),
@@ -6181,55 +6181,55 @@ ElementsTable.Dropdown = (function()
 				local Button = New("TextButton", {
 					Size = UDim2.new(1, -5, 0, 32),
 					BackgroundTransparency = 1,
-					ZIndex = 23,
+					ZIndex = 53,
 					Text = "",
-					Parent = self._scroll,
+					Parent = Dropdown._scroll,
 					ThemeTag = { BackgroundColor3 = "DropdownOption" },
 				}, {
 					ButtonSelector,
 					ButtonLabel,
 					New("UICorner", { CornerRadius = UDim.new(0, 6) }),
 				})
-				local Selected = self.Multi and self.Value[Value] or self.Value == Value
+				local Selected = Dropdown.Multi and Dropdown.Value[Value] or Dropdown.Value == Value
 				local BackMotor, SetBackTransparency = Creator.SpringMotor(1, Button, "BackgroundTransparency")
 				local SelMotor, SetSelTransparency = Creator.SpringMotor(1, ButtonSelector, "BackgroundTransparency")
 				local SelectorSizeMotor = Flipper.SingleMotor.new(6)
 				SelectorSizeMotor:onStep(function(value)
 					ButtonSelector.Size = UDim2.new(0, 4, 0, value)
 				end)
-				
+
 				local buttonData = {
 					UpdateButton = function()
-						local isSelected = self.Multi and self.Value[Value] or self.Value == Value
+						local isSelected = Dropdown.Multi and Dropdown.Value[Value] or Dropdown.Value == Value
 						SetBackTransparency(isSelected and 0.89 or 1)
 						SelectorSizeMotor:setGoal(Flipper.Spring.new(isSelected and 14 or 6, { frequency = 6 }))
 						SetSelTransparency(isSelected and 0 or 1)
 					end
 				}
-				
+
 				AddSignal(Button.Activated, function()
 					local Try = not Selected
-					if self:GetActiveValues() == 1 and not Try and not self.AllowNull then
+					if Dropdown:GetActiveValues() == 1 and not Try and not Dropdown.AllowNull then
 						return
 					end
-					if self.Multi then
+					if Dropdown.Multi then
 						Selected = Try
-						self.Value[Value] = Selected and true or nil
+						Dropdown.Value[Value] = Selected and true or nil
 					else
 						Selected = Try
-						self.Value = Selected and Value or nil
-						for _, otherButton in next, self._buttons do
+						Dropdown.Value = Selected and Value or nil
+						for _, otherButton in next, Dropdown._buttons do
 							otherButton:UpdateButton()
 						end
 					end
 					buttonData:UpdateButton()
-					self:Display()
-					Library:SafeCallback(self.Callback, self.Value)
-					if self.Changed then
-						Library:SafeCallback(self.Changed, self.Value)
+					Dropdown:Display()
+					Library:SafeCallback(Dropdown.Callback, Dropdown.Value)
+					if Dropdown.Changed then
+						Library:SafeCallback(Dropdown.Changed, Dropdown.Value)
 					end
 				end)
-				
+
 				local visible = true
 				if searchText ~= "" then
 					local text = tostring(Value):lower()
@@ -6237,59 +6237,64 @@ ElementsTable.Dropdown = (function()
 				end
 				Button.Visible = visible
 				buttonData:UpdateButton()
-				table.insert(self._buttons, buttonData)
+				table.insert(Dropdown._buttons, buttonData)
 			end
-			self._layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-				self._scroll.CanvasSize = UDim2.new(0, 0, 0, self._layout.AbsoluteContentSize.Y + 8)
+			Dropdown._layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+				Dropdown._scroll.CanvasSize = UDim2.new(0, 0, 0, Dropdown._layout.AbsoluteContentSize.Y + 8)
 			end)
 			task.wait()
-			self._scroll.CanvasSize = UDim2.new(0, 0, 0, self._layout.AbsoluteContentSize.Y + 8)
-			self:Display()
+			Dropdown._scroll.CanvasSize = UDim2.new(0, 0, 0, Dropdown._layout.AbsoluteContentSize.Y + 8)
+			Dropdown:Display()
 		end
 
 		function Dropdown:OnChanged(Func)
-			self.Changed = Func
+			Dropdown.Changed = Func
 			if type(Func) == "function" then
 				task.spawn(function()
-					pcall(Func, self.Value)
+					pcall(Func, Dropdown.Value)
 				end)
 			end
 		end
 
 		function Dropdown:SetValue(Val)
-			if self.Multi then
+			if Dropdown.Multi then
 				local nTable = {}
 				for Value, _ in next, Val do
-					if table.find(self.Values, Value) then nTable[Value] = true end
+					if table.find(Dropdown.Values, Value) then nTable[Value] = true end
 				end
-				self.Value = nTable
+				Dropdown.Value = nTable
 			else
 				if not Val then
-					self.Value = nil
-				elseif table.find(self.Values, Val) then
-					self.Value = Val
+					Dropdown.Value = nil
+				elseif table.find(Dropdown.Values, Val) then
+					Dropdown.Value = Val
 				end
 			end
-			self:RefreshList()
-			Library:SafeCallback(self.Callback, self.Value)
-			if self.Changed then
-				Library:SafeCallback(self.Changed, self.Value)
+			Dropdown:RefreshList()
+			Library:SafeCallback(Dropdown.Callback, Dropdown.Value)
+			if Dropdown.Changed then
+				Library:SafeCallback(Dropdown.Changed, Dropdown.Value)
 			end
 		end
 
+		function Dropdown:SetValues(Val)
+			Dropdown.Values = Val
+			Dropdown:RefreshList()
+		end
+
 		function Dropdown:GetValue()
-			return self.Value
+			return Dropdown.Value
 		end
 
 		function Dropdown:Destroy()
 			DropdownFrame:Destroy()
-			self._overlay:Destroy()
+			Dropdown._overlay:Destroy()
 			Library.Options[Idx] = nil
 		end
 
 		Overlay.Activated:Connect(function()
-			if self.Opened then
-				self:Close()
+			if Dropdown.Opened then
+				Dropdown:Close()
 			end
 		end)
 
@@ -6300,21 +6305,21 @@ ElementsTable.Dropdown = (function()
 		end)
 
 		CloseButton.MouseButton1Click:Connect(function()
-			if self.Opened then
-				self:Close()
+			if Dropdown.Opened then
+				Dropdown:Close()
 			end
 		end)
 
 		DropdownInner.MouseButton1Click:Connect(function()
-			if self.Opened then
-				self:Close()
+			if Dropdown.Opened then
+				Dropdown:Close()
 				return
 			end
-			self:Open()
+			Dropdown:Open()
 		end)
 
 		DropdownSearch:GetPropertyChangedSignal("Text"):Connect(function()
-			self:RefreshList()
+			Dropdown:RefreshList()
 		end)
 
 		DropdownSearch.Focused:Connect(function()
@@ -6332,8 +6337,8 @@ ElementsTable.Dropdown = (function()
 		end)
 
 		Library.Window.Root:GetPropertyChangedSignal("Visible"):Connect(function()
-			if not Library.Window.Root.Visible and self.Opened then
-				self:Close()
+			if not Library.Window.Root.Visible and Dropdown.Opened then
+				Dropdown:Close()
 			end
 		end)
 
