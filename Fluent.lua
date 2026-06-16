@@ -6037,8 +6037,9 @@ ElementsTable.Dropdown = (function()
 			}),
 		})
 
+		-- FIX 1: giảm height từ 380 xuống 280
 		local Popup = New("CanvasGroup", {
-			Size = UDim2.fromOffset(360, 380),
+			Size = UDim2.fromOffset(360, 280),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromScale(0.5, 0.5),
 			GroupTransparency = 1,
@@ -6187,7 +6188,6 @@ ElementsTable.Dropdown = (function()
 					ButtonLabel,
 					New("UICorner", { CornerRadius = UDim.new(0, 6) }),
 				})
-				local Selected = Dropdown.Multi and Dropdown.Value[Value] or Dropdown.Value == Value
 				local BackMotor, SetBackTransparency = Creator.SpringMotor(1, Button, "BackgroundTransparency")
 				local SelMotor, SetSelTransparency = Creator.SpringMotor(1, ButtonSelector, "BackgroundTransparency")
 				local SelectorSizeMotor = Flipper.SingleMotor.new(6)
@@ -6204,17 +6204,18 @@ ElementsTable.Dropdown = (function()
 					end
 				}
 
+				-- FIX 2: tính currentlySelected từ Dropdown.Value tại thời điểm click
+				-- thay vì dùng closure var 'Selected' bị stale sau khi chọn item khác
 				AddSignal(Button.Activated, function()
-					local Try = not Selected
+					local currentlySelected = Dropdown.Multi and Dropdown.Value[Value] or Dropdown.Value == Value
+					local Try = not currentlySelected
 					if Dropdown:GetActiveValues() == 1 and not Try and not Dropdown.AllowNull then
 						return
 					end
 					if Dropdown.Multi then
-						Selected = Try
-						Dropdown.Value[Value] = Selected and true or nil
+						Dropdown.Value[Value] = Try and true or nil
 					else
-						Selected = Try
-						Dropdown.Value = Selected and Value or nil
+						Dropdown.Value = Try and Value or nil
 						for _, otherButton in next, Dropdown._buttons do
 							otherButton:UpdateButton()
 						end
@@ -6315,22 +6316,9 @@ ElementsTable.Dropdown = (function()
 			Dropdown:Open()
 		end)
 
+		-- FIX 3: auto search ngay khi gõ, bỏ Focused/FocusLost handler gây nhầm lẫn
 		DropdownSearch:GetPropertyChangedSignal("Text"):Connect(function()
 			Dropdown:RefreshList()
-		end)
-
-		DropdownSearch.Focused:Connect(function()
-			DropdownSearch.Text = ""
-		end)
-
-		DropdownSearch.FocusLost:Connect(function()
-			if #DropdownSearch.Text > 0 then
-				local Tick = tick()
-				repeat wait() until tick() - Tick > 5 or DropdownSearch:IsFocused()
-				if not DropdownSearch:IsFocused() then
-					DropdownSearch.Text = ""
-				end
-			end
 		end)
 
 		Library.Window.Root:GetPropertyChangedSignal("Visible"):Connect(function()
