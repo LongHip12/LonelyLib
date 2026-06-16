@@ -2,7 +2,7 @@ local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
 local LocalPlayer = game:GetService("Players").LocalPlayer
 local UserInputService = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
+local TweenSeElementsTable.Droprvice = game:GetService("TweenService")
 local TextService = game:GetService("TextService")
 local Camera = game:GetService("Workspace").CurrentCamera
 local Mouse = LocalPlayer:GetMouse()
@@ -5799,6 +5799,8 @@ ElementsTable.Dropdown = (function()
 	Element.__index = Element
 	Element.__type = "Dropdown"
 
+	local CurrentOpenDropdown = nil
+
 	function Element:New(Idx, Config)
 		if type(Idx) == "table" then
 			Config = Idx
@@ -5841,7 +5843,7 @@ ElementsTable.Dropdown = (function()
 		local DropdownDisplay = New("TextBox", {
 			FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal),
 			Text = "",
-			PlaceholderText = "Value",
+			PlaceholderText = "--",
 			PlaceholderColor3 = Color3.fromRGB(240, 240, 240),
 			TextColor3 = Color3.fromRGB(240, 240, 240),
 			TextSize = 14,
@@ -5920,157 +5922,93 @@ ElementsTable.Dropdown = (function()
 			DropdownListLayout,
 		})
 
-		local DropdownHolderFrame = New("Frame", {
-			Size = UDim2.fromScale(1, 0.6),
-			ThemeTag = {
-				BackgroundColor3 = "DropdownHolder",
-			},
-		}, {
-			DropdownScrollFrame,
-			New("UICorner", {
-				CornerRadius = UDim.new(0, 7),
-			}),
-			New("UIStroke", {
-				ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-				ThemeTag = {
-					Color = "DropdownBorder",
-				},
-			}),
-			New("ImageLabel", {
-				BackgroundTransparency = 1,
-				Image = "http://www.roblox.com/asset/?id=5554236805",
-				ScaleType = Enum.ScaleType.Slice,
-				SliceCenter = Rect.new(23, 23, 277, 277),
-				Size = UDim2.fromScale(1, 1) + UDim2.fromOffset(30, 30),
-				Position = UDim2.fromOffset(-15, -15),
-				ImageColor3 = Color3.fromRGB(0, 0, 0),
-				ImageTransparency = 0.1,
-			}),
-		})
-
-		local DropdownHolderCanvas = New("Frame", {
+		local TintOverlay = New("TextButton", {
+			Size = UDim2.fromScale(1, 1),
+			BackgroundColor3 = Color3.fromRGB(0, 0, 0),
 			BackgroundTransparency = 1,
-			Size = UDim2.fromOffset(170, 300),
+			Text = "",
+			ZIndex = 50,
 			Parent = Library.GUI,
 			Visible = false,
-		}, {
-			DropdownHolderFrame,
-			New("UISizeConstraint", {
-				MinSize = Vector2.new(170, 0),
-			}),
 		})
 
-		local Border = New("UIStroke", {
-			ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-			Color = Color3.fromRGB(0, 0, 0),
-			ThemeTag = {
-				Color = "ElementBorder",
-			},
-		})
-
-		local searchIcon = New("ImageLabel", {
-			Image = "rbxassetid://10734943674",
-			Size = UDim2.fromOffset(18, 18),
-			AnchorPoint = Vector2.new(0, 0.5),
-			Position = UDim2.new(0, 4, 0.5, 0),
+		local DropdownDialog = New("Frame", {
+			Size = UDim2.fromOffset(300, 350),
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = UDim2.fromScale(0.5, 0.5),
 			BackgroundTransparency = 1,
-			Rotation = 0,
-			ThemeTag = {
-				ImageColor3 = "SubText",
-			},
-		})
-
-		local SearchBase = New("Frame", {
-			Visible = false,
-			Size = UDim2.new(0, 170, 0, 30),
-			Parent = Library.GUI,
-			AutomaticSize = Enum.AutomaticSize.Y,
-			ThemeTag = {
-				BackgroundColor3 = "DropdownHolder",
-			},
-		}, {
-			New("UICorner", {
-				CornerRadius = UDim.new(0, 4),
-			}),
-			searchIcon,
-			Border,
+			ZIndex = 51,
+			Parent = TintOverlay,
 		})
 
 		local DropdownSearch = New("TextBox", {
-			FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal),
+			FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json"),
 			Text = "",
 			PlaceholderText = "Search...",
-			PlaceholderColor3 = Color3.fromRGB(240, 240, 240),
-			Parent = SearchBase,
-			TextColor3 = Color3.fromRGB(240, 240, 240),
-			TextSize = 14,
-			TextYAlignment = Enum.TextYAlignment.Center,
+			TextSize = 13,
 			TextXAlignment = Enum.TextXAlignment.Left,
-			Size = UDim2.new(1, -20, 1, 0),
-			Position = UDim2.new(0.5, 18, 0.5, 0),
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+			Size = UDim2.new(1, -60, 1, 0),
+			Position = UDim2.new(0, 30, 0, 0),
 			BackgroundTransparency = 1,
-			LayoutOrder = 7,
-			TextTruncate = Enum.TextTruncate.AtEnd,
-			Interactable = true,
-			AutoLocalize = false,
-			ThemeTag = {
-				TextColor3 = "Text",
-				PlaceholderColor3 = "Text"
-			},
+			ZIndex = 53,
+			ThemeTag = { TextColor3 = "Text", PlaceholderColor3 = "SubText" },
 		})
 
-		table.insert(Library.OpenFrames, DropdownHolderCanvas)
+		local CloseButton = New("TextButton", {
+			Size = UDim2.fromOffset(28, 28),
+			Position = UDim2.new(1, -32, 0.5, 0),
+			AnchorPoint = Vector2.new(0, 0.5),
+			BackgroundTransparency = 1,
+			Text = "✕",
+			TextSize = 14,
+			ZIndex = 53,
+			ThemeTag = { TextColor3 = "SubText" },
+		})
 
-		local XADD = 195
-		local DEFAULT_Y_OFFSET_WITH_OBJ = -5
-		local DEFAULT_Y_OFFSET_WITHOUT_OBJ = 18
-		local MAX_DROPDOWN_ITEMS = 5
+		local SearchBarFrame = New("Frame", {
+			Size = UDim2.new(1, 0, 0, 36),
+			Position = UDim2.fromOffset(0, 0),
+			ZIndex = 52,
+			Parent = DropdownDialog,
+			ThemeTag = { BackgroundColor3 = "DropdownHolder" },
+		}, {
+			New("UICorner", { CornerRadius = UDim.new(0, 7) }),
+			New("UIStroke", { Transparency = 0.5, ThemeTag = { Color = "DropdownBorder" } }),
+			New("ImageLabel", {
+				Image = "rbxassetid://10734943674",
+				Size = UDim2.fromOffset(16, 16),
+				Position = UDim2.new(0, 8, 0.5, 0),
+				AnchorPoint = Vector2.new(0, 0.5),
+				BackgroundTransparency = 1,
+				ThemeTag = { ImageColor3 = "SubText" },
+			}),
+			DropdownSearch,
+			CloseButton,
+		})
 
-		local MoveList = {
-			{ Instance = DropdownHolderCanvas, YOffset = 35},
-			{ Instance = SearchBase, YOffset = 0 },
-		}
-
-		local function RecalculateListPosition()
-			local Add = 0
-			local availableSpace = Camera.ViewportSize.Y - DropdownInner.AbsolutePosition.Y
-			local neededSpace = DropdownHolderCanvas.AbsoluteSize.Y - 5
-
-			if availableSpace < neededSpace then
-				Add = neededSpace - availableSpace + 40
-			end
-
-			local defaultYOffset = (DEFAULT_Y_OFFSET_WITH_OBJ - Add) or DEFAULT_Y_OFFSET_WITHOUT_OBJ
-			local baseX = DropdownInner.AbsolutePosition.X - 1 + XADD
-			local baseY = DropdownInner.AbsolutePosition.Y + defaultYOffset
-
-			for _, entry in ipairs(MoveList) do
-				local inst = entry.Instance
-				local xOffset = entry.XOffset or 0
-				local yOffset = entry.YOffset or 0
-				inst.Position = UDim2.fromOffset(baseX + xOffset, baseY + yOffset)
-			end
-		end
-
-		local ListSizeX = 0
-		local function RecalculateListSize()
-			if #Dropdown.Values > MAX_DROPDOWN_ITEMS then
-				DropdownHolderCanvas.Size = UDim2.fromOffset(ListSizeX, (39 * MAX_DROPDOWN_ITEMS) - 13)
-			else
-				DropdownHolderCanvas.Size = UDim2.fromOffset(ListSizeX, DropdownListLayout.AbsoluteContentSize.Y + 10)
-			end
-		end
+		local DropdownHolderFrame = New("Frame", {
+			Size = UDim2.new(1, 0, 1, -46),
+			Position = UDim2.new(0, 0, 0, 46),
+			ZIndex = 52,
+			Parent = DropdownDialog,
+			ThemeTag = { BackgroundColor3 = "DropdownHolder" },
+		}, {
+			New("UICorner", { CornerRadius = UDim.new(0, 7) }),
+			New("UIStroke", { Transparency = 0.5, ThemeTag = { Color = "DropdownBorder" } }),
+			DropdownScrollFrame,
+		})
 
 		local function RecalculateCanvasSize()
 			DropdownScrollFrame.CanvasSize = UDim2.fromOffset(0, DropdownListLayout.AbsoluteContentSize.Y)
 		end
 
-		RecalculateListPosition()
-		RecalculateListSize()
+		local ScrollFrame = self.ScrollFrame
 
-		Creator.AddSignal(DropdownInner:GetPropertyChangedSignal("AbsolutePosition"), RecalculateListPosition)
+		Library.Window.Root:GetPropertyChangedSignal("Visible"):Connect(function()
+			if not Library.Window.Root.Visible and Dropdown.Opened then
+				Dropdown:Close()
+			end
+		end)
 
 		Creator.AddSignal(DropdownInner.MouseButton1Click, function()
 			if Dropdown.Opened then
@@ -6082,71 +6020,65 @@ ElementsTable.Dropdown = (function()
 
 		Creator.AddSignal(DropdownSearch:GetPropertyChangedSignal("Text"), function()
 			local Text = DropdownSearch.Text
-			for _, Element in next, DropdownScrollFrame:GetChildren() do
-				if not Element:IsA("UIListLayout") then
-					local Value = Element.ButtonLabel.Text
-					local Similar = Value:lower():match(Text:lower()) or Value:lower() == Text:lower()
-					Element.Visible = (#Text == 0 or Similar) and true or false
+			for _, Elem in next, DropdownScrollFrame:GetChildren() do
+				if not Elem:IsA("UIListLayout") then
+					local Value = Elem.ButtonLabel.Text
+					local Similar = string.find(Value:lower(), Text:lower(), 1, true) ~= nil
+					Elem.Visible = (#Text == 0 or Similar) and true or false
 				end
 			end
-			RecalculateListPosition()
-			RecalculateListSize()
 		end)
 
 		Creator.AddSignal(DropdownSearch.Focused, function()
 			DropdownSearch.Text = ""
 		end)
 
-		Creator.AddSignal(DropdownSearch.FocusLost, function()
-			if #DropdownSearch.Text > 0 then
-				local Tick = tick()
-				repeat wait() until tick() - Tick > 5 or DropdownSearch:IsFocused()
-				if not DropdownSearch:IsFocused() then
-					DropdownSearch.Text = ""
-				end
-			end
-		end)
-
-		local ScrollFrame = self.ScrollFrame
-
-		Library.Window.Root:GetPropertyChangedSignal("Visible"):Connect(function()
-			if not Library.Window.Root.Visible and Dropdown.Opened then
-				Dropdown:Close()
-			end
-		end)
-
 		function Dropdown:Open()
+			if CurrentOpenDropdown and CurrentOpenDropdown ~= Dropdown then
+				CurrentOpenDropdown:Close()
+			end
+			CurrentOpenDropdown = Dropdown
 			Dropdown.Opened = true
-			SearchBase.Visible = true
 			ScrollFrame.ScrollingEnabled = false
-			DropdownHolderCanvas.Visible = true
-			TweenService:Create(
-				DropdownHolderFrame,
-				TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
-				{ Size = UDim2.fromScale(1, 1) }
-			):Play()
-			TweenService:Create(
-				DropdownIco,
-				TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
-				{ Rotation = -90 }
-			):Play()
+			TintOverlay.Visible = true
+			TweenService:Create(TintOverlay, TweenInfo.new(0.25), { BackgroundTransparency = 0.6 }):Play()
+			local scale = Instance.new("UIScale")
+			scale.Scale = 0.9
+			scale.Parent = DropdownDialog
+			TweenService:Create(scale, TweenInfo.new(0.25, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+			TweenService:Create(DropdownIco, TweenInfo.new(0.2), { Rotation = -90 }):Play()
+			DropdownSearch:CaptureFocus()
 		end
 
 		function Dropdown:Close()
+			CurrentOpenDropdown = nil
 			Dropdown.Opened = false
-			SearchBase.Visible = false
 			ScrollFrame.ScrollingEnabled = true
-			DropdownDisplay.Interactable = false
-			DropdownHolderFrame.Size = UDim2.fromScale(1, 0.6)
-			DropdownHolderCanvas.Visible = false
-			TweenService:Create(
-				DropdownIco,
-				TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
-				{ Rotation = 90 }
-			):Play()
-			DropdownSearch:ReleaseFocus(false)
-			Dropdown:Display()
+			TweenService:Create(TintOverlay, TweenInfo.new(0.2), { BackgroundTransparency = 1 }):Play()
+			local scale = DropdownDialog:FindFirstChildOfClass("UIScale")
+			if scale then
+				TweenService:Create(scale, TweenInfo.new(0.2, Enum.EasingStyle.Quart), { Scale = 0.9 }):Play()
+			end
+			TweenService:Create(DropdownIco, TweenInfo.new(0.2), { Rotation = 90 }):Play()
+			task.delay(0.2, function()
+				TintOverlay.Visible = false
+				DropdownSearch.Text = ""
+				Dropdown:Display()
+			end)
 		end
+
+		TintOverlay.MouseButton1Click:Connect(function()
+			if Dropdown.Opened then Dropdown:Close() end
+		end)
+
+		DropdownDialog.InputBegan:Connect(function(i)
+			if i.UserInputType == Enum.UserInputType.MouseButton1 then
+			end
+		end)
+
+		CloseButton.MouseButton1Click:Connect(function()
+			Dropdown:Close()
+		end)
 
 		function Dropdown:Display()
 			local Values = Dropdown.Values
@@ -6161,6 +6093,7 @@ ElementsTable.Dropdown = (function()
 			else
 				Str = Dropdown.Value or ""
 			end
+			DropdownDisplay.Text = (Str == "" and "" or Str)
 			DropdownDisplay.PlaceholderText = (Str == "" and "--" or Str)
 		end
 
@@ -6180,9 +6113,9 @@ ElementsTable.Dropdown = (function()
 			local Values = Dropdown.Values
 			local Buttons = {}
 
-			for _, Element in next, DropdownScrollFrame:GetChildren() do
-				if not Element:IsA("UIListLayout") then
-					Element:Destroy()
+			for _, Elem in next, DropdownScrollFrame:GetChildren() do
+				if not Elem:IsA("UIListLayout") then
+					Elem:Destroy()
 				end
 			end
 
@@ -6268,15 +6201,7 @@ ElementsTable.Dropdown = (function()
 				Buttons[Button] = Table
 			end
 
-			ListSizeX = 0
-			for Button, _ in next, Buttons do
-				if Button.ButtonLabel.TextBounds.X > ListSizeX then
-					ListSizeX = Button.ButtonLabel.TextBounds.X
-				end
-			end
-			ListSizeX = ListSizeX + 30
 			RecalculateCanvasSize()
-			RecalculateListSize()
 			Dropdown:Display()
 		end
 
