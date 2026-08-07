@@ -1,1405 +1,1476 @@
+-- LonelyLib.lua
 local Library = {}
-local _theme = {
-    Background = Color3.fromRGB(24, 24, 24),
+local Themes = {
     Accent = Color3.fromRGB(248, 4, 46),
-    Secondary = Color3.fromRGB(40, 40, 40),
+    Background = Color3.fromRGB(24, 24, 24),
+    BackgroundDark = Color3.fromRGB(20, 20, 20),
+    BackgroundLight = Color3.fromRGB(30, 30, 30),
     Text = Color3.fromRGB(255, 255, 255),
-    SubText = Color3.fromRGB(150, 150, 150),
-    Border = Color3.fromRGB(60, 60, 60),
-    SliderFill = Color3.fromRGB(175, 40, 42),
-    SliderBackground = Color3.fromRGB(255, 255, 255)
+    TextDim = Color3.fromRGB(180, 180, 180),
+    Border = Color3.fromRGB(255, 255, 255),
+    Button = Color3.fromRGB(248, 4, 46),
+    ButtonText = Color3.fromRGB(255, 255, 255),
+    ToggleOn = Color3.fromRGB(248, 4, 46),
+    ToggleOff = Color3.fromRGB(100, 100, 100),
 }
 
-local function Create(className, properties)
-    local instance = Instance.new(className)
-    for prop, value in pairs(properties) do
-        instance[prop] = value
+local function createUIElement(parent, className, properties)
+    local obj = Instance.new(className)
+    for k, v in pairs(properties) do
+        obj[k] = v
     end
-    return instance
+    obj.Parent = parent
+    return obj
 end
 
-local function CreateText(className, text, parent)
-    local instance = Create(className, {
-        Text = text,
-        TextColor3 = _theme.Text,
-        TextScaled = false,
-        TextSize = 14,
-        Font = Enum.Font.SourceSans,
-        BackgroundTransparency = 1,
-        Parent = parent,
-        Size = UDim2.new(1, 0, 1, 0),
-        Position = UDim2.new(0, 0, 0, 0),
-        TextWrapped = true,
-        TextXAlignment = Enum.TextXAlignment.Left,
-        TextYAlignment = Enum.TextYAlignment.Center
+local function createCorner(parent, radius)
+    if type(radius) == "number" then
+        radius = UDim.new(0, radius)
+    end
+    createUIElement(parent, "UICorner", {
+        BottomLeftRadius = radius,
+        BottomRightRadius = radius,
+        TopLeftRadius = radius,
+        TopRightRadius = radius,
     })
-    return instance
+end
+
+local function createStroke(parent, color, thickness, transparency)
+    createUIElement(parent, "UIStroke", {
+        Color = color or Color3.new(1,1,1),
+        Thickness = thickness or 1,
+        Transparency = transparency or 0,
+    })
+end
+
+local function createListLayout(parent, padding, sortOrder, fillDirection, horizontalAlignment, verticalAlignment)
+    createUIElement(parent, "UIListLayout", {
+        Padding = padding or UDim.new(0, 0),
+        SortOrder = sortOrder or Enum.SortOrder.LayoutOrder,
+        FillDirection = fillDirection or Enum.FillDirection.Vertical,
+        HorizontalAlignment = horizontalAlignment or Enum.HorizontalAlignment.Center,
+        VerticalAlignment = verticalAlignment or Enum.VerticalAlignment.Top,
+    })
+end
+
+local function createGridLayout(parent, cellSize, cellPadding, sortOrder)
+    createUIElement(parent, "UIGridLayout", {
+        CellSize = cellSize or UDim2.new(0.475, 0, 0.175, 0),
+        CellPadding = cellPadding or UDim2.new(0.0325, 0, 0.03, 0),
+        SortOrder = sortOrder or Enum.SortOrder.LayoutOrder,
+    })
 end
 
 local Window = {}
 Window.__index = Window
+Window._tabs = {}
+Window._tabObjects = {}
 
-function Window.new(config)
-    local self = setmetatable({}, Window)
-    self._config = config or {}
-    self._tabs = {}
-    self._currentTab = nil
-    self._sections = {}
+function Library:CreateWindow(options)
+    options = options or {}
+    local screenGui = createUIElement(nil, "ScreenGui", {
+        Name = "LonelyHub",
+        ResetOnSpawn = false,
+        ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+        Enabled = true,
+    })
+    screenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
 
-    self._screenGui = Instance.new("ScreenGui")
-    self._screenGui.Name = "LonelyLib"
-    self._screenGui.ResetOnSpawn = false
-    self._screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-
-    self._mainFrame = Create("Frame", {
+    local mainFrame = createUIElement(screenGui, "CanvasGroup", {
         Name = "MAIN_UI",
-        Parent = self._screenGui,
-        Size = UDim2.new(0.4678339958190918, 15, 0.6484929919242859, 15),
-        Position = UDim2.new(0.5, 0, 0.5, 0),
-        AnchorPoint = Vector2.new(0.5, 0.5),
-        BackgroundColor3 = _theme.Background,
-        BackgroundTransparency = 0.25,
+        BackgroundColor3 = Color3.fromRGB(24, 24, 24),
+        BackgroundTransparency = 0,
         BorderSizePixel = 0,
-        ClipsDescendants = true,
-        ZIndex = 999
-    })
-
-    Create("UICorner", {
-        Parent = self._mainFrame,
-        CornerRadius = UDim.new(0.075, 0)
-    })
-
-    local stroke = Create("UIStroke", {
-        Parent = self._mainFrame,
-        Color = _theme.Text,
-        Thickness = 2.5
-    })
-    Create("UIGradient", {
-        Parent = stroke,
-        Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(26, 25, 25)),
-            ColorSequenceKeypoint.new(0.1468, Color3.fromRGB(34, 23, 25)),
-            ColorSequenceKeypoint.new(0.563, Color3.fromRGB(156, 3, 31)),
-            ColorSequenceKeypoint.new(0.9188, Color3.fromRGB(33, 23, 25)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(37, 22, 25))
-        }),
-        Rotation = 90
-    })
-
-    local split = Create("Frame", {
-        Name = "SplitScreen",
-        Parent = self._mainFrame,
-        Size = UDim2.new(0.004999999888241291, 0, 0.8999999761581421, 0),
-        Position = UDim2.new(0.5, 0, 0.5, 0),
         AnchorPoint = Vector2.new(0.5, 0.5),
-        BackgroundColor3 = Color3.new(1, 1, 1),
-        BorderSizePixel = 0
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(0.4678, 15, 0.6485, 15),
+        ZIndex = 999,
+        GroupTransparency = 0,
     })
-    Create("UIGradient", {
-        Parent = split,
+    createCorner(mainFrame, UDim.new(0.075, 0))
+    createUIElement(mainFrame, "UIAspectRatioConstraint", { AspectRatio = 1.50464 })
+
+    local bgGrad = createUIElement(mainFrame, "Frame", {
+        Name = "GRADIENT",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Size = UDim2.new(1,0,1,0),
+        ZIndex = 0,
+    })
+    createUIElement(bgGrad, "UIGradient", {
         Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(16, 16, 16)),
-            ColorSequenceKeypoint.new(0.1468, Color3.fromRGB(34, 23, 25)),
-            ColorSequenceKeypoint.new(0.563, Color3.fromRGB(156, 3, 31)),
-            ColorSequenceKeypoint.new(0.9188, Color3.fromRGB(33, 23, 25)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(22, 15, 17))
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(26, 26, 26)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(40, 40, 40)),
         }),
-        Rotation = 90
+        Rotation = -90,
+        Transparency = NumberSequence.new({
+            NumberSequenceKeypoint.new(0, 0.9),
+            NumberSequenceKeypoint.new(1, 0.9),
+        }),
     })
-
-    local titleFrame = Create("Frame", {
-        Name = "Title",
-        Parent = self._mainFrame,
-        Size = UDim2.new(1, 0, 0.12, 0),
-        Position = UDim2.new(0, 0, 0.03, 0),
+    createUIElement(bgGrad, "ImageLabel", {
+        Name = "BACKGROUND_PATTERN",
+        Image = "rbxassetid://2151741365",
+        ImageTransparency = 0.6,
+        ScaleType = Enum.ScaleType.Tile,
+        TileSize = UDim2.new(0, 250, 0, 250),
+        SliceCenter = Rect.new(0, 256, 0, 256),
+        BackgroundColor3 = Color3.new(1,1,1),
         BackgroundTransparency = 1,
-        ClipsDescendants = true
+        Size = UDim2.new(1,0,1,0),
+        ZIndex = 0,
     })
-    local title = CreateText("TextLabel", config.Title or "LonelyLib", titleFrame)
-    title.TextColor3 = _theme.Text
-    title.TextSize = 20
-    title.Font = Enum.Font.GothamBold
-    title.TextXAlignment = Enum.TextXAlignment.Center
-    local subtitle = CreateText("TextLabel", config.Subtitle or "Advanced UI Library", titleFrame)
-    subtitle.Position = UDim2.new(0, 0, 0, 20)
-    subtitle.TextColor3 = _theme.SubText
-    subtitle.TextSize = 14
-    subtitle.Font = Enum.Font.Gotham
-    subtitle.TextXAlignment = Enum.TextXAlignment.Center
-
-    self._tabContainer = Create("Frame", {
-        Name = "TabContainer",
-        Parent = self._mainFrame,
-        Size = UDim2.new(1, 0, 0.07, 0),
-        Position = UDim2.new(0, 0, 0.15, 0),
-        BackgroundTransparency = 1
+    createUIElement(bgGrad, "UIStroke", {
+        Color = Color3.new(1,1,1),
+        Thickness = 2.5,
+        Transparency = 0.5,
     })
 
-    self._contentContainer = Create("Frame", {
-        Name = "Content",
-        Parent = self._mainFrame,
-        Size = UDim2.new(1, 0, 0.78, 0),
-        Position = UDim2.new(0, 0, 0.22, 0),
+    local topBar = createUIElement(mainFrame, "Frame", {
+        Name = "TOP_BAR",
+        BackgroundColor3 = Color3.fromRGB(24, 24, 24),
+        BackgroundTransparency = 0,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 0, -0.003, 0),
+        Size = UDim2.new(0.999, 0, 0.17, 0),
+        ZIndex = 4,
+        ClipsDescendants = false,
+    })
+    createUIElement(topBar, "ImageLabel", {
+        Name = "BACKGROUND_PATTERN",
+        Image = "rbxassetid://2151741365",
+        ImageTransparency = 0.6,
+        ScaleType = Enum.ScaleType.Tile,
+        TileSize = UDim2.new(0, 250, 0, 250),
+        SliceCenter = Rect.new(0, 256, 0, 256),
+        BackgroundColor3 = Color3.new(1,1,1),
         BackgroundTransparency = 1,
-        ClipsDescendants = true
+        Size = UDim2.new(1,0,1,0),
+        ZIndex = 0,
     })
 
-    local dragging = false
-    local dragStart = nil
-    local startPos = nil
-
-    self._mainFrame.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-            dragStart = input.Position
-            startPos = self._mainFrame.Position
-        end
-    end)
-
-    self._mainFrame.InputChanged:Connect(function(input)
-        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-            local delta = input.Position - dragStart
-            self._mainFrame.Position = UDim2.new(
-                startPos.X.Scale,
-                startPos.X.Offset + delta.X,
-                startPos.Y.Scale,
-                startPos.Y.Offset + delta.Y
-            )
-        end
-    end)
-
-    self._mainFrame.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = false
-        end
-    end)
-
-    return self
-end
-
-function Window:AddTab(config)
-    local tab = {}
-    tab._config = config or {}
-    tab._sections = {}
-    tab._window = self
-
-    local button = Create("TextButton", {
-        Name = "Tab_" .. (#self._tabs + 1),
-        Parent = self._tabContainer,
-        Size = UDim2.new(0.2, 0, 1, 0),
-        Position = UDim2.new(#self._tabs * 0.2, 0, 0, 0),
+    local decoration = createUIElement(topBar, "TextLabel", {
+        Name = "DECORATION",
+        BackgroundColor3 = Color3.new(1,1,1),
         BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0.349, 0, 0.5229, 0),
+        Size = UDim2.new(0.2983, 0, 0.2955, 0),
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Font = Enum.Font.SourceSans,
+        Text = [[>>  <font color="#f8042e">>></font>  >>  <font color="#f8042e">>></font>  >>]],
+        TextColor3 = Color3.new(1,1,1),
+        TextScaled = true,
+        TextWrapped = true,
+        RichText = true,
+        ZIndex = 2,
+    })
+
+    local logo = createUIElement(topBar, "ImageLabel", {
+        Name = "HUB_LOGO",
+        Image = options.Logo or "rbxassetid://16073594682",
+        ScaleType = Enum.ScaleType.Fit,
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0.0551, 0, 0.1826, 0),
+        Size = UDim2.new(0.1312, 0, 0.7083, 0),
+        ZIndex = 2,
+    })
+
+    local topHome = createUIElement(topBar, "TextButton", {
+        Name = "TOP_HOME",
+        Active = true,
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5566, 0, 0.5, 0),
+        Size = UDim2.new(0.1475, 0, 0.5981, 0),
+        ZIndex = 2,
         Text = "",
         AutoButtonColor = false,
-        ZIndex = 2
     })
-
-    local label = CreateText("TextLabel", config.Title or "Tab", button)
-    label.TextColor3 = _theme.SubText
-    label.TextSize = 14
-    label.Font = Enum.Font.GothamBold
-    label.TextXAlignment = Enum.TextXAlignment.Center
-
-    local content = Create("Frame", {
-        Name = "Content_" .. (#self._tabs + 1),
-        Parent = self._contentContainer,
-        Size = UDim2.new(1, 0, 1, 0),
-        Position = UDim2.new(0, 0, 0, 0),
-        BackgroundTransparency = 1,
-        Visible = #self._tabs == 0,
-        ClipsDescendants = true
-    })
-
-    local scrollFrame = Create("ScrollingFrame", {
-        Name = "ScrollFrame",
-        Parent = content,
-        Size = UDim2.new(1, 0, 1, 0),
-        Position = UDim2.new(0, 0, 0, 0),
+    createUIElement(topHome, "TextLabel", {
+        Name = "Title",
+        BackgroundColor3 = Color3.new(1,1,1),
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
-        ScrollBarThickness = 3,
-        ScrollBarImageColor3 = _theme.Accent,
-        AutomaticCanvasSize = Enum.AutomaticSize.Y,
-        CanvasSize = UDim2.new(0, 0, 0, 0)
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(1, 0, 0.6, 0),
+        Font = Enum.Font.SourceSans,
+        Text = "Home",
+        TextColor3 = Color3.fromRGB(255, 51, 51),
+        TextScaled = true,
+        TextWrapped = true,
+        ZIndex = 2,
     })
 
-    local layout = Create("UIListLayout", {
-        Parent = scrollFrame,
-        SortOrder = Enum.SortOrder.LayoutOrder,
-        Padding = UDim.new(0, 5)
+    local topPages = createUIElement(topBar, "TextButton", {
+        Name = "TOP_PAGES",
+        Active = true,
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.7125, 0, 0.5, 0),
+        Size = UDim2.new(0.1475, 0, 0.5981, 0),
+        ZIndex = 2,
+        Text = "",
+        AutoButtonColor = false,
+    })
+    createUIElement(topPages, "TextLabel", {
+        Name = "Title",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(1, 0, 0.6, 0),
+        Font = Enum.Font.SourceSans,
+        Text = "Pages",
+        TextColor3 = Color3.new(1,1,1),
+        TextScaled = true,
+        TextTransparency = 0.5,
+        TextWrapped = true,
+        ZIndex = 2,
     })
 
-    tab._button = button
-    tab._label = label
-    tab._content = content
-    tab._scrollFrame = scrollFrame
+    local topCredits = createUIElement(topBar, "TextButton", {
+        Name = "TOP_CREDITS",
+        Active = true,
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.8683, 0, 0.5, 0),
+        Size = UDim2.new(0.1475, 0, 0.5981, 0),
+        ZIndex = 2,
+        Text = "",
+        AutoButtonColor = false,
+    })
+    createUIElement(topCredits, "TextLabel", {
+        Name = "Title",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(1, 0, 0.6, 0),
+        Font = Enum.Font.SourceSans,
+        Text = "Credits",
+        TextColor3 = Color3.new(1,1,1),
+        TextScaled = true,
+        TextTransparency = 0.5,
+        TextWrapped = true,
+        ZIndex = 2,
+    })
 
-    button.MouseButton1Click:Connect(function()
-        for _, t in ipairs(self._tabs) do
-            t._content.Visible = false
-            t._label.TextColor3 = _theme.SubText
-        end
-        content.Visible = true
-        label.TextColor3 = _theme.Text
-        self._currentTab = tab
+    local splitScreen = createUIElement(mainFrame, "Frame", {
+        Name = "SplitScreen",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(0.005, 0, 0.9, 0),
+        ZIndex = 0,
+    })
+    createUIElement(splitScreen, "UIGradient", {
+        Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(16, 16, 16)),
+            ColorSequenceKeypoint.new(0.1468, Color3.fromRGB(34, 23, 23)),
+            ColorSequenceKeypoint.new(0.563, Color3.fromRGB(156, 3, 31)),
+            ColorSequenceKeypoint.new(0.9188, Color3.fromRGB(33, 23, 25)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(22, 15, 17)),
+        }),
+        Rotation = 90,
+    })
+
+    local mainZones = createUIElement(mainFrame, "Frame", {
+        Name = "MAIN_ZONES",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Size = UDim2.new(1,0,1,0),
+        ZIndex = 1,
+    })
+
+    local pagesTab = createUIElement(mainZones, "Frame", {
+        Name = "PAGES_TAB",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5897, 0),
+        Size = UDim2.new(1,0,1,0),
+        ZIndex = 1,
+        LayoutOrder = 1,
+    })
+
+    local anchor = createUIElement(pagesTab, "Frame", {
+        Name = "ANCHOR",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, -1.5, 0),
+        Size = UDim2.new(1,0,1,0),
+        LayoutOrder = 1,
+    })
+    createListLayout(anchor, UDim.new(0,0), Enum.SortOrder.LayoutOrder, Enum.FillDirection.Vertical, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Top)
+
+    local configPages = createUIElement(anchor, "Frame", {
+        Name = "CONFIG_PAGES",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.6576, 0),
+        Size = UDim2.new(1,0,1,0),
+        LayoutOrder = 2,
+    })
+
+    local miniPages = createUIElement(anchor, "Frame", {
+        Name = "MINI_PAGES",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.6576, 0),
+        Size = UDim2.new(1,0,1,0),
+        LayoutOrder = 1,
+    })
+
+    local homeTab = createUIElement(anchor, "Frame", {
+        Name = "HOME_TAB",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, -2, 0),
+        Size = UDim2.new(1,0,1,0),
+        Visible = false,
+    })
+
+    local creditsTab = createUIElement(anchor, "Frame", {
+        Name = "CREDITS_TAB",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, -2, 0),
+        Size = UDim2.new(1,0,1,0),
+        LayoutOrder = 2,
+        Visible = false,
+    })
+
+    local homeUpper = createUIElement(homeTab, "Frame", {
+        Name = "Upper",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(1,0,1,0),
+    })
+
+    local updateBanner = createUIElement(homeUpper, "ImageLabel", {
+        Name = "UPDATE_BANNER1",
+        Image = options.Thumbnail or "rbxassetid://16171568093",
+        ScaleType = Enum.ScaleType.Fit,
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0.4676, 0, 0.155, 0),
+        Size = UDim2.new(0.4831, 0, 0.5338, 0),
+        ZIndex = 1,
+    })
+
+    local header = createUIElement(homeUpper, "TextLabel", {
+        Name = "HEADER",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.2255, 0, 0.2863, 0),
+        Size = UDim2.new(0.3408, 0, 0.2333, 0),
+        Font = Enum.Font.SourceSans,
+        Text = options.Title or [[WELCOME TO
+<font color="#f8042e">BEST FREE</font>
+BLOX FRUIT HUB]],
+        TextColor3 = Color3.new(1,1,1),
+        TextScaled = true,
+        TextWrapped = true,
+        RichText = true,
+        LineHeight = 0.8,
+        ZIndex = 1,
+    })
+
+    local title1 = createUIElement(homeUpper, "TextLabel", {
+        Name = "TITLE1",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.2478, 0, 0.4853, 0),
+        Size = UDim2.new(0.3855, 0, 0.1647, 0),
+        Font = Enum.Font.SourceSans,
+        Text = options.Description or [[Thanks for using our services. 
+We are commited to bring greatest 
+experience to users !]],
+        TextColor3 = Color3.new(1,1,1),
+        TextScaled = true,
+        TextWrapped = true,
+        RichText = true,
+        ZIndex = 1,
+    })
+
+    local socialsButtons = createUIElement(homeUpper, "Frame", {
+        Name = "SOCIALS_BUTTONS",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0.0551, 0, 0.5768, 0),
+        Size = UDim2.new(0.3855, 0, 0.0786, 0),
+    })
+    createListLayout(socialsButtons, UDim.new(0.05,0), Enum.SortOrder.LayoutOrder, Enum.FillDirection.Horizontal, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Top)
+
+    local social1 = createUIElement(socialsButtons, "ImageButton", {
+        Name = "1",
+        Image = "rbxassetid://16171891828",
+        ImageColor3 = Themes.Accent,
+        ScaleType = Enum.ScaleType.Fit,
+        Active = false,
+        BackgroundColor3 = Color3.fromRGB(255, 51, 51),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.0695, 0, 0.5, 0),
+        Size = UDim2.new(0.139, 0, 0.909, 0),
+        ZIndex = 1,
+    })
+    createUIElement(social1, "ImageLabel", {
+        Name = "Hover",
+        Image = "rbxassetid://16171994145",
+        ImageColor3 = Themes.Accent,
+        ImageTransparency = 1,
+        ScaleType = Enum.ScaleType.Fit,
+        BackgroundColor3 = Color3.fromRGB(255, 51, 51),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(2.5, 0, 2.5, 0),
+        ZIndex = 1,
+    })
+
+    local social2 = createUIElement(socialsButtons, "ImageButton", {
+        Name = "2",
+        Image = "rbxassetid://16171897995",
+        ImageColor3 = Themes.Accent,
+        ScaleType = Enum.ScaleType.Fit,
+        Active = false,
+        BackgroundColor3 = Color3.fromRGB(255, 51, 51),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.4749, 0, 0.3161, 0),
+        Size = UDim2.new(0.139, 0, 0.909, 0),
+        ZIndex = 1,
+    })
+    createUIElement(social2, "ImageLabel", {
+        Name = "Hover",
+        Image = "rbxassetid://16171994145",
+        ImageColor3 = Themes.Accent,
+        ImageTransparency = 1,
+        ScaleType = Enum.ScaleType.Fit,
+        BackgroundColor3 = Color3.fromRGB(255, 51, 51),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(2.5, 0, 2.5, 0),
+        ZIndex = 1,
+    })
+
+    local social3 = createUIElement(socialsButtons, "ImageButton", {
+        Name = "3",
+        Image = "rbxassetid://16171900314",
+        ImageColor3 = Themes.Accent,
+        ScaleType = Enum.ScaleType.Fit,
+        Active = false,
+        BackgroundColor3 = Color3.fromRGB(255, 51, 51),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.4475, 0, 0.5, 0),
+        Size = UDim2.new(0.13, 0, 0.8, 0),
+        ZIndex = 1,
+    })
+    createUIElement(social3, "ImageLabel", {
+        Name = "Hover",
+        Image = "rbxassetid://16171994145",
+        ImageColor3 = Themes.Accent,
+        ImageTransparency = 1,
+        ScaleType = Enum.ScaleType.Fit,
+        BackgroundColor3 = Color3.fromRGB(255, 51, 51),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(2.5, 0, 2.5, 0),
+        ZIndex = 1,
+    })
+
+    local homeFunctions = createUIElement(homeUpper, "Frame", {
+        Name = "Functions",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0.001, 0, 0.672, 0),
+        Size = UDim2.new(1, 0, 0.2845, 0),
+    })
+
+    local homePager = createUIElement(homeFunctions, "Frame", {
+        Name = "HOME_PAGER",
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        ClipsDescendants = true,
+        Size = UDim2.new(1, 0, 1, 0),
+    })
+
+    local pagesHolder = createUIElement(homePager, "Frame", {
+        Name = "PAGES_HOLDER",
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Size = UDim2.new(2, 0, 1, 0),
+    })
+
+    local pageShortcuts = createUIElement(pagesHolder, "Frame", {
+        Name = "PAGE_SHORTCUTS",
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Size = UDim2.new(0.5, 0, 1, 0),
+    })
+    createListLayout(pageShortcuts, UDim.new(0.02,0), Enum.SortOrder.LayoutOrder, Enum.FillDirection.Horizontal, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Top)
+
+    local creditsUpper = createUIElement(creditsTab, "Frame", {
+        Name = "Upper",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(1,0,1,0),
+    })
+
+    local pfp = createUIElement(creditsUpper, "ImageLabel", {
+        Name = "Pfp",
+        Image = "rbxassetid://16165550572",
+        ScaleType = Enum.ScaleType.Fit,
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0.2045, 0, 0.2146, 0),
+        Size = UDim2.new(0.2297, 0, 0.2612, 0),
+    })
+    createCorner(pfp, UDim.new(0.075, 0))
+
+    local invitation = createUIElement(creditsUpper, "TextLabel", {
+        Name = "Invitation",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.6217, 0, 0.2631, 0),
+        Size = UDim2.new(0.3757, 0, 0.0972, 0),
+        Font = Enum.Font.SourceSans,
+        Text = [[JOIN OUR <font color="#f8042e">COMMUNITY</font> !]],
+        TextColor3 = Color3.new(1,1,1),
+        TextScaled = true,
+        TextWrapped = true,
+        RichText = true,
+    })
+
+    local mems = createUIElement(creditsUpper, "TextLabel", {
+        Name = "Mems",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.6217, 0, 0.3257, 0),
+        Size = UDim2.new(0.3757, 0, 0.0639, 0),
+        Font = Enum.Font.SourceSans,
+        Text = [[<font color="#f8042e">600K+</font> MEMBERS]],
+        TextColor3 = Color3.new(1,1,1),
+        TextScaled = true,
+        TextWrapped = true,
+        RichText = true,
+    })
+
+    local copyInvite = createUIElement(creditsUpper, "TextButton", {
+        Name = "Copy Invite",
+        BackgroundColor3 = Color3.fromRGB(248, 4, 46),
+        BorderSizePixel = 0,
+        Position = UDim2.new(0.6122, 0, 0.4105, 0),
+        Size = UDim2.new(0.3561, 0, 0.0782, 0),
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        AutoButtonColor = false,
+        Active = false,
+        Selectable = false,
+        Text = "",
+        ZIndex = 1,
+    })
+    createCorner(copyInvite, UDim.new(0.2, 0))
+    createUIElement(copyInvite, "TextLabel", {
+        Name = "Title",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(1, 0, 0.7, 0),
+        Font = Enum.Font.SourceSans,
+        Text = "COPY INVITE",
+        TextColor3 = Color3.new(1,1,1),
+        TextScaled = true,
+        TextWrapped = true,
+    })
+    createUIElement(copyInvite, "ImageLabel", {
+        Name = "Hover",
+        Image = "rbxassetid://16261022724",
+        ImageColor3 = Themes.Accent,
+        ImageTransparency = 1,
+        ScaleType = Enum.ScaleType.Slice,
+        SliceCenter = Rect.new(205, 197, 828, 828),
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(1.08, 0, 1.45, 0),
+    })
+
+    local creditsLabel = createUIElement(creditsUpper, "TextLabel", {
+        Name = "Credits",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5542, 0, 0.5679, 0),
+        Size = UDim2.new(0.6458, 0, 0.132, 0),
+        Font = Enum.Font.SourceSans,
+        Text = [[BIG <font color="#f8042e">THANKS</font> TO OUR CONTRIBUTORS !]],
+        TextColor3 = Color3.new(1,1,1),
+        TextScaled = true,
+        TextWrapped = true,
+        RichText = true,
+    })
+
+    local contributors = createUIElement(creditsUpper, "Frame", {
+        Name = "Contributors",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(1,0,1,0),
+    })
+
+    local scrollFrame = createUIElement(contributors, "ScrollingFrame", {
+        Name = "ScrollFrame",
+        CanvasSize = UDim2.new(0,0,1,0),
+        ScrollBarImageColor3 = Color3.new(0,0,0),
+        ScrollBarThickness = 0,
+        Active = true,
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0.2026, 0, 0.6339, 0),
+        Size = UDim2.new(0.6462, 0, 0.2874, 0),
+    })
+    createListLayout(scrollFrame, UDim.new(0,0), Enum.SortOrder.LayoutOrder, Enum.FillDirection.Vertical, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Top)
+
+    local contributor1 = createUIElement(scrollFrame, "TextLabel", {
+        Name = "label",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.6217, 0, 0.3257, 0),
+        Size = UDim2.new(1, 0, 0.07, 0),
+        Font = Enum.Font.SourceSans,
+        Text = "👑 LongHip12 👑",
+        TextColor3 = Color3.new(1,1,1),
+        TextScaled = true,
+        TextWrapped = true,
+        RichText = true,
+    })
+
+    local contributor2 = createUIElement(scrollFrame, "TextLabel", {
+        Name = "label",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.6217, 0, 0.3257, 0),
+        Size = UDim2.new(1, 0, 0.07, 0),
+        Font = Enum.Font.SourceSans,
+        Text = "Lonely Hub | dsc.gg/lonelyhub",
+        TextColor3 = Color3.new(1,1,1),
+        TextScaled = true,
+        TextWrapped = true,
+        RichText = true,
+    })
+
+    local returnButton = createUIElement(configPages, "TextButton", {
+        Name = "RETURN_BUTTON",
+        BackgroundColor3 = Color3.fromRGB(20,20,20),
+        BackgroundTransparency = 0.5,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0.8671, 0, 0.179, 0),
+        Size = UDim2.new(0.078, 0, 0.1161, 0),
+        ZIndex = 3,
+        AutoButtonColor = false,
+        Active = false,
+        Selectable = false,
+        Text = "",
+    })
+    createCorner(returnButton, UDim.new(0.3, 0))
+    createUIElement(returnButton, "ImageLabel", {
+        Name = "Icon",
+        Image = "rbxassetid://3926305904",
+        ImageRectOffset = Vector2.new(884, 364),
+        ImageRectSize = Vector2.new(36, 36),
+        BackgroundTransparency = 1,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(0.7728, 0, 0.7728, 0),
+        Selectable = true,
+        ZIndex = 2,
+        LayoutOrder = 4,
+    })
+
+    returnButton.MouseButton1Click:Connect(function()
+        self:ShowHome()
     end)
 
+    local searchBox = createUIElement(configPages, "Frame", {
+        Name = "SearchBox",
+        BackgroundColor3 = Color3.fromRGB(20,20,20),
+        BackgroundTransparency = 0.5,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0.055, 0, 0.179, 0),
+        Size = UDim2.new(0.7867, 0, 0.1161, 0),
+        ZIndex = 3,
+    })
+    local searchTextbox = createUIElement(searchBox, "TextBox", {
+        Name = "Textbox",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Font = Enum.Font.SourceSans,
+        PlaceholderText = "SEARCH ...",
+        PlaceholderColor3 = Color3.fromRGB(117,117,117),
+        Text = "",
+        TextColor3 = Color3.new(1,1,1),
+        TextScaled = true,
+        TextWrapped = true,
+        RichText = true,
+        AnchorPoint = Vector2.new(0, 0.5),
+        Position = UDim2.new(0, 0, 0.5, 0),
+        Size = UDim2.new(0.72, 0, 0.5789, 0),
+        Selectable = false,
+        ZIndex = 2,
+    })
+
+    local deepSearchBtn = createUIElement(searchBox, "TextButton", {
+        Name = "DeepSearchBtn",
+        Font = Enum.Font.Bangers,
+        Text = "",
+        TextColor3 = Color3.new(1,1,1),
+        TextScaled = true,
+        TextWrapped = true,
+        AutoButtonColor = false,
+        BackgroundColor3 = Color3.fromRGB(157, 2, 31),
+        BackgroundTransparency = 0.25,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(1, 0.5),
+        Position = UDim2.new(1, -4, 0.5, 0),
+        Size = UDim2.new(0.26, 0, 0.72, 0),
+        ZIndex = 4,
+    })
+    createCorner(deepSearchBtn, UDim.new(0.25, 0))
+    createUIElement(deepSearchBtn, "ImageLabel", {
+        Name = "Icon",
+        Image = "rbxassetid://72965444708833",
+        ScaleType = Enum.ScaleType.Fit,
+        BackgroundTransparency = 1,
+        AnchorPoint = Vector2.new(0, 0.5),
+        Position = UDim2.new(0, 4, 0.5, 0),
+        Size = UDim2.new(1, 0, 1, -6),
+        SizeConstraint = Enum.SizeConstraint.RelativeYY,
+        ZIndex = 5,
+    })
+    createUIElement(deepSearchBtn, "TextLabel", {
+        Name = "Label",
+        Font = Enum.Font.Bangers,
+        Text = "Deep Search",
+        TextColor3 = Color3.new(1,1,1),
+        TextScaled = true,
+        TextWrapped = true,
+        BackgroundTransparency = 1,
+        AnchorPoint = Vector2.new(1, 0.5),
+        Position = UDim2.new(1, -4, 0.5, 0),
+        Size = UDim2.new(0.72, 0, 0.6, 0),
+        ZIndex = 5,
+    })
+
+    local miniConfig1 = createUIElement(configPages, "Frame", {
+        Name = "MINI_1",
+        BackgroundColor3 = Color3.new(0,0,0),
+        BackgroundTransparency = 0.75,
+        BorderSizePixel = 0,
+        ClipsDescendants = true,
+        Position = UDim2.new(0.0549, 0, 0.3371, 0),
+        Size = UDim2.new(0.8901, 0, 0.6019, 0),
+        Visible = false,
+        ZIndex = 3,
+        LayoutOrder = 1,
+    })
+
+    local miniConfig2 = createUIElement(configPages, "Frame", {
+        Name = "MINI_2",
+        BackgroundColor3 = Color3.new(0,0,0),
+        BackgroundTransparency = 0.75,
+        BorderSizePixel = 0,
+        ClipsDescendants = true,
+        Position = UDim2.new(0.0549, 0, 0.3371, 0),
+        Size = UDim2.new(0.8901, 0, 0.6019, 0),
+        Visible = false,
+        ZIndex = 3,
+        LayoutOrder = 2,
+    })
+
+    local miniConfig3 = createUIElement(configPages, "Frame", {
+        Name = "MINI_9_CONFIG_3",
+        BackgroundColor3 = Color3.fromRGB(0,0,0),
+        BackgroundTransparency = 0.75,
+        BorderSizePixel = 0,
+        ClipsDescendants = true,
+        Position = UDim2.new(0.0549, 0, 0.3451, 0),
+        Size = UDim2.new(0.8901, 0, 0.6019, 0),
+        Visible = false,
+        ZIndex = 3,
+        LayoutOrder = 3,
+    })
+
+    local miniConfigScroll1 = createUIElement(miniConfig1, "ScrollingFrame", {
+        Name = "ScrollFrame",
+        AutomaticCanvasSize = Enum.AutomaticSize.Y,
+        CanvasSize = UDim2.new(0,0,0,0),
+        ScrollBarThickness = 0,
+        BackgroundColor3 = Color3.new(0,0,0),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        ClipsDescendants = false,
+        Position = UDim2.new(0.0217, 0, 0.0537, 0),
+        Size = UDim2.new(0.9653, 0, 0.9463, 0),
+        Selectable = false,
+        ZIndex = 3,
+    })
+    createGridLayout(miniConfigScroll1, UDim2.new(0.475,0,0.175,0), UDim2.new(0.0325,0,0.03,0), Enum.SortOrder.LayoutOrder)
+
+    local miniConfig2Scroll = createUIElement(miniConfig2, "ScrollingFrame", {
+        Name = "ScrollFrame",
+        AutomaticCanvasSize = Enum.AutomaticSize.Y,
+        CanvasSize = UDim2.new(0,0,0,0),
+        ScrollBarThickness = 0,
+        BackgroundColor3 = Color3.new(0,0,0),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        ClipsDescendants = false,
+        Position = UDim2.new(0.0217, 0, 0.0537, 0),
+        Size = UDim2.new(0.9653, 0, 0.9463, 0),
+        Selectable = false,
+        ZIndex = 3,
+    })
+    createGridLayout(miniConfig2Scroll, UDim2.new(0.475,0,0.175,0), UDim2.new(0.0325,0,0.03,0), Enum.SortOrder.LayoutOrder)
+
+    local miniConfig3Scroll = createUIElement(miniConfig3, "ScrollingFrame", {
+        Name = "ScrollFrame",
+        AutomaticCanvasSize = Enum.AutomaticSize.Y,
+        CanvasSize = UDim2.new(0,0,0,0),
+        ScrollBarThickness = 0,
+        BackgroundColor3 = Color3.new(0,0,0),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        ClipsDescendants = false,
+        Position = UDim2.new(0.0217, 0, 0.0537, 0),
+        Size = UDim2.new(0.9653, 0, 0.9463, 0),
+        Selectable = false,
+        ZIndex = 3,
+    })
+    createGridLayout(miniConfig3Scroll, UDim2.new(0.475,0,0.175,0), UDim2.new(0.0325,0,0.03,0), Enum.SortOrder.LayoutOrder)
+
+    local windowObj = setmetatable({
+        _screenGui = screenGui,
+        _mainFrame = mainFrame,
+        _configPages = configPages,
+        _miniPages = miniPages,
+        _homeTab = homeTab,
+        _creditsTab = creditsTab,
+        _miniConfig1 = miniConfig1,
+        _miniConfig2 = miniConfig2,
+        _miniConfig3 = miniConfig3,
+        _miniConfig1Scroll = miniConfig1Scroll,
+        _miniConfig2Scroll = miniConfig2Scroll,
+        _miniConfig3Scroll = miniConfig3Scroll,
+        _topHome = topHome,
+        _topPages = topPages,
+        _topCredits = topCredits,
+        _pageShortcuts = pageShortcuts,
+        _social1 = social1,
+        _social2 = social2,
+        _social3 = social3,
+        _copyInvite = copyInvite,
+        _tabs = {},
+        _tabObjects = {},
+        _activeTab = nil,
+        _homepageSet = false,
+        _youtube = options.Youtube or "",
+        _tiktok = options.Tiktok or "",
+        _discord = options.Discord or "",
+    }, Window)
+
+    topHome.MouseButton1Click:Connect(function()
+        windowObj:ShowHome()
+    end)
+
+    topCredits.MouseButton1Click:Connect(function()
+        windowObj:ShowCredits()
+    end)
+
+    social1.MouseButton1Click:Connect(function()
+        if windowObj._discord ~= "" then
+            setclipboard(windowObj._discord)
+        end
+    end)
+
+    social2.MouseButton1Click:Connect(function()
+        if windowObj._youtube ~= "" then
+            setclipboard(windowObj._youtube)
+        end
+    end)
+
+    social3.MouseButton1Click:Connect(function()
+        if windowObj._tiktok ~= "" then
+            setclipboard(windowObj._tiktok)
+        end
+    end)
+
+    copyInvite.MouseButton1Click:Connect(function()
+        if windowObj._discord ~= "" then
+            setclipboard(windowObj._discord)
+        end
+    end)
+
+    topPages.MouseButton1Click:Connect(function()
+        if not windowObj._homepageSet then
+            print("Error: Please set homepage shortcuts first using SetHomepageShortcut")
+            return
+        end
+        windowObj:ShowPages()
+    end)
+
+    deepSearchBtn.MouseButton1Click:Connect(function()
+        local query = searchTextbox.Text
+        if query == "" then
+            return
+        end
+        for _, tab in pairs(windowObj._tabs) do
+            if tab._miniConfig then
+                local visible = false
+                local titleLabel = tab._miniConfig:FindFirstChild("Title")
+                local descLabel = tab._miniConfig:FindFirstChild("Desc")
+                if titleLabel and string.lower(titleLabel.Text):find(string.lower(query)) then
+                    visible = true
+                end
+                if descLabel and string.lower(descLabel.Text):find(string.lower(query)) then
+                    visible = true
+                end
+                tab._miniConfig.Visible = visible
+            end
+        end
+    end)
+
+    return windowObj
+end
+
+function Window:ShowHome()
+    self._homeTab.Visible = true
+    self._creditsTab.Visible = false
+    self._configPages.Visible = false
+    self._miniPages.Visible = false
+    for _, tab in pairs(self._tabs) do
+        if tab._miniConfig then
+            tab._miniConfig.Visible = false
+        end
+    end
+end
+
+function Window:ShowCredits()
+    self._homeTab.Visible = false
+    self._creditsTab.Visible = true
+    self._configPages.Visible = false
+    self._miniPages.Visible = false
+    for _, tab in pairs(self._tabs) do
+        if tab._miniConfig then
+            tab._miniConfig.Visible = false
+        end
+    end
+end
+
+function Window:ShowPages()
+    self._homeTab.Visible = false
+    self._creditsTab.Visible = false
+    self._configPages.Visible = true
+    self._miniPages.Visible = true
+end
+
+function Window:SetHomepageShortcut(tab1, tab2, tab3)
+    if not tab1 or not tab2 or not tab3 then
+        print("Error: SetHomepageShortcut requires exactly 3 tabs")
+        return
+    end
+    self._tabs = {tab1, tab2, tab3}
+    self._tabObjects = {tab1, tab2, tab3}
+    self._homepageSet = true
+
+    local shortcuts = self._pageShortcuts:GetChildren()
+    local shortcutIndex = 1
+    for _, child in ipairs(shortcuts) do
+        if child:IsA("TextButton") and child.Name == "HOMEPAGE_BUTTON" then
+            local tab = self._tabs[shortcutIndex]
+            if tab then
+                child.MouseButton1Click:Connect(function()
+                    self:SelectTab(tab)
+                end)
+                shortcutIndex = shortcutIndex + 1
+            end
+        end
+    end
+
+    self:ShowHome()
+end
+
+function Window:AddTab(options)
+    options = options or {}
+    local tab = {
+        Title = options.Title or "Tab",
+        Description = options.Description or "",
+        Image = options.Image or "",
+        Side = options.Side or "Left",
+        _elements = {},
+        _parent = self,
+        _miniConfig = nil,
+        _active = false,
+    }
     table.insert(self._tabs, tab)
-
-    if #self._tabs == 1 then
-        content.Visible = true
-        label.TextColor3 = _theme.Text
-        self._currentTab = tab
-    end
-
-    for i, t in ipairs(self._tabs) do
-        t._button.Position = UDim2.new((i - 1) * 0.2, 0, 0, 0)
-    end
-
     return tab
 end
 
-function Window:SetMainTab(tab1, tab2, tab3)
-    if not tab1 or not tab2 or not tab3 then
-        warn("SetMainTab requires 3 tabs!")
+function Window:SelectTab(tab)
+    if not self._homepageSet then
+        print("Error: Please set homepage shortcuts first using SetHomepageShortcut")
         return
     end
-end
 
-function Tab:AddSection(config)
-    local section = {}
-    section._config = config or {}
-    section._elements = {}
-    section._tab = self
+    self:ShowPages()
 
-    local frame = Create("Frame", {
-        Name = "Section_" .. (#self._sections + 1),
-        Parent = self._scrollFrame,
-        Size = UDim2.new(1, -10, 0, 60),
-        Position = UDim2.new(0, 5, 0, 0),
-        BackgroundColor3 = _theme.Secondary,
-        BackgroundTransparency = 0.5,
-        BorderSizePixel = 0,
-        ClipsDescendants = true,
-        LayoutOrder = #self._sections + 1,
-        ZIndex = 3
-    })
-
-    Create("UICorner", {
-        Parent = frame,
-        CornerRadius = UDim.new(0.075, 0)
-    })
-
-    local stroke = Create("UIStroke", {
-        Parent = frame,
-        Color = _theme.Border,
-        Thickness = 2.5,
-        Transparency = 0.7
-    })
-
-    local titleLabel = CreateText("TextLabel", config.Title or "Section", frame)
-    titleLabel.Position = UDim2.new(0.02, 0, 0.1, 0)
-    titleLabel.TextColor3 = _theme.Text
-    titleLabel.TextSize = 16
-    titleLabel.Font = Enum.Font.GothamBold
-    titleLabel.Size = UDim2.new(0.6, 0, 0.3, 0)
-    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-    if config.Description then
-        local desc = CreateText("TextLabel", config.Description, frame)
-        desc.Position = UDim2.new(0.02, 0, 0.35, 0)
-        desc.TextColor3 = _theme.SubText
-        desc.TextSize = 12
-        desc.Font = Enum.Font.Gotham
-        desc.Size = UDim2.new(0.6, 0, 0.2, 0)
-        desc.TextXAlignment = Enum.TextXAlignment.Left
-    end
-
-    local elementContainer = Create("Frame", {
-        Name = "Elements",
-        Parent = frame,
-        Size = UDim2.new(1, 0, 1, -30),
-        Position = UDim2.new(0, 0, 0.45, 0),
-        BackgroundTransparency = 1,
-        ClipsDescendants = true
-    })
-
-    local elementLayout = Create("UIListLayout", {
-        Parent = elementContainer,
-        SortOrder = Enum.SortOrder.LayoutOrder,
-        Padding = UDim.new(0, 2)
-    })
-
-    section._frame = frame
-    section._elementContainer = elementContainer
-    section._elementLayout = elementLayout
-    section._titleLabel = titleLabel
-
-    table.insert(self._sections, section)
-
-    local function updateHeight()
-        local count = #section._elements
-        local height = 60 + count * 25
-        frame.Size = UDim2.new(1, -10, 0, height)
-    end
-
-    section._updateHeight = updateHeight
-
-    return section
-end
-
-function Section:AddCheckbox(config)
-    local element = {}
-    element._config = config or {}
-    element._section = self
-    element._value = config.Default or false
-
-    local frame = Create("Frame", {
-        Name = "Checkbox_" .. (#self._elements + 1),
-        Parent = self._elementContainer,
-        Size = UDim2.new(1, 0, 0, 20),
-        BackgroundTransparency = 1,
-        LayoutOrder = #self._elements + 1
-    })
-
-    local title = CreateText("TextLabel", config.Title or "Checkbox", frame)
-    title.Size = UDim2.new(0.7, 0, 1, 0)
-    title.TextXAlignment = Enum.TextXAlignment.Left
-    title.TextColor3 = _theme.Text
-    title.TextSize = 13
-    title.Font = Enum.Font.Gotham
-
-    local toggleFrame = Create("Frame", {
-        Parent = frame,
-        Size = UDim2.new(0.14, 0, 0.75, 0),
-        Position = UDim2.new(0.85, 0, 0.125, 0),
-        BackgroundColor3 = _theme.Secondary,
-        BackgroundTransparency = 0.5,
-        BorderSizePixel = 0,
-        ZIndex = 5
-    })
-    Create("UICorner", {
-        Parent = toggleFrame,
-        CornerRadius = UDim.new(0.3, 0)
-    })
-
-    local indicator = Create("Frame", {
-        Parent = toggleFrame,
-        Size = UDim2.new(0.9, 0, 0.9, 0),
-        Position = UDim2.new(0.05, 0, 0.05, 0),
-        BackgroundColor3 = _theme.Accent,
-        BackgroundTransparency = element._value and 0 or 0.5,
-        BorderSizePixel = 0
-    })
-    Create("UICorner", {
-        Parent = indicator,
-        CornerRadius = UDim.new(0.3, 0)
-    })
-
-    local function setValue(val)
-        element._value = val
-        indicator.BackgroundTransparency = val and 0 or 0.5
-        if config.Callback then
-            config.Callback(val)
+    for _, t in pairs(self._tabs) do
+        if t == tab then
+            t._active = true
+            self._activeTab = tab
+            if t._miniConfig then
+                t._miniConfig.Visible = true
+            end
+        else
+            if t._miniConfig then
+                t._miniConfig.Visible = false
+            end
+            t._active = false
         end
     end
 
-    local button = Create("TextButton", {
-        Parent = frame,
-        Size = UDim2.new(1, 0, 1, 0),
-        Position = UDim2.new(0, 0, 0, 0),
-        BackgroundTransparency = 1,
+    self._configPages.Visible = true
+    self._miniPages.Visible = true
+end
+
+function Window:CreateSectionFrame(parent, title, description, image, side)
+    local frame = createUIElement(parent, "TextButton", {
+        Name = "Button",
+        BackgroundColor3 = Color3.fromRGB(20, 20, 20),
+        BackgroundTransparency = 0.5,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0.3634, 0, 0.1283, 0),
+        Size = UDim2.new(0.2906, 0, 0.2725, 0),
+        LayoutOrder = #parent:GetChildren() + 1,
+        AutoButtonColor = false,
+        Active = false,
+        Selectable = false,
         Text = "",
-        ZIndex = 6
+        ZIndex = 1,
     })
-
-    button.MouseButton1Click:Connect(function()
-        setValue(not element._value)
-    end)
-
-    element._frame = frame
-    element._setValue = setValue
-
-    table.insert(self._elements, element)
-    self._updateHeight()
-
-    return element
-end
-
-function Section:AddSlider(config)
-    local element = {}
-    element._config = config or {}
-    element._section = self
-    element._value = config.Default or 0
-    element._min = config.Min or 0
-    element._max = config.Max or 100
-    element._increase = config.Increase or 1
-
-    local frame = Create("Frame", {
-        Name = "Slider_" .. (#self._elements + 1),
-        Parent = self._elementContainer,
-        Size = UDim2.new(1, 0, 0, 35),
-        BackgroundTransparency = 1,
-        LayoutOrder = #self._elements + 1
-    })
-
-    local title = CreateText("TextLabel", config.Title or "Slider", frame)
-    title.Size = UDim2.new(0.7, 0, 0.4, 0)
-    title.Position = UDim2.new(0, 0, 0, 0)
-    title.TextXAlignment = Enum.TextXAlignment.Left
-    title.TextColor3 = _theme.Text
-    title.TextSize = 13
-    title.Font = Enum.Font.Gotham
-
-    local valueLabel = CreateText("TextLabel", tostring(element._value), frame)
-    valueLabel.Size = UDim2.new(0.2, 0, 0.4, 0)
-    valueLabel.Position = UDim2.new(0.8, 0, 0, 0)
-    valueLabel.TextXAlignment = Enum.TextXAlignment.Right
-    valueLabel.TextColor3 = _theme.Text
-    valueLabel.TextSize = 13
-    valueLabel.Font = Enum.Font.Gotham
-
-    local sliderFrame = Create("Frame", {
-        Parent = frame,
-        Size = UDim2.new(0.9, 0, 0.3, 0),
-        Position = UDim2.new(0.05, 0, 0.5, 0),
-        BackgroundColor3 = _theme.SliderBackground,
-        BackgroundTransparency = 0.8,
-        BorderSizePixel = 0
-    })
-    Create("UICorner", {
-        Parent = sliderFrame,
-        CornerRadius = UDim.new(1, 10)
-    })
-
-    local fill = Create("Frame", {
-        Parent = sliderFrame,
-        Size = UDim2.new((element._value - element._min) / (element._max - element._min), 0, 1, 0),
-        Position = UDim2.new(0, 0, 0, 0),
-        BackgroundColor3 = _theme.SliderFill,
-        BorderSizePixel = 0
-    })
-    Create("UICorner", {
-        Parent = fill,
-        CornerRadius = UDim.new(1, 10)
-    })
-
-    local function setValue(val)
-        val = math.clamp(val, element._min, element._max)
-        val = math.round(val / element._increase) * element._increase
-        element._value = val
-        valueLabel.Text = tostring(val)
-        fill.Size = UDim2.new((val - element._min) / (element._max - element._min), 0, 1, 0)
-        if config.Callback then
-            config.Callback(val)
-        end
-    end
-
-    local dragging = false
-    local sliderButton = Create("TextButton", {
-        Parent = sliderFrame,
-        Size = UDim2.new(1, 0, 5, 0),
-        Position = UDim2.new(0, 0, -2, 0),
-        BackgroundTransparency = 1,
-        Text = "",
-        ZIndex = 2
-    })
-
-    sliderButton.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-        end
-    end)
-
-    sliderButton.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = false
-        end
-    end)
-
-    sliderButton.InputChanged:Connect(function(input)
-        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-            local scale = math.clamp((input.Position.X - sliderFrame.AbsolutePosition.X) / sliderFrame.AbsoluteSize.X, 0, 1)
-            setValue(element._min + scale * (element._max - element._min))
-        end
-    end)
-
-    element._frame = frame
-    element._setValue = setValue
-
-    table.insert(self._elements, element)
-    self._updateHeight()
-
-    return element
-end
-
-function Section:AddDropdown(config)
-    local element = {}
-    element._config = config or {}
-    element._section = self
-    element._values = config.Values or {}
-    element._multi = config.Multi or false
-    element._selected = {}
-    element._default = config.Default or element._values[1] or ""
-
-    local frame = Create("Frame", {
-        Name = "Dropdown_" .. (#self._elements + 1),
-        Parent = self._elementContainer,
-        Size = UDim2.new(1, 0, 0, 25),
-        BackgroundTransparency = 1,
-        LayoutOrder = #self._elements + 1
-    })
-
-    local title = CreateText("TextLabel", config.Title or "Dropdown", frame)
-    title.Size = UDim2.new(0.4, 0, 1, 0)
-    title.TextXAlignment = Enum.TextXAlignment.Left
-    title.TextColor3 = _theme.Text
-    title.TextSize = 13
-    title.Font = Enum.Font.Gotham
-
-    local dropdownFrame = Create("Frame", {
-        Parent = frame,
-        Size = UDim2.new(0.5, 0, 0.8, 0),
-        Position = UDim2.new(0.45, 0, 0.1, 0),
-        BackgroundColor3 = _theme.Secondary,
-        BackgroundTransparency = 0.5,
-        BorderSizePixel = 0,
-        ZIndex = 3,
-        ClipsDescendants = true
-    })
-    Create("UICorner", {
-        Parent = dropdownFrame,
-        CornerRadius = UDim.new(0.3, 0)
-    })
-
-    local selectedText = CreateText("TextLabel", element._default, dropdownFrame)
-    selectedText.TextXAlignment = Enum.TextXAlignment.Left
-    selectedText.TextColor3 = _theme.Text
-    selectedText.TextSize = 13
-    selectedText.Size = UDim2.new(0.85, 0, 1, 0)
-    selectedText.Position = UDim2.new(0.05, 0, 0, 0)
-
-    local arrow = CreateText("TextLabel", "▼", dropdownFrame)
-    arrow.TextXAlignment = Enum.TextXAlignment.Right
-    arrow.TextColor3 = _theme.SubText
-    arrow.TextSize = 12
-    arrow.Size = UDim2.new(0.15, 0, 1, 0)
-    arrow.Position = UDim2.new(0.85, 0, 0, 0)
-
-    local dropdownList = Create("ScrollingFrame", {
-        Parent = dropdownFrame,
-        Size = UDim2.new(1, 0, 0, 100),
-        Position = UDim2.new(0, 0, 1, 0),
-        BackgroundColor3 = _theme.Secondary,
-        BackgroundTransparency = 0.9,
-        BorderSizePixel = 0,
-        Visible = false,
-        ZIndex = 10,
-        CanvasSize = UDim2.new(0, 0, 0, 0),
-        ScrollBarThickness = 2,
-        AutomaticCanvasSize = Enum.AutomaticSize.Y,
-        ClipsDescendants = true
-    })
-    Create("UICorner", {
-        Parent = dropdownList,
-        CornerRadius = UDim.new(0.3, 0)
-    })
-
-    local listLayout = Create("UIListLayout", {
-        Parent = dropdownList,
-        SortOrder = Enum.SortOrder.LayoutOrder,
-        Padding = UDim.new(0, 2)
-    })
-
-    local function updateList()
-        for _, child in ipairs(dropdownList:GetChildren()) do
-            if child:IsA("TextButton") then
-                child:Destroy()
-            end
-        end
-
-        for _, value in ipairs(element._values) do
-            local item = Create("TextButton", {
-                Parent = dropdownList,
-                Size = UDim2.new(1, 0, 0, 20),
-                BackgroundTransparency = 1,
-                Text = "",
-                ZIndex = 11
-            })
-
-            local label = CreateText("TextLabel", value, item)
-            label.TextXAlignment = Enum.TextXAlignment.Left
-            label.TextColor3 = _theme.Text
-            label.TextSize = 13
-            label.Font = Enum.Font.Gotham
-            label.Size = UDim2.new(0.9, 0, 1, 0)
-            label.Position = UDim2.new(0.05, 0, 0, 0)
-
-            local check = Create("Frame", {
-                Parent = item,
-                Size = UDim2.new(0.1, 0, 0.6, 0),
-                Position = UDim2.new(0.9, 0, 0.2, 0),
-                BackgroundColor3 = _theme.Accent,
-                BackgroundTransparency = 0.7,
-                BorderSizePixel = 0,
-                Visible = element._multi and table.find(element._selected, value) ~= nil or (not element._multi and element._selected[1] == value)
-            })
-            Create("UICorner", {
-                Parent = check,
-                CornerRadius = UDim.new(0.2, 0)
-            })
-
-            item.MouseButton1Click:Connect(function()
-                if element._multi then
-                    local idx = table.find(element._selected, value)
-                    if idx then
-                        table.remove(element._selected, idx)
-                    else
-                        table.insert(element._selected, value)
-                    end
-                else
-                    element._selected = {value}
-                    selectedText.Text = value
-                    dropdownList.Visible = false
-                end
-                updateList()
-                if config.Callback then
-                    config.Callback(element._multi and element._selected or element._selected[1])
-                end
-            end)
-        end
-    end
-
-    if element._multi then
-        element._selected = {}
-    else
-        element._selected = {element._default}
-    end
-
-    local function toggleDropdown()
-        dropdownList.Visible = not dropdownList.Visible
-        if dropdownList.Visible then
-            updateList()
-            local count = #element._values
-            local height = math.min(count * 22, 120)
-            dropdownList.Size = UDim2.new(1, 0, 0, height)
-        end
-    end
-
-    dropdownFrame.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            toggleDropdown()
-        end
-    end)
-
-    element._frame = frame
-
-    table.insert(self._elements, element)
-    self._updateHeight()
-
-    return element
-end
-
-function Section:AddInput(config)
-    local element = {}
-    element._config = config or {}
-    element._section = self
-    element._value = config.Default or ""
-
-    local frame = Create("Frame", {
-        Name = "Input_" .. (#self._elements + 1),
-        Parent = self._elementContainer,
-        Size = UDim2.new(1, 0, 0, 25),
-        BackgroundTransparency = 1,
-        LayoutOrder = #self._elements + 1
-    })
-
-    local title = CreateText("TextLabel", config.Title or "Input", frame)
-    title.Size = UDim2.new(0.4, 0, 1, 0)
-    title.TextXAlignment = Enum.TextXAlignment.Left
-    title.TextColor3 = _theme.Text
-    title.TextSize = 13
-    title.Font = Enum.Font.Gotham
-
-    local inputFrame = Create("Frame", {
-        Parent = frame,
-        Size = UDim2.new(0.5, 0, 0.8, 0),
-        Position = UDim2.new(0.45, 0, 0.1, 0),
-        BackgroundColor3 = _theme.Secondary,
-        BackgroundTransparency = 0.5,
-        BorderSizePixel = 0
-    })
-    Create("UICorner", {
-        Parent = inputFrame,
-        CornerRadius = UDim.new(0.3, 0)
-    })
-    Create("UIStroke", {
-        Parent = inputFrame,
-        Color = _theme.Border,
-        Thickness = 1.5,
-        Transparency = 0.7
-    })
-
-    local textBox = Create("TextBox", {
-        Parent = inputFrame,
-        Size = UDim2.new(1, 0, 1, 0),
-        Position = UDim2.new(0, 0, 0, 0),
-        BackgroundTransparency = 1,
-        Text = element._value,
-        PlaceholderText = config.Placeholder or "Type here...",
-        TextColor3 = _theme.Text,
-        PlaceholderColor3 = _theme.SubText,
-        TextSize = 13,
-        Font = Enum.Font.Gotham,
-        ClearTextOnFocus = false,
-        TextXAlignment = Enum.TextXAlignment.Left,
-        TextYAlignment = Enum.TextYAlignment.Center
-    })
-
-    textBox:GetPropertyChangedSignal("Text"):Connect(function()
-        element._value = textBox.Text
-        if config.Callback then
-            config.Callback(element._value)
-        end
-    end)
-
-    element._frame = frame
-    element._textBox = textBox
-
-    table.insert(self._elements, element)
-    self._updateHeight()
-
-    return element
-end
-
-function Section:AddButton(config)
-    local element = {}
-    element._config = config or {}
-    element._section = self
-
-    local frame = Create("Frame", {
-        Name = "Button_" .. (#self._elements + 1),
-        Parent = self._elementContainer,
-        Size = UDim2.new(1, 0, 0, 25),
-        BackgroundTransparency = 1,
-        LayoutOrder = #self._elements + 1
-    })
-
-    local button = Create("TextButton", {
-        Parent = frame,
-        Size = UDim2.new(0.3, 0, 0.9, 0),
-        Position = UDim2.new(0.35, 0, 0.05, 0),
-        BackgroundColor3 = _theme.Secondary,
-        BackgroundTransparency = 0.3,
-        BorderSizePixel = 0,
-        Text = config.Title or "Button",
-        TextColor3 = _theme.Text,
-        TextSize = 14,
-        Font = Enum.Font.GothamBold,
-        ZIndex = 4
-    })
-    Create("UICorner", {
-        Parent = button,
-        CornerRadius = UDim.new(0.3, 0)
-    })
-
-    local hover = Create("Frame", {
-        Parent = button,
-        Size = UDim2.new(1, 0, 1, 0),
-        Position = UDim2.new(0, 0, 0, 0),
-        BackgroundColor3 = _theme.Accent,
-        BackgroundTransparency = 0.95,
-        BorderSizePixel = 0
-    })
-    Create("UICorner", {
-        Parent = hover,
-        CornerRadius = UDim.new(0.3, 0)
-    })
-
-    button.MouseEnter:Connect(function()
-        hover.BackgroundTransparency = 0.85
-    end)
-
-    button.MouseLeave:Connect(function()
-        hover.BackgroundTransparency = 0.95
-    end)
-
-    button.MouseButton1Click:Connect(function()
-        if config.Callback then
-            config.Callback()
-        end
-    end)
-
-    element._frame = frame
-
-    table.insert(self._elements, element)
-    self._updateHeight()
-
-    return element
-end
-
-function Section:AddButtonGroup(config)
-    local element = {}
-    element._config = config or {}
-    element._section = self
-
-    local frame = Create("Frame", {
-        Name = "ButtonGroup_" .. (#self._elements + 1),
-        Parent = self._elementContainer,
-        Size = UDim2.new(1, 0, 0, 35),
-        BackgroundTransparency = 1,
-        LayoutOrder = #self._elements + 1
-    })
-
-    local title = CreateText("TextLabel", config.Title or "Actions", frame)
-    title.Size = UDim2.new(0.4, 0, 0.5, 0)
-    title.Position = UDim2.new(0, 0, 0, 0)
-    title.TextXAlignment = Enum.TextXAlignment.Left
-    title.TextColor3 = _theme.Text
-    title.TextSize = 13
-    title.Font = Enum.Font.Gotham
-
-    local groupFrame = Create("Frame", {
-        Parent = frame,
-        Size = UDim2.new(0.55, 0, 0.6, 0),
-        Position = UDim2.new(0.42, 0, 0.25, 0),
-        BackgroundTransparency = 1
-    })
-
-    local layout = Create("UIListLayout", {
-        Parent = groupFrame,
-        FillDirection = Enum.FillDirection.Horizontal,
-        HorizontalAlignment = Enum.HorizontalAlignment.Center,
-        VerticalAlignment = Enum.VerticalAlignment.Center,
-        Padding = UDim.new(0, 5)
-    })
-
-    for i, btnConfig in ipairs(config.Buttons or {}) do
-        local button = Create("TextButton", {
-            Parent = groupFrame,
-            Size = UDim2.new(0, 50, 1, 0),
-            BackgroundColor3 = _theme.Accent,
-            BackgroundTransparency = 0.3,
-            BorderSizePixel = 0,
-            Text = btnConfig.Title or "Button",
-            TextColor3 = _theme.Text,
-            TextSize = 12,
-            Font = Enum.Font.GothamBold
-        })
-        Create("UICorner", {
-            Parent = button,
-            CornerRadius = UDim.new(0.2, 0)
-        })
-
-        button.MouseButton1Click:Connect(function()
-            if btnConfig.Callback then
-                btnConfig.Callback()
-            end
-        end)
-    end
-
-    element._frame = frame
-
-    table.insert(self._elements, element)
-    self._updateHeight()
-
-    return element
-end
-
-function Section:AddLabel(config)
-    local element = {}
-    element._config = config or {}
-    element._section = self
-
-    local frame = Create("Frame", {
-        Name = "Label_" .. (#self._elements + 1),
-        Parent = self._elementContainer,
-        Size = UDim2.new(1, 0, 0, 20),
-        BackgroundTransparency = 1,
-        LayoutOrder = #self._elements + 1
-    })
-
-    local label = CreateText("TextLabel", config.Title or "Label", frame)
-    label.TextXAlignment = config.Side == "Right" and Enum.TextXAlignment.Right or Enum.TextXAlignment.Left
-    label.TextColor3 = _theme.Text
-    label.TextSize = 13
-    label.Font = Enum.Font.Gotham
-
-    element._frame = frame
-
-    table.insert(self._elements, element)
-    self._updateHeight()
-
-    return element
-end
-
-function Section:AddParagraph(config)
-    local element = {}
-    element._config = config or {}
-    element._section = self
-
-    local frame = Create("Frame", {
-        Name = "Paragraph_" .. (#self._elements + 1),
-        Parent = self._elementContainer,
-        Size = UDim2.new(1, 0, 0, 40),
-        BackgroundTransparency = 1,
-        LayoutOrder = #self._elements + 1,
-        ClipsDescendants = true
-    })
-
-    local label = CreateText("TextLabel", config.Title or "Paragraph", frame)
-    label.TextXAlignment = config.Side == "Right" and Enum.TextXAlignment.Right or Enum.TextXAlignment.Left
-    label.TextColor3 = _theme.Text
-    label.TextSize = 12
-    label.Font = Enum.Font.Gotham
-    label.TextWrapped = true
-    label.Size = UDim2.new(1, 0, 1, 0)
-
-    element._frame = frame
-
-    table.insert(self._elements, element)
-    self._updateHeight()
-
-    return element
-end
-
-function Section:AddImageLabel(config)
-    local element = {}
-    element._config = config or {}
-    element._section = self
-
-    local frame = Create("Frame", {
-        Name = "ImageLabel_" .. (#self._elements + 1),
-        Parent = self._elementContainer,
-        Size = UDim2.new(1, 0, 0, 60),
-        BackgroundTransparency = 1,
-        LayoutOrder = #self._elements + 1
-    })
-
-    local image = Create("ImageLabel", {
-        Parent = frame,
-        Size = UDim2.new(0, 50, 0, 50),
-        Position = UDim2.new(0.5, -25, 0, 0),
-        BackgroundTransparency = 1,
-        Image = config.Image or "rbxassetid://112485471724320",
-        ScaleType = Enum.ScaleType.Fit
-    })
-
-    local label = CreateText("TextLabel", config.Title or "Image", frame)
-    label.Position = UDim2.new(0, 0, 0, 50)
-    label.TextXAlignment = Enum.TextXAlignment.Center
-    label.TextColor3 = _theme.SubText
-    label.TextSize = 12
-    label.Font = Enum.Font.Gotham
-
-    element._frame = frame
-
-    table.insert(self._elements, element)
-    self._updateHeight()
-
-    return element
-end
-
-function Section:AddSelector(config)
-    local element = {}
-    element._config = config or {}
-    element._section = self
-
-    local frame = Create("Frame", {
-        Name = "Selector_" .. (#self._elements + 1),
-        Parent = self._elementContainer,
-        Size = UDim2.new(1, 0, 0, 60),
-        BackgroundTransparency = 1,
-        LayoutOrder = #self._elements + 1,
-        ClipsDescendants = true
-    })
-
-    local title = CreateText("TextLabel", config.Title or "Select", frame)
-    title.Size = UDim2.new(1, 0, 0.2, 0)
-    title.Position = UDim2.new(0.02, 0, 0, 0)
-    title.TextXAlignment = Enum.TextXAlignment.Left
-    title.TextColor3 = _theme.Text
-    title.TextSize = 14
-    title.Font = Enum.Font.GothamBold
-
-    local scroll = Create("ScrollingFrame", {
-        Parent = frame,
-        Size = UDim2.new(1, 0, 0.7, 0),
-        Position = UDim2.new(0, 0, 0.3, 0),
-        BackgroundTransparency = 1,
-        BorderSizePixel = 0,
-        CanvasSize = UDim2.new(0, 0, 0, 0),
-        ScrollBarThickness = 0,
-        AutomaticCanvasSize = Enum.AutomaticSize.Y
-    })
-
-    local layout = Create("UIListLayout", {
-        Parent = scroll,
-        SortOrder = Enum.SortOrder.LayoutOrder,
-        Padding = UDim.new(0, 2)
-    })
-
-    for i, value in ipairs(config.Values or {}) do
-        local btn = Create("TextButton", {
-            Parent = scroll,
-            Size = UDim2.new(1, 0, 0, 20),
-            BackgroundTransparency = 1,
-            Text = "",
-            LayoutOrder = i
-        })
-
-        local label = CreateText("TextLabel", value, btn)
-        label.TextXAlignment = Enum.TextXAlignment.Left
-        label.TextColor3 = _theme.Text
-        label.TextSize = 13
-        label.Font = Enum.Font.Gotham
-
-        btn.MouseButton1Click:Connect(function()
-            if config.Callback then
-                config.Callback(value)
-            end
-        end)
-    end
-
-    element._frame = frame
-
-    table.insert(self._elements, element)
-    self._updateHeight()
-
-    return element
-end
-
-function Section:AddColorPicker(config)
-    local element = {}
-    element._config = config or {}
-    element._section = self
-    element._value = config.Default or Color3.fromRGB(255, 255, 255)
-
-    local frame = Create("Frame", {
-        Name = "ColorPicker_" .. (#self._elements + 1),
-        Parent = self._elementContainer,
-        Size = UDim2.new(1, 0, 0, 30),
-        BackgroundTransparency = 1,
-        LayoutOrder = #self._elements + 1
-    })
-
-    local title = CreateText("TextLabel", config.Title or "Color", frame)
-    title.Size = UDim2.new(0.6, 0, 1, 0)
-    title.TextXAlignment = Enum.TextXAlignment.Left
-    title.TextColor3 = _theme.Text
-    title.TextSize = 13
-    title.Font = Enum.Font.Gotham
-
-    local colorDisplay = Create("Frame", {
-        Parent = frame,
-        Size = UDim2.new(0.08, 0, 0.7, 0),
-        Position = UDim2.new(0.62, 0, 0.15, 0),
-        BackgroundColor3 = element._value,
-        BorderSizePixel = 1,
-        BorderColor3 = _theme.Border,
-        ZIndex = 2
-    })
-    Create("UICorner", {
-        Parent = colorDisplay,
-        CornerRadius = UDim.new(0.2, 0)
-    })
-
-    local pickerFrame = Create("Frame", {
-        Parent = frame,
-        Size = UDim2.new(0.3, 0, 0, 150),
-        Position = UDim2.new(0.7, 0, 1, 0),
-        BackgroundColor3 = _theme.Secondary,
-        BackgroundTransparency = 0.05,
-        BorderSizePixel = 0,
-        Visible = false,
-        ZIndex = 10,
-        ClipsDescendants = true
-    })
-    Create("UICorner", {
-        Parent = pickerFrame,
-        CornerRadius = UDim.new(0.1, 0)
-    })
-    Create("UIStroke", {
-        Parent = pickerFrame,
-        Color = _theme.Border,
-        Thickness = 1.5,
-        Transparency = 0.5
-    })
-
-    local hueSlider = Create("Frame", {
-        Parent = pickerFrame,
-        Size = UDim2.new(0.8, 0, 0.15, 0),
-        Position = UDim2.new(0.1, 0, 0.05, 0),
-        BackgroundColor3 = _theme.SliderBackground,
-        BackgroundTransparency = 0.8,
-        BorderSizePixel = 0
-    })
-    Create("UICorner", {
-        Parent = hueSlider,
-        CornerRadius = UDim.new(1, 5)
-    })
-
-    local hueGradient = Create("UIGradient", {
-        Parent = hueSlider,
+    createUIElement(frame, "UIAspectRatioConstraint", { AspectRatio = 2.915 })
+    createUIElement(frame, "UIGradient", {
         Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
-            ColorSequenceKeypoint.new(0.17, Color3.fromRGB(255, 255, 0)),
-            ColorSequenceKeypoint.new(0.33, Color3.fromRGB(0, 255, 0)),
-            ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 255, 255)),
-            ColorSequenceKeypoint.new(0.67, Color3.fromRGB(0, 0, 255)),
-            ColorSequenceKeypoint.new(0.83, Color3.fromRGB(255, 0, 255)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(157, 2, 31)),
+            ColorSequenceKeypoint.new(0.525, Color3.fromRGB(134, 2, 31)),
+            ColorSequenceKeypoint.new(0.815, Color3.fromRGB(40, 23, 24)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(24, 18, 19)),
         }),
-        Rotation = 0
+        Rotation = -57,
+    })
+    createUIElement(frame, "UIStroke", {
+        Color = Color3.new(1,1,1),
+        Thickness = 2,
     })
 
-    local hueFill = Create("Frame", {
-        Parent = hueSlider,
-        Size = UDim2.new(0.5, 0, 1, 0),
-        Position = UDim2.new(0, 0, 0, 0),
-        BackgroundColor3 = _theme.Accent,
-        BackgroundTransparency = 0.5,
-        BorderSizePixel = 0
-    })
-    Create("UICorner", {
-        Parent = hueFill,
-        CornerRadius = UDim.new(1, 5)
-    })
-
-    local satSlider = Create("Frame", {
-        Parent = pickerFrame,
-        Size = UDim2.new(0.8, 0, 0.15, 0),
-        Position = UDim2.new(0.1, 0, 0.25, 0),
-        BackgroundColor3 = _theme.SliderBackground,
-        BackgroundTransparency = 0.8,
-        BorderSizePixel = 0
-    })
-    Create("UICorner", {
-        Parent = satSlider,
-        CornerRadius = UDim.new(1, 5)
-    })
-    local satFill = Create("Frame", {
-        Parent = satSlider,
-        Size = UDim2.new(0.5, 0, 1, 0),
-        Position = UDim2.new(0, 0, 0, 0),
-        BackgroundColor3 = _theme.Accent,
-        BackgroundTransparency = 0.5,
-        BorderSizePixel = 0
-    })
-    Create("UICorner", {
-        Parent = satFill,
-        CornerRadius = UDim.new(1, 5)
-    })
-
-    local valSlider = Create("Frame", {
-        Parent = pickerFrame,
-        Size = UDim2.new(0.8, 0, 0.15, 0),
-        Position = UDim2.new(0.1, 0, 0.45, 0),
-        BackgroundColor3 = _theme.SliderBackground,
-        BackgroundTransparency = 0.8,
-        BorderSizePixel = 0
-    })
-    Create("UICorner", {
-        Parent = valSlider,
-        CornerRadius = UDim.new(1, 5)
-    })
-    local valFill = Create("Frame", {
-        Parent = valSlider,
-        Size = UDim2.new(0.5, 0, 1, 0),
-        Position = UDim2.new(0, 0, 0, 0),
-        BackgroundColor3 = _theme.Accent,
-        BackgroundTransparency = 0.5,
-        BorderSizePixel = 0
-    })
-    Create("UICorner", {
-        Parent = valFill,
-        CornerRadius = UDim.new(1, 5)
-    })
-
-    local function updateColor()
-        local h, s, v = element._value:ToHSV()
-        hueFill.Size = UDim2.new(h, 0, 1, 0)
-        satFill.Size = UDim2.new(s, 0, 1, 0)
-        valFill.Size = UDim2.new(v, 0, 1, 0)
-        colorDisplay.BackgroundColor3 = element._value
-    end
-
-    local function setupSlider(slider, fill, callback)
-        local dragging = false
-        local button = Create("TextButton", {
-            Parent = slider,
-            Size = UDim2.new(1, 0, 3, 0),
-            Position = UDim2.new(0, 0, -1, 0),
-            BackgroundTransparency = 1,
-            Text = "",
-            ZIndex = 2
-        })
-
-        button.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                dragging = true
-            end
-        end)
-
-        button.InputEnded:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                dragging = false
-            end
-        end)
-
-        button.InputChanged:Connect(function(input)
-            if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-                local scale = math.clamp((input.Position.X - slider.AbsolutePosition.X) / slider.AbsoluteSize.X, 0, 1)
-                callback(scale)
-                updateColor()
-                if config.Callback then
-                    config.Callback(element._value)
-                end
-            end
-        end)
-    end
-
-    setupSlider(hueSlider, hueFill, function(scale)
-        local r, g, b = Color3.fromHSV(scale, 0.5, 0.5):ToRGB()
-        element._value = Color3.fromRGB(r, g, b)
-    end)
-
-    setupSlider(satSlider, satFill, function(scale)
-        local h, s, v = element._value:ToHSV()
-        element._value = Color3.fromHSV(h, scale, v)
-    end)
-
-    setupSlider(valSlider, valFill, function(scale)
-        local h, s, v = element._value:ToHSV()
-        element._value = Color3.fromHSV(h, s, scale)
-    end)
-
-    colorDisplay.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            pickerFrame.Visible = not pickerFrame.Visible
-        end
-    end)
-
-    element._frame = frame
-    element._setValue = function(val)
-        element._value = val
-        updateColor()
-        if config.Callback then
-            config.Callback(val)
-        end
-    end
-
-    updateColor()
-
-    table.insert(self._elements, element)
-    self._updateHeight()
-
-    return element
-end
-
-function Library:Notify(config)
-    local title = config.Title or "Notification"
-    local message = config.Content or ""
-    local image = config.Image or ""
-    local duration = config.Duration or 5
-
-    local screenGui = self._windows[1] and self._windows[1]._screenGui
-    if not screenGui then
-        screenGui = Instance.new("ScreenGui")
-        screenGui.Name = "LonelyLib_Notify"
-        screenGui.ResetOnSpawn = false
-    end
-
-    local zone = screenGui:FindFirstChild("NOTIFICATION_ZONE")
-    if not zone then
-        zone = Create("Frame", {
-            Name = "NOTIFICATION_ZONE",
-            Parent = screenGui,
-            Size = UDim2.new(0.2134149968624115, 0, 1, 0),
-            Position = UDim2.new(1, 0, 1, 0),
-            AnchorPoint = Vector2.new(1, 1),
-            BackgroundColor3 = Color3.new(0, 0, 0),
-            BackgroundTransparency = 1,
-            BorderSizePixel = 0,
-            ClipsDescendants = true,
-            ZIndex = 1000
-        })
-        local layout = Create("UIListLayout", {
-            Parent = zone,
-            SortOrder = Enum.SortOrder.LayoutOrder,
-            VerticalAlignment = Enum.VerticalAlignment.Bottom,
-            HorizontalAlignment = Enum.HorizontalAlignment.Center,
-            Padding = UDim.new(0, 5)
-        })
-        Create("UIAspectRatioConstraint", {
-            Parent = zone,
-            AspectRatio = 0.4247570037841797
-        })
-    end
-
-    local noti = Create("Frame", {
-        Parent = zone,
-        Size = UDim2.new(1, 0, 0.17389200627803802, 0),
-        BackgroundColor3 = Color3.fromRGB(85, 255, 0),
-        BackgroundTransparency = 1,
-        BorderSizePixel = 0
-    })
-
-    local main = Create("CanvasGroup", {
-        Parent = noti,
-        Size = UDim2.new(0.9430000185966492, 0, 0.8989049792289734, 0),
-        Position = UDim2.new(0, 0, 0.5, 0),
-        AnchorPoint = Vector2.new(0, 0.5),
-        BackgroundColor3 = Color3.fromRGB(24, 24, 24),
-        BackgroundTransparency = 0.25,
+    local bg = createUIElement(frame, "Frame", {
+        Name = "Background",
+        BackgroundColor3 = Color3.new(0,0,0),
+        BackgroundTransparency = 0.6,
         BorderSizePixel = 0,
-        ZIndex = 2
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.3322, 0, 0.79, 0),
+        Size = UDim2.new(0.6042, 0, 0.3, 0),
     })
-    Create("UICorner", {
-        Parent = main,
-        CornerRadius = UDim.new(0.1, 0)
+    createCorner(bg, UDim.new(0, 20))
+
+    local titleLabel = createUIElement(frame, "TextLabel", {
+        Name = "Title",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.3408, 0, 0.34, 0),
+        Size = UDim2.new(0.587, 0, 0.6442, 0),
+        Font = Enum.Font.SourceSans,
+        Text = title or "Section",
+        TextColor3 = Color3.new(1,1,1),
+        TextScaled = true,
+        TextWrapped = true,
+        RichText = true,
+        LineHeight = 0.8,
+        ZIndex = 2,
     })
 
-    if image and image ~= "" then
-        local icon = Create("ImageLabel", {
-            Parent = main,
-            Size = UDim2.new(0, 40, 0, 40),
-            Position = UDim2.new(0.05, 0, 0.5, 0),
-            AnchorPoint = Vector2.new(0, 0.5),
-            BackgroundTransparency = 1,
-            Image = image,
-            ScaleType = Enum.ScaleType.Fit
-        })
-    end
+    local descLabel = createUIElement(frame, "TextLabel", {
+        Name = "Desc",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.332, 0, 0.775, 0),
+        Size = UDim2.new(0.5, 0, 0.268, 0),
+        Font = Enum.Font.SourceSans,
+        Text = description or "",
+        TextColor3 = Color3.new(1,1,1),
+        TextScaled = true,
+        TextWrapped = true,
+        RichText = true,
+        LineHeight = 0.8,
+        ZIndex = 2,
+    })
 
-    local titleLabel = CreateText("TextLabel", title, main)
-    titleLabel.Position = UDim2.new(0.15, 0, 0.15, 0)
-    titleLabel.Size = UDim2.new(0.8, 0, 0.35, 0)
-    titleLabel.TextColor3 = _theme.Text
-    titleLabel.TextSize = 16
-    titleLabel.Font = Enum.Font.GothamBold
-    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    local icon = createUIElement(frame, "CanvasGroup", {
+        Name = "Icon",
+        BackgroundColor3 = Color3.new(0,0,0),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.8257, 0, 0.5, 0),
+        Size = UDim2.new(0.2724, 0, 0.8152, 0),
+        ZIndex = 99,
+    })
+    createUIElement(icon, "ImageLabel", {
+        Name = "Display",
+        Image = image or "rbxassetid://16126564089",
+        ScaleType = Enum.ScaleType.Fit,
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Size = UDim2.new(1,0,1,0),
+    })
+    createCorner(icon, UDim.new(0, 18))
 
-    local messageLabel = CreateText("TextLabel", message, main)
-    messageLabel.Position = UDim2.new(0.15, 0, 0.55, 0)
-    messageLabel.Size = UDim2.new(0.8, 0, 0.35, 0)
-    messageLabel.TextColor3 = _theme.SubText
-    messageLabel.TextSize = 13
-    messageLabel.Font = Enum.Font.Gotham
-    messageLabel.TextXAlignment = Enum.TextXAlignment.Left
-    messageLabel.TextWrapped = true
-
-    task.delay(duration, function()
-        noti:Destroy()
-    end)
-
-    return noti
+    return frame
 end
 
-function Library:AddWindow(config)
-    local win = Window.new(config)
-    table.insert(self._windows, win)
-    return win
+function Window:AddSection(tab, options)
+    options = options or {}
+    local targetFrame
+    if tab == self._tabs[1] then
+        targetFrame = self._miniConfig1Scroll
+    elseif tab == self._tabs[2] then
+        targetFrame = self._miniConfig2Scroll
+    elseif tab == self._tabs[3] then
+        targetFrame = self._miniConfig3Scroll
+    else
+        return nil
+    end
+
+    local sectionFrame = self:CreateSectionFrame(targetFrame, options.Title, options.Description, options.Image, options.Side)
+    tab._miniConfig = sectionFrame
+
+    local sectionObj = {
+        _frame = sectionFrame,
+        _parent = self,
+        _tab = tab,
+        _elements = {},
+    }
+
+    sectionFrame.MouseButton1Click:Connect(function()
+        self:SelectTab(tab)
+    end)
+
+    return sectionObj
+end
+
+function Window:AddToggle(section, options)
+    options = options or {}
+    local frame = createUIElement(section._frame, "TextButton", {
+        Name = "Toggle",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.1206, 0, 0.79, 0),
+        Size = UDim2.new(0.1464, 0, 0.2676, 0),
+        LayoutOrder = #section._frame:GetChildren() + 1,
+        AutoButtonColor = false,
+        Active = false,
+        Selectable = false,
+        Text = "",
+        ZIndex = 2,
+    })
+    local holder = createUIElement(frame, "Frame", {
+        Name = "Holder",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        Size = UDim2.new(0.8, 0, 0.6, 0),
+        ZIndex = 99,
+    })
+    createCorner(holder, UDim.new(0, 20))
+    createStroke(holder, Color3.new(1,1,1), 2, 0.75)
+    local marker = createUIElement(holder, "ImageLabel", {
+        Name = "Marker",
+        Image = options.ToggleIcon or "rbxassetid://16284242787",
+        ImageTransparency = 0.5,
+        ScaleType = Enum.ScaleType.Fit,
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.22, 0, 0.5, 0),
+        Size = UDim2.new(0.5, 0, 0.8, 0),
+    })
+    local titleLabel = createUIElement(frame, "TextLabel", {
+        Name = "Title",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.3408, 0, 0.34, 0),
+        Size = UDim2.new(0.587, 0, 0.6442, 0),
+        Font = Enum.Font.SourceSans,
+        Text = options.Title or "Toggle",
+        TextColor3 = Color3.new(1,1,1),
+        TextScaled = true,
+        TextWrapped = true,
+        RichText = true,
+        LineHeight = 0.8,
+        ZIndex = 2,
+    })
+    local descLabel = createUIElement(frame, "TextLabel", {
+        Name = "Desc",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.406, 0, 0.79, 0),
+        Size = UDim2.new(0.3862, 0, 0.2677, 0),
+        Font = Enum.Font.SourceSans,
+        Text = options.Description or "",
+        TextColor3 = Color3.new(1,1,1),
+        TextScaled = true,
+        TextWrapped = true,
+        RichText = true,
+        LineHeight = 0.8,
+        ZIndex = 2,
+    })
+    local icon = createUIElement(frame, "CanvasGroup", {
+        Name = "Icon",
+        BackgroundColor3 = Color3.new(0,0,0),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.8257, 0, 0.5, 0),
+        Size = UDim2.new(0.2724, 0, 0.8152, 0),
+        ZIndex = 99,
+    })
+    createUIElement(icon, "ImageLabel", {
+        Name = "Display",
+        Image = options.Image or "rbxassetid://15057692658",
+        ScaleType = Enum.ScaleType.Fit,
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Size = UDim2.new(1,0,1,0),
+    })
+    createCorner(icon, UDim.new(0, 18))
+
+    local toggleObj = {
+        _frame = frame,
+        _marker = marker,
+        _state = options.Default or false,
+        _callback = options.Callback,
+        _parent = section,
+    }
+
+    frame.MouseButton1Click:Connect(function()
+        toggleObj._state = not toggleObj._state
+        if toggleObj._state then
+            toggleObj._marker.Position = UDim2.new(0.78, 0, 0.5, 0)
+        else
+            toggleObj._marker.Position = UDim2.new(0.22, 0, 0.5, 0)
+        end
+        if toggleObj._callback then
+            toggleObj._callback(toggleObj._state)
+        end
+    end)
+
+    if options.Default then
+        toggleObj._marker.Position = UDim2.new(0.78, 0, 0.5, 0)
+    end
+
+    return toggleObj
+end
+
+function Window:AddButton(section, options)
+    options = options or {}
+    local frame = createUIElement(section._frame, "TextButton", {
+        Name = "Button",
+        BackgroundColor3 = Color3.fromRGB(20, 20, 20),
+        BackgroundTransparency = 0.5,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0.3634, 0, 0.1283, 0),
+        Size = UDim2.new(0.2906, 0, 0.2725, 0),
+        LayoutOrder = #section._frame:GetChildren() + 1,
+        AutoButtonColor = false,
+        Active = false,
+        Selectable = false,
+        Text = "",
+        ZIndex = 1,
+    })
+    createUIElement(frame, "UIAspectRatioConstraint", { AspectRatio = 2.915 })
+    createUIElement(frame, "UIGradient", {
+        Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(157, 2, 31)),
+            ColorSequenceKeypoint.new(0.525, Color3.fromRGB(134, 2, 31)),
+            ColorSequenceKeypoint.new(0.815, Color3.fromRGB(40, 23, 24)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(24, 18, 19)),
+        }),
+        Rotation = -57,
+    })
+    createUIElement(frame, "UIStroke", {
+        Color = Color3.new(1,1,1),
+        Thickness = 2,
+    })
+    local bg = createUIElement(frame, "Frame", {
+        Name = "Background",
+        BackgroundColor3 = Color3.new(0,0,0),
+        BackgroundTransparency = 0.6,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.3322, 0, 0.79, 0),
+        Size = UDim2.new(0.6042, 0, 0.3, 0),
+    })
+    createCorner(bg, UDim.new(0, 20))
+    local titleLabel = createUIElement(frame, "TextLabel", {
+        Name = "Title",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.3408, 0, 0.34, 0),
+        Size = UDim2.new(0.587, 0, 0.6442, 0),
+        Font = Enum.Font.SourceSans,
+        Text = options.Title or "Button",
+        TextColor3 = Color3.new(1,1,1),
+        TextScaled = true,
+        TextWrapped = true,
+        RichText = true,
+        LineHeight = 0.8,
+        ZIndex = 2,
+    })
+    local descLabel = createUIElement(frame, "TextLabel", {
+        Name = "Desc",
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.332, 0, 0.775, 0),
+        Size = UDim2.new(0.5, 0, 0.268, 0),
+        Font = Enum.Font.SourceSans,
+        Text = options.Description or "",
+        TextColor3 = Color3.new(1,1,1),
+        TextScaled = true,
+        TextWrapped = true,
+        RichText = true,
+        LineHeight = 0.8,
+        ZIndex = 2,
+    })
+    local icon = createUIElement(frame, "CanvasGroup", {
+        Name = "Icon",
+        BackgroundColor3 = Color3.new(0,0,0),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.8257, 0, 0.5, 0),
+        Size = UDim2.new(0.2724, 0, 0.8152, 0),
+        ZIndex = 99,
+    })
+    createUIElement(icon, "ImageLabel", {
+        Name = "Display",
+        Image = options.Image or "rbxassetid://16126564089",
+        ScaleType = Enum.ScaleType.Fit,
+        BackgroundColor3 = Color3.new(1,1,1),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Size = UDim2.new(1,0,1,0),
+    })
+    createCorner(icon, UDim.new(0, 18))
+
+    local buttonObj = {
+        _frame = frame,
+        _callback = options.Callback,
+        _parent = section,
+    }
+
+    frame.MouseButton1Click:Connect(function()
+        if buttonObj._callback then
+            buttonObj._callback()
+        end
+    end)
+
+    return buttonObj
 end
 
 return Library
