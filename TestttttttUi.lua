@@ -13008,6 +13008,34 @@ function Library:RenderLevel2()
             displayImg.Image = secObj.Image
         end
 
+        local cardToggle = card:FindFirstChild("Toggle", true)
+        if cardToggle then
+            if secObj.Type == "Toggle" then
+                cardToggle.Visible = true
+                local toggleElem = secObj.Elements[1]
+                local toggled = toggleElem and toggleElem.Default or false
+
+                local function updateCardToggleVisual()
+                    local inner = cardToggle:FindFirstChild("Inner", true) or cardToggle:FindFirstChild("Marker", true)
+                    local outer = cardToggle:FindFirstChild("Outer", true) or cardToggle:FindFirstChild("Holder", true)
+                    if inner then inner.Visible = toggled end
+                    if outer then outer.BackgroundColor3 = toggled and Color3.fromRGB(248, 4, 46) or Color3.fromRGB(40, 40, 40) end
+                end
+                updateCardToggleVisual()
+
+                local toggleTrigger = cardToggle:IsA("TextButton") and cardToggle or cardToggle:FindFirstChildOfClass("TextButton")
+                if not toggleTrigger then toggleTrigger = cardToggle end
+                toggleTrigger.MouseButton1Click:Connect(function()
+                    toggled = not toggled
+                    if toggleElem then toggleElem.Default = toggled end
+                    updateCardToggleVisual()
+                    if secObj.Callback then secObj.Callback(toggled) end
+                end)
+            else
+                cardToggle.Visible = false
+            end
+        end
+
         local trigger = card:IsA("TextButton") and card or card:FindFirstChildOfClass("TextButton")
         if not trigger then
             trigger = Instance.new("TextButton")
@@ -13091,9 +13119,6 @@ function Library:RenderLevel3()
         end
 
         itemObj.Visible = true
-        if kind == "Label" then
-            itemObj.Size = UDim2.new(1, 0, 0, 40)
-        end
         if elem.Side == "Right" then
             itemObj.Parent = tab2
         else
@@ -13112,8 +13137,8 @@ function Library:RenderLevel3()
 
             local function updateToggleVisual()
                 if toggleBtn then
-                    local inner = toggleBtn:FindFirstChild("Inner", true)
-                    local outer = toggleBtn:FindFirstChild("Outer", true)
+                    local inner = toggleBtn:FindFirstChild("Inner", true) or toggleBtn:FindFirstChild("Marker", true)
+                    local outer = toggleBtn:FindFirstChild("Outer", true) or toggleBtn:FindFirstChild("Holder", true)
                     if inner then
                         inner.Visible = toggled
                         inner.ImageColor3 = Color3.fromRGB(248, 4, 46)
@@ -13129,17 +13154,40 @@ function Library:RenderLevel3()
             end
             updateToggleVisual()
 
-            local mainTrigger = itemObj:IsA("TextButton") and itemObj or itemObj:FindFirstChildOfClass("TextButton")
-            local toggleTrigger = toggleBtn and (toggleBtn:IsA("TextButton") and toggleBtn or toggleBtn:FindFirstChildOfClass("TextButton"))
-
-            local function onToggleClick()
-                toggled = not toggled
-                updateToggleVisual()
-                if elem.Callback then elem.Callback(toggled) end
+            local isDraggingToggle = false
+            local function handleToggleDrag(input)
+                if not toggleBtn then return end
+                local absPos = toggleBtn.AbsolutePosition
+                local absSize = toggleBtn.AbsoluteSize
+                if absSize.X <= 0 then return end
+                local relX = (input.Position.X - absPos.X) / absSize.X
+                local newState = relX > 0.5
+                if newState ~= toggled then
+                    toggled = newState
+                    updateToggleVisual()
+                    if elem.Callback then elem.Callback(toggled) end
+                end
             end
 
-            if mainTrigger then mainTrigger.MouseButton1Click:Connect(onToggleClick) end
-            if toggleTrigger and toggleTrigger ~= mainTrigger then toggleTrigger.MouseButton1Click:Connect(onToggleClick) end
+            local triggerObj = toggleBtn or itemObj
+            triggerObj.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                    isDraggingToggle = true
+                    toggled = not toggled
+                    updateToggleVisual()
+                    if elem.Callback then elem.Callback(toggled) end
+                end
+            end)
+            Modules.UserInputService.InputChanged:Connect(function(input)
+                if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) and isDraggingToggle then
+                    handleToggleDrag(input)
+                end
+            end)
+            Modules.UserInputService.InputEnded:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                    isDraggingToggle = false
+                end
+            end)
 
         elseif kind == "Button" then
             local trigger = itemObj:IsA("TextButton") and itemObj or itemObj:FindFirstChildOfClass("TextButton")
@@ -13218,7 +13266,8 @@ function Library:RenderLevel3()
                             tLbl.TextColor3 = isSelected and Color3.fromRGB(255, 50, 50) or Color3.fromRGB(255, 255, 255)
                         end
                         if tickImg and tickImg:IsA("ImageLabel") then
-                            tickImg.Visible = isSelected
+                            tickImg.Visible = true
+                            tickImg.ImageColor3 = isSelected and Color3.fromRGB(255, 50, 50) or Color3.fromRGB(120, 120, 120)
                         end
                     end
                 end
@@ -13231,6 +13280,8 @@ function Library:RenderLevel3()
                     local tLbl = optBtn:FindFirstChild("Title", true) or optBtn
                     if tLbl and tLbl:IsA("TextLabel") then
                         tLbl.Font = Enum.Font.SourceSansBold
+                        tLbl.Position = UDim2.new(0, 0, 0, 0)
+                        tLbl.Size = UDim2.new(1, 0, 1, 0)
                         tLbl.TextXAlignment = Enum.TextXAlignment.Center
                         tLbl.RichText = true
                         tLbl.Text = tostring(optVal)
@@ -13277,27 +13328,42 @@ function Library:RenderLevel3()
             end
 
         elseif kind == "Slider" then
+            itemObj.Size = UDim2.new(1, 0, 0, 55)
             local minVal = elem.Min or 0
             local maxVal = elem.Max or 100
             local currentVal = elem.Default or minVal
             local step = elem.Increase or 1
 
-            local valLbl = itemObj:FindFirstChild("Value", true) or itemObj:FindFirstChild("Title", true)
+            local titleLbl = itemObj:FindFirstChild("Title", true)
+            local valLbl = itemObj:FindFirstChild("Value", true)
+            if not valLbl then
+                valLbl = Instance.new("TextLabel")
+                valLbl.Name = "Value"
+                valLbl.Font = Enum.Font.SourceSansBold
+                valLbl.TextColor3 = Color3.fromRGB(255, 50, 50)
+                valLbl.TextSize = 14
+                valLbl.TextXAlignment = Enum.TextXAlignment.Right
+                valLbl.BackgroundTransparency = 1
+                valLbl.Position = UDim2.new(0.68, 0, 0, 4)
+                valLbl.Size = UDim2.new(0.28, 0, 0, 22)
+                valLbl.Parent = itemObj
+            end
+
             local track = itemObj:FindFirstChild("Bar", true) or itemObj:FindFirstChild("Track", true) or itemObj:FindFirstChild("Slider", true)
             local fill = track and (track:FindFirstChild("Fill", true) or track:FindFirstChild("Progress", true))
 
             if not track then
                 track = Instance.new("Frame")
                 track.Name = "Track"
-                track.Size = UDim2.new(0.9, 0, 0, 6)
-                track.Position = UDim2.new(0.05, 0, 0, 49)
+                track.Size = UDim2.new(0.96, 0, 0, 8)
+                track.Position = UDim2.new(0.02, 0, 0, 32)
                 track.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
                 track.BorderSizePixel = 0
                 track.Active = true
                 track.Parent = itemObj
 
                 local corner = Instance.new("UICorner")
-                corner.CornerRadius = UDim.new(1, 0)
+                corner.CornerRadius = UDim.new(0, 4)
                 corner.Parent = track
 
                 fill = Instance.new("Frame")
@@ -13308,7 +13374,7 @@ function Library:RenderLevel3()
                 fill.Parent = track
 
                 local fillCorner = Instance.new("UICorner")
-                fillCorner.CornerRadius = UDim.new(1, 0)
+                fillCorner.CornerRadius = UDim.new(0, 4)
                 fillCorner.Parent = fill
             end
 
@@ -13318,8 +13384,11 @@ function Library:RenderLevel3()
                 if fill then
                     fill.Size = UDim2.new(pct, 0, 1, 0)
                 end
+                if titleLbl and titleLbl:IsA("TextLabel") then
+                    titleLbl.Text = elem.Title
+                end
                 if valLbl and valLbl:IsA("TextLabel") then
-                    valLbl.Text = elem.Title .. " : " .. tostring(val)
+                    valLbl.Text = tostring(val)
                 end
             end
             updateSliderVisual(currentVal)
@@ -13365,8 +13434,8 @@ function Library:RenderLevel3()
                 holder.Visible = false
                 holder.ZIndex = math.max(holder.ZIndex, 80)
                 holder.ClipsDescendants = true
-                holder.Position = UDim2.new(0.5, 0, 0, 60)
-                holder.Size = UDim2.new(1, 0, 0, 170)
+                holder.Position = UDim2.new(0.5, 0, 0, 52)
+                holder.Size = UDim2.new(0.94, 0, 0, 115)
                 local control = holder:FindFirstChild("Control", true)
                 if control then
                     control.Position = UDim2.new(0, 0, 0, 0)
@@ -13411,10 +13480,11 @@ function Library:RenderLevel3()
                         isColorPickerOpen = not isColorPickerOpen
                         holder.Visible = isColorPickerOpen
                         if isColorPickerOpen then
-                            itemObj.Size = UDim2.new(1, 0, 0, 240)
+                            itemObj.Size = UDim2.new(1, 0, 0, 172)
                         else
                             itemObj.Size = UDim2.new(1, 0, 0, 50)
                         end
+                        if syncConfigCanvas then syncConfigCanvas() end
                     end
                 end)
             end
@@ -13514,15 +13584,11 @@ function Library:RenderLevel3()
         for _, column in ipairs({tab1, tab2}) do
             local layout = column:FindFirstChildOfClass("UIListLayout")
             if layout then
-                contentBottom = math.max(contentBottom, layout.AbsoluteContentSize.Y)
+                local columnY = column.Position.Y.Scale * mainSf.AbsoluteSize.Y + column.Position.Y.Offset
+                contentBottom = math.max(contentBottom, columnY + layout.AbsoluteContentSize.Y)
             end
         end
-        local frameY = mainSf.AbsoluteSize.Y
-        if contentBottom > frameY and frameY > 0 then
-            mainSf.CanvasSize = UDim2.new(0, 0, 0, contentBottom + 12)
-        else
-            mainSf.CanvasSize = UDim2.new(0, 0, 0, 0)
-        end
+        mainSf.CanvasSize = UDim2.new(0, 0, 0, math.max(mainSf.AbsoluteSize.Y, contentBottom + 8))
     end
     if not mainSf:GetAttribute("LonelyLibColumnsBound") then
         mainSf:SetAttribute("LonelyLibColumnsBound", true)
@@ -13605,11 +13671,12 @@ function Library:AddTab(options)
     function tabObj:AddSection(secOptions)
         secOptions = secOptions or {}
         local secTitle = Modules.getOption(secOptions, {"Title", "Name"}, "New Section")
-        local secDesc = Modules.getOption(secOptions, {"Description", "Content"}, "Section description")
+        local secDesc = Modules.getOption(secOptions, {"Description", "Desc", "Content"}, "")
         local secImage = Modules.getOption(secOptions, {"Image"}, "rbxassetid://112485471724320")
         local secSide = Modules.getOption(secOptions, {"Side"}, "Left")
         local secType = Modules.getOption(secOptions, {"Type"}, "Button")
         local secCallback = Modules.getOption(secOptions, {"Callback", "callback"}, function() end)
+        local toggleName = Modules.getOption(secOptions, {"ToggleName", "ToggleText", "ToggleTitle"}, "Enabled")
 
         local secObj = {
             Title = secTitle,
@@ -13618,6 +13685,7 @@ function Library:AddTab(options)
             Side = secSide,
             Type = secType,
             Callback = secCallback,
+            ToggleName = toggleName,
             Elements = {},
             Tab = tabObj
         }
@@ -13625,8 +13693,8 @@ function Library:AddTab(options)
         if secType == "Toggle" then
             table.insert(secObj.Elements, {
                 Kind = "Toggle",
-                Title = "Enabled",
-                Default = false,
+                Title = toggleName,
+                Default = Modules.getOption(secOptions, {"Default"}, false),
                 Side = secSide,
                 Callback = secCallback
             })
