@@ -750,7 +750,8 @@ Modules.buildMainGuiRaw = function()
     e[77].BorderSizePixel = 0
     e[77].ClipsDescendants = true
     e[77].LayoutOrder = 3
-    e[77].Position = UDim2.new(0.05485910177230835, 0, 0.3451460003852844, 0)
+    e[77].AnchorPoint = Vector2.new(0.5, 0.5)
+    e[77].Position = UDim2.new(0.5, 0, 0.6, 0)
     e[77].Size = UDim2.new(0.8901020288467407, 0, 0.601934015750885, 0)
     e[77].Visible = false
     e[77].ZIndex = 3
@@ -765,17 +766,18 @@ Modules.buildMainGuiRaw = function()
     e[78].BorderColor3 = Color3.new(0, 0, 0)
     e[78].BorderSizePixel = 0
     e[78].ClipsDescendants = true
-    e[78].Position = UDim2.new(0.021672500297427177, 0, 0.053731098771095276, 0)
+    e[78].AnchorPoint = Vector2.new(0.5, 0.5)
+    e[78].Position = UDim2.new(0.5, 0, 0.5, 0)
     e[78].Selectable = false
-    e[78].Size = UDim2.new(0.9653239846229553, 0, 0.9462689757347107, 0)
+    e[78].Size = UDim2.new(0.96, 0, 0.94, 0)
     e[78].ZIndex = 4
     e[79] = Instance.new("Frame")
     e[79].BackgroundColor3 = Color3.new(1, 1, 1)
     e[79].BackgroundTransparency = 1
     e[79].BorderColor3 = Color3.new(0, 0, 0)
     e[79].BorderSizePixel = 0
-    e[79].Position = UDim2.new(0.5180000066757202, 0, 0, 0)
-    e[79].Size = UDim2.new(0.4749999940395355, 0, 0.07999999821186066, 0)
+    e[79].Position = UDim2.new(0.51, 0, 0, 0)
+    e[79].Size = UDim2.new(0.48, 0, 0.08, 0)
     e[79].Name = "Tab2"
     e[80] = Instance.new("UIAspectRatioConstraint")
     e[80].AspectRatio = 4.250999927520752
@@ -12855,11 +12857,11 @@ function Library:Notify(options)
         if not trigger then trigger = okBtn end
         trigger.MouseButton1Click:Connect(function()
             if tween then tween:Cancel() end
-            if type(callback) == "function" then
-                callback(true)
-            end
             if notiCard and notiCard.Parent then
                 notiCard:Destroy()
+            end
+            if type(callback) == "function" then
+                callback(true)
             end
         end)
     end
@@ -12872,6 +12874,9 @@ function Library:Notify(options)
             if tween then tween:Cancel() end
             if notiCard and notiCard.Parent then
                 notiCard:Destroy()
+            end
+            if type(callback) == "function" then
+                callback(false)
             end
         end)
     end
@@ -13155,22 +13160,22 @@ function Library:RenderLevel3()
                 for _, bData in ipairs(elem.Buttons) do
                     local subBtn = buttonTemplate and buttonTemplate:Clone() or Instance.new("TextButton")
                     subBtn.Visible = true
+                    subBtn.BackgroundColor3 = Color3.fromRGB(248, 4, 46)
                     subBtn.ClipsDescendants = true
                     local subCorner = subBtn:FindFirstChildOfClass("UICorner")
                     if not subCorner then
                         subCorner = Instance.new("UICorner")
-                        subCorner.CornerRadius = UDim.new(0, 5)
                         subCorner.Parent = subBtn
-                    else
-                        subCorner.CornerRadius = UDim.new(0, 5)
                     end
+                    subCorner.CornerRadius = UDim.new(0, 5)
+
                     local subTitle = subBtn:FindFirstChild("Title", true) or subBtn
                     if subTitle and subTitle:IsA("TextLabel") then
-                        subTitle.Font = Enum.Font.SourceSansBold
+                        subTitle.TextColor3 = Color3.fromRGB(0, 0, 0)
                         subTitle.RichText = true
                         subTitle.Text = bData.Title or "Btn"
                     elseif subBtn:IsA("TextButton") then
-                        subBtn.Font = Enum.Font.SourceSansBold
+                        subBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
                         subBtn.Text = bData.Title or "Btn"
                     end
                     subBtn.Parent = groupFrame
@@ -13225,9 +13230,13 @@ function Library:RenderLevel3()
 
                     local tLbl = optBtn:FindFirstChild("Title", true) or optBtn
                     if tLbl and tLbl:IsA("TextLabel") then
+                        tLbl.Font = Enum.Font.SourceSansBold
+                        tLbl.TextXAlignment = Enum.TextXAlignment.Center
                         tLbl.RichText = true
                         tLbl.Text = tostring(optVal)
                     elseif optBtn:IsA("TextButton") then
+                        optBtn.Font = Enum.Font.SourceSansBold
+                        optBtn.TextXAlignment = Enum.TextXAlignment.Center
                         optBtn.Text = tostring(optVal)
                     end
                     optBtn.Parent = listFrame
