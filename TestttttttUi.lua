@@ -40,52 +40,73 @@ end
 
 
 
-Modules.bindHover = function(guiObject, trigger)
+Modules.bindHover = function(guiObject, trigger, isElement)
     if not guiObject then
         return
     end
 
-    local hover = guiObject:FindFirstChild("Hover", true)
+    local effect = guiObject:FindFirstChild("HoverEffect")
     local target = trigger or (guiObject:IsA("GuiButton") and guiObject or guiObject:FindFirstChildOfClass("GuiButton") or guiObject)
     if not target or not target:IsA("GuiObject") then
         return
     end
 
     target.Active = true
-    local tweenInfo = TweenInfo.new(0.16, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-    if not hover or not hover:IsA("ImageLabel") then
-        hover = Instance.new("ImageLabel")
-        hover.Name = "Hover"
-        hover.Parent = guiObject
-    end
-    hover.Image = "rbxassetid://16261022724"
-    hover.ScaleType = Enum.ScaleType.Slice
-    hover.SliceCenter = Rect.new(Vector2.new(205, 197), Vector2.new(828, 828))
-    hover.AnchorPoint = Vector2.new(0.5, 0.5)
-    hover.Position = UDim2.new(0.5, 0, 0.5, 0)
-    hover.Size = UDim2.new(1, 4, 1, 4)
-    hover.ZIndex = math.max(guiObject.ZIndex, 5)
-    hover.BackgroundTransparency = 1
-    hover.BorderSizePixel = 0
-    hover.Visible = true
-    hover.Active = false
-    hover.ImageColor3 = Color3.fromRGB(248, 4, 46)
-    hover.ImageTransparency = 1
+    if not effect or not effect:IsA("Frame") then
+        effect = Instance.new("Frame")
+        effect.Name = "HoverEffect"
+        effect.Size = UDim2.fromScale(1, 1)
+        effect.Position = UDim2.fromScale(0, 0)
+        effect.BackgroundColor3 = Color3.fromRGB(248, 4, 46)
+        effect.BackgroundTransparency = 1
+        effect.BorderSizePixel = 0
+        effect.ZIndex = math.max(guiObject.ZIndex, 1)
+        effect.Parent = guiObject
 
-    local function tweenTo(value)
-        Modules.TweenService:Create(hover, tweenInfo, {
-            ImageTransparency = value
-        }):Play()
+        local existingCorner = guiObject:FindFirstChildOfClass("UICorner")
+        local effectCorner = Instance.new("UICorner")
+        effectCorner.CornerRadius = existingCorner and existingCorner.CornerRadius or UDim.new(0, 10)
+        effectCorner.Parent = effect
+
+        local gradient = Instance.new("UIGradient")
+        gradient.Rotation = isElement and -90 or 45
+        gradient.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(248, 4, 46)),
+            ColorSequenceKeypoint.new(0.18, Color3.fromRGB(248, 4, 46)),
+            ColorSequenceKeypoint.new(0.38, Color3.fromRGB(200, 15, 35)),
+            ColorSequenceKeypoint.new(0.55, Color3.fromRGB(150, 10, 25)),
+            ColorSequenceKeypoint.new(0.72, Color3.fromRGB(80, 5, 15)),
+            ColorSequenceKeypoint.new(0.88, Color3.fromRGB(30, 5, 10)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(15, 5, 8))
+        })
+        gradient.Transparency = NumberSequence.new({
+            NumberSequenceKeypoint.new(0, 0),
+            NumberSequenceKeypoint.new(0.12, 0.05),
+            NumberSequenceKeypoint.new(0.25, 0.12),
+            NumberSequenceKeypoint.new(0.4, 0.28),
+            NumberSequenceKeypoint.new(0.55, 0.48),
+            NumberSequenceKeypoint.new(0.68, 0.68),
+            NumberSequenceKeypoint.new(0.8, 0.84),
+            NumberSequenceKeypoint.new(0.9, 0.94),
+            NumberSequenceKeypoint.new(1, 1)
+        })
+        gradient.Parent = effect
     end
+
+    local enterTween = TweenInfo.new(0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
+    local leaveTween = TweenInfo.new(0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
 
     target.MouseEnter:Connect(function()
-        tweenTo(0.2)
+        Modules.TweenService:Create(effect, enterTween, {
+            BackgroundTransparency = 0.3
+        }):Play()
     end)
     target.MouseLeave:Connect(function()
-        tweenTo(1)
+        Modules.TweenService:Create(effect, leaveTween, {
+            BackgroundTransparency = 1
+        }):Play()
     end)
 end
-
 
 Modules.buildMainGuiRaw = function()
     local e = {}
@@ -12557,10 +12578,14 @@ function Library:SetupSearchBox(searchBox, level)
     if tb and tb:IsA("TextBox") then
         Modules.bindHover(searchBox, tb)
     end
+    if tb and tb:IsA("TextBox") then
+        Modules.bindHover(searchBox, tb, true)
+    end
     local deepBtn = searchBox:FindFirstChild("DeepSearchBtn", true)
     if deepBtn then
         local trigger = deepBtn:IsA("TextButton") and deepBtn or deepBtn:FindFirstChildOfClass("TextButton")
         if not trigger then trigger = deepBtn end
+        Modules.bindHover(deepBtn, trigger, true)
         Modules.bindHover(deepBtn, trigger)
         trigger.MouseButton1Click:Connect(function()
             if self.DeepSearchModal then
@@ -13011,6 +13036,7 @@ function Library:RenderLevel1()
         end
         Modules.bindHover(card, trigger)
         Modules.bindHover(card, trigger)
+        Modules.bindHover(card, trigger, false)
         trigger.MouseButton1Click:Connect(function()
             self:ShowLevel(2, tabObj)
         end)
@@ -13100,7 +13126,8 @@ function Library:RenderLevel2()
             trigger.Parent = card
         end
         Modules.bindHover(card, trigger)
-        Modules.bindHover(card, trigger)
+        Modules.bindHover(card, trigger, false)
+        Modules.bindHover(card, trigger, false)
         trigger.MouseButton1Click:Connect(function()
             self:ShowLevel(3, secObj)
         end)
@@ -13646,7 +13673,7 @@ function Library:RenderLevel3()
 
         if itemObj then
             local itemTrigger = itemObj:IsA("GuiButton") and itemObj or itemObj:FindFirstChildOfClass("GuiButton") or itemObj
-            Modules.bindHover(itemObj, itemTrigger)
+            Modules.bindHover(itemObj, itemTrigger, true)
         end
     end
 
@@ -13714,6 +13741,7 @@ function Library:SetHomepageShortcut(tab1, tab2, tab3)
                 end
                 Modules.bindHover(scBtn, trigger)
                 Modules.bindHover(scBtn, trigger)
+                Modules.bindHover(scBtn, trigger, false)
                 trigger.MouseButton1Click:Connect(function()
                     self:SwitchTab("Pages")
                     self:ShowLevel(2, tabObj)
