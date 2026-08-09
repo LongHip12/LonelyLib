@@ -38,6 +38,55 @@ Modules.getOption = function(cfg, keys, default)
     return default
 end
 
+
+
+Modules.bindHover = function(guiObject, trigger)
+    if not guiObject then
+        return
+    end
+
+    local hover = guiObject:FindFirstChild("Hover", true)
+    local target = trigger or (guiObject:IsA("GuiButton") and guiObject or guiObject:FindFirstChildOfClass("GuiButton") or guiObject)
+    if not target or not target:IsA("GuiObject") then
+        return
+    end
+
+    target.Active = true
+    local tweenInfo = TweenInfo.new(0.16, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    if not hover or not hover:IsA("ImageLabel") then
+        hover = Instance.new("ImageLabel")
+        hover.Name = "Hover"
+        hover.Parent = guiObject
+    end
+    hover.Image = "rbxassetid://16261022724"
+    hover.ScaleType = Enum.ScaleType.Slice
+    hover.SliceCenter = Rect.new(Vector2.new(205, 197), Vector2.new(828, 828))
+    hover.AnchorPoint = Vector2.new(0.5, 0.5)
+    hover.Position = UDim2.new(0.5, 0, 0.5, 0)
+    hover.Size = UDim2.new(1, 4, 1, 4)
+    hover.ZIndex = math.max(guiObject.ZIndex, 5)
+    hover.BackgroundTransparency = 1
+    hover.BorderSizePixel = 0
+    hover.Visible = true
+    hover.Active = false
+    hover.ImageColor3 = Color3.fromRGB(248, 4, 46)
+    hover.ImageTransparency = 1
+
+    local function tweenTo(value)
+        Modules.TweenService:Create(hover, tweenInfo, {
+            ImageTransparency = value
+        }):Play()
+    end
+
+    target.MouseEnter:Connect(function()
+        tweenTo(0.2)
+    end)
+    target.MouseLeave:Connect(function()
+        tweenTo(1)
+    end)
+end
+
+
 Modules.buildMainGuiRaw = function()
     local e = {}
     e[1] = Instance.new("ScreenGui")
@@ -751,7 +800,7 @@ Modules.buildMainGuiRaw = function()
     e[77].ClipsDescendants = true
     e[77].LayoutOrder = 3
     e[77].AnchorPoint = Vector2.new(0.5, 0.5)
-    e[77].Position = UDim2.new(0.5, 0, 0.6, 0)
+    e[77].Position = UDim2.new(0.5, 0, 0.6, 8)
     e[77].Size = UDim2.new(0.8901020288467407, 0, 0.601934015750885, 0)
     e[77].Visible = false
     e[77].ZIndex = 3
@@ -12505,10 +12554,14 @@ function Library:SetupSearchBox(searchBox, level)
         end)
     end
 
+    if tb and tb:IsA("TextBox") then
+        Modules.bindHover(searchBox, tb)
+    end
     local deepBtn = searchBox:FindFirstChild("DeepSearchBtn", true)
     if deepBtn then
         local trigger = deepBtn:IsA("TextButton") and deepBtn or deepBtn:FindFirstChildOfClass("TextButton")
         if not trigger then trigger = deepBtn end
+        Modules.bindHover(deepBtn, trigger)
         trigger.MouseButton1Click:Connect(function()
             if self.DeepSearchModal then
                 self.DeepSearchModal.Visible = true
@@ -12602,7 +12655,7 @@ function Library:UpdateDeepSearch(query)
 
     for _, tabObj in ipairs(self.Tabs) do
         if string.find(string.lower(tabObj.Title), query) or string.find(string.lower(tabObj.Description), query) then
-            self:CreateSearchResult(holder, "[Section] " .. tabObj.Title, function()
+            self:CreateSearchResult(holder, tabObj.Title, function()
                 self.DeepSearchModal.Visible = false
                 self:SwitchTab("Pages")
                 self:ShowLevel(2, tabObj)
@@ -12611,7 +12664,7 @@ function Library:UpdateDeepSearch(query)
 
         for _, secObj in ipairs(tabObj.Sections) do
             if string.find(string.lower(secObj.Title), query) or string.find(string.lower(secObj.Description), query) then
-                self:CreateSearchResult(holder, "[Section] " .. tabObj.Title .. " > " .. secObj.Title, function()
+                self:CreateSearchResult(holder, tabObj.Title .. " > " .. secObj.Title, function()
                     self.DeepSearchModal.Visible = false
                     self:SwitchTab("Pages")
                     self:ShowLevel(3, secObj)
@@ -12620,7 +12673,7 @@ function Library:UpdateDeepSearch(query)
 
             for _, elem in ipairs(secObj.Elements) do
                 if string.find(string.lower(elem.Title), query) then
-                    self:CreateSearchResult(holder, "[Element] " .. tabObj.Title .. " > " .. secObj.Title .. " > " .. elem.Title, function()
+                    self:CreateSearchResult(holder, tabObj.Title .. " > " .. secObj.Title .. " > " .. elem.Title, function()
                         self.DeepSearchModal.Visible = false
                         self:SwitchTab("Pages")
                         self:ShowLevel(3, secObj)
@@ -12956,6 +13009,8 @@ function Library:RenderLevel1()
             trigger.Text = ""
             trigger.Parent = card
         end
+        Modules.bindHover(card, trigger)
+        Modules.bindHover(card, trigger)
         trigger.MouseButton1Click:Connect(function()
             self:ShowLevel(2, tabObj)
         end)
@@ -13044,6 +13099,8 @@ function Library:RenderLevel2()
             trigger.Text = ""
             trigger.Parent = card
         end
+        Modules.bindHover(card, trigger)
+        Modules.bindHover(card, trigger)
         trigger.MouseButton1Click:Connect(function()
             self:ShowLevel(3, secObj)
         end)
@@ -13129,6 +13186,12 @@ function Library:RenderLevel3()
         if titleLbl and titleLbl:IsA("TextLabel") then
             titleLbl.RichText = true
             titleLbl.Text = elem.Title
+            titleLbl.TextScaled = false
+            titleLbl.TextSize = 14
+            titleLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
+            titleLbl.TextWrapped = true
+            local sc = titleLbl:FindFirstChildOfClass("UITextSizeConstraint")
+            if sc then sc:Destroy() end
         end
 
         if kind == "Toggle" then
@@ -13340,7 +13403,7 @@ function Library:RenderLevel3()
                 valLbl = Instance.new("TextLabel")
                 valLbl.Name = "Value"
                 valLbl.Font = Enum.Font.SourceSansBold
-                valLbl.TextColor3 = Color3.fromRGB(255, 50, 50)
+                valLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
                 valLbl.TextSize = 14
                 valLbl.TextXAlignment = Enum.TextXAlignment.Right
                 valLbl.BackgroundTransparency = 1
@@ -13430,15 +13493,18 @@ function Library:RenderLevel3()
             local currentColor = elem.Default or Color3.fromRGB(255, 0, 0)
             local isColorPickerOpen = false
 
+            itemObj.ClipsDescendants = true
             if holder then
                 holder.Visible = false
                 holder.ZIndex = math.max(holder.ZIndex, 80)
                 holder.ClipsDescendants = true
-                holder.Position = UDim2.new(0.5, 0, 0, 52)
+                holder.AnchorPoint = Vector2.new(0.5, 0)
+                holder.Position = UDim2.new(0.5, 0, 0, 48)
                 holder.Size = UDim2.new(0.94, 0, 0, 115)
                 local control = holder:FindFirstChild("Control", true)
                 if control then
-                    control.Position = UDim2.new(0, 0, 0, 0)
+                    control.AnchorPoint = Vector2.new(0.5, 0.5)
+                    control.Position = UDim2.new(0.5, 0, 0.5, 0)
                     control.Size = UDim2.new(1, 0, 1, 0)
                     control.ZIndex = math.max(control.ZIndex, 99)
                 end
@@ -13577,6 +13643,11 @@ function Library:RenderLevel3()
                 imgLabel.Image = elem.Image
             end
         end
+
+        if itemObj then
+            local itemTrigger = itemObj:IsA("GuiButton") and itemObj or itemObj:FindFirstChildOfClass("GuiButton") or itemObj
+            Modules.bindHover(itemObj, itemTrigger)
+        end
     end
 
     local function syncConfigCanvas()
@@ -13641,6 +13712,8 @@ function Library:SetHomepageShortcut(tab1, tab2, tab3)
                     trigger.Text = ""
                     trigger.Parent = scBtn
                 end
+                Modules.bindHover(scBtn, trigger)
+                Modules.bindHover(scBtn, trigger)
                 trigger.MouseButton1Click:Connect(function()
                     self:SwitchTab("Pages")
                     self:ShowLevel(2, tabObj)
