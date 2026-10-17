@@ -1,0 +1,84 @@
+Lonely Hub License v1.0
+Copyright (c) 2026 LongHip12 / Lonely Hub
+Discord: dsc.gg/lonelyhub
+
+This license applies to the obfuscated file HoHo_updated.lua, its
+user interface, assets, and documentation (collectively, the
+"Software").
+
+By downloading, running, or using the Software, you agree to the
+terms below. If you do not agree, delete the Software immediately.
+
+1. Attribution
+Any use, distribution, sharing, embedding, or integration of the
+Software (including forks, reuploads, or inclusion in other hubs
+or scripts) must credit the original author as:
+
+    Made by LongHip12 / Lonely Hub
+    dsc.gg/lonelyhub
+
+This credit must appear in at least one of the following: the
+in-game UI (Credits / About / Footer), the source code header,
+the README or video description, or any public post referencing
+the Software. Removing, hiding, or altering the author's name,
+the UI credit, or this LICENSE file is a violation and
+immediately terminates all your rights.
+
+2. No Deobfuscation
+The Software is distributed in obfuscated form. You may not
+deobfuscate, decompile, disassemble, unpack, decrypt, or
+reverse-engineer the Software by any means, including tools such
+as unluau, luadec, unluac, Konstantine, LuaObfuscator Deobf, or
+custom scripts. You may not extract, redistribute, or publish
+recovered source, modify or hook the code to bypass obfuscation,
+license checks, credit display, or anti-tamper mechanisms, or
+share instructions or tools that help others do any of the above.
+
+3. Non-Commercial Use Only
+The Software is provided free of charge. You may not sell,
+resell, rent, sublicense, bundle it into any paid product, paid
+hub, paid script, paid service, or subscription; use it to
+generate revenue in any form (paid keys, paid access, premium
+tiers, donations gated behind features, ad-gated features);
+use it as advertising material for a commercial product without
+written permission; or claim ownership, rebrand it, or present
+it under another author's name. Commercial licensing requires
+explicit written permission from the author.
+
+4. Permitted Use
+You may use the Software for personal, non-commercial purposes;
+share the unmodified obfuscated file with others provided the
+LICENSE file and credit remain intact; post screenshots or videos
+of the Software on social media with visible credit; and discuss,
+review, or critique the Software publicly. You may not modify the
+obfuscated code; if you wish to contribute, contact us on Discord.
+
+5. Anti-Tamper
+The Software may include runtime checks that verify file
+integrity, the presence of the credit, or the absence of
+unauthorized modifications. Bypassing, disabling, or removing
+these checks is a violation of this license. The author reserves
+the right to remotely disable the Software for confirmed
+violators.
+
+6. No Warranty
+The Software is provided "as is", without warranty of any kind.
+The author is not liable for any damages arising from use of the
+Software, including but not limited to Roblox account bans, data
+loss, or any legal consequences.
+
+7. Termination
+Your rights under this license terminate automatically and
+immediately if you violate any term above. Upon termination, you
+must delete all copies of the Software. The author may report
+violations to Roblox, Discord, YouTube, GitHub, and any relevant
+platform, publicly identify violators, and pursue further legal
+remedies.
+
+8. Enforcement
+Confirmed violations may result in DMCA takedown requests on the
+hosting platform, reports to Roblox, Discord, GitHub, YouTube and
+others, public disclosure of the violator's identity with
+evidence, and legal action under copyright law where applicable.
+
+Commercial licensing contact: dsc.gg/lonelyhub
